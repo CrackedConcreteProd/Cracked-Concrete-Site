@@ -210,3 +210,106 @@ body::before{
   }
   .px{ width:6px; height:6px; }
 }
+/* ===== TV SHELL ===== */
+.tv{
+  position: fixed;
+  inset: 0;
+  display:grid;
+  place-items:center;
+  padding: clamp(16px, 4vw, 44px);
+  background: #000; /* behind the TV */
+}
+
+.tv-frame{
+  width: min(1200px, 96vw);
+  aspect-ratio: 4 / 3;
+  border-radius: 28px;
+  background:
+    radial-gradient(120% 90% at 50% 20%, #2a2a30 0%, #0c0c10 55%, #050507 100%);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.65),
+    inset 0 2px 0 rgba(255,255,255,.06),
+    inset 0 -14px 40px rgba(0,0,0,.75);
+  padding: 5.5%;
+  position: relative;
+}
+
+.tv-frame::before{
+  content:"";
+  position:absolute;
+  inset: 4.2%;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.35));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset 0 30px 60px rgba(0,0,0,.65);
+  pointer-events:none;
+}
+
+/* ===== SCREEN (THIS HOLDS YOUR PAGE CONTENT) ===== */
+.screen{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--blueA), var(--blueB) 45%, var(--blueC));
+  box-shadow:
+    0 0 28px rgba(233,251,255,.16),
+    0 0 90px rgba(233,251,255,.08),
+    inset 0 0 90px rgba(0,0,0,.72),
+    inset 0 0 0 2px rgba(255,255,255,.03);
+}
+
+/* Your existing CRT layers can live on the screen */
+.screen::before{
+  content:"";
+  position:absolute;
+  inset:-8%;
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 100% at 50% 45%, rgba(255,255,255,.06), transparent 55%),
+    radial-gradient(140% 120% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%);
+  mix-blend-mode: multiply;
+  pointer-events:none;
+}
+
+.screen::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,.20) 3px
+    );
+  opacity:.75;
+  mix-blend-mode: multiply;
+}
+
+/* CRT overlay divs (reuse your existing ones) */
+.screen .crt-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.screen .crt-phosphor{ /* you already have this */ }
+.screen .crt-noise{ /* you already have this */ }
+.screen .crt-vignette{ /* you already have this */ }
+.screen .crt-roll{ /* you already have this */ }
+.screen .flicker{ /* you already have this */ }
+
+/* Page content lives above overlays */
+.screen-content{
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  width: 100%;
+}
+
+/* Keep your existing .wrap/.grid/.tile styles as-is */
+
