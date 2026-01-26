@@ -1,7 +1,7 @@
-Before you work (Mac or PC)
+BEFORE YOUR WORK (Mac or PC):
 git pull
 
-After you make changes
-git add .
-git commit -m "describe change"
-git push
+AFTER YOU MAKE CHANGES:
+/git add .
+/git commit -m "describe change"
+/git push
