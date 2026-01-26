@@ -210,106 +210,292 @@ body::before{
   }
   .px{ width:6px; height:6px; }
 }
-/* ===== TV SHELL ===== */
-.tv{
-  position: fixed;
-  inset: 0;
+
+/* D4: SPLIT ARCHIVE PANELS */
+
+.projectsGrid{
   display:grid;
-  place-items:center;
-  padding: clamp(16px, 4vw, 44px);
-  background: #000; /* behind the TV */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.tv-frame{
-  width: min(1200px, 96vw);
-  aspect-ratio: 4 / 3;
-  border-radius: 28px;
-  background:
-    radial-gradient(120% 90% at 50% 20%, #2a2a30 0%, #0c0c10 55%, #050507 100%);
-  box-shadow:
-    0 30px 90px rgba(0,0,0,.65),
-    inset 0 2px 0 rgba(255,255,255,.06),
-    inset 0 -14px 40px rgba(0,0,0,.75);
-  padding: 5.5%;
+.projectCard{
   position: relative;
-}
-
-.tv-frame::before{
-  content:"";
-  position:absolute;
-  inset: 4.2%;
-  border-radius: 20px;
-  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.35));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.05),
-    inset 0 30px 60px rgba(0,0,0,.65);
-  pointer-events:none;
-}
-
-/* ===== SCREEN (THIS HOLDS YOUR PAGE CONTENT) ===== */
-.screen{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 18px;
+  background: transparent;
+  color: var(--osd);
+  border: 1px solid rgba(233,251,255,.16);
+  border-radius: 10px;
+  padding: 12px 12px 12px 0;
+  cursor: pointer;
+  text-align: left;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--blueA), var(--blueB) 45%, var(--blueC));
-  box-shadow:
-    0 0 28px rgba(233,251,255,.16),
-    0 0 90px rgba(233,251,255,.08),
-    inset 0 0 90px rgba(0,0,0,.72),
-    inset 0 0 0 2px rgba(255,255,255,.03);
+
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 0;
 }
 
-/* Your existing CRT layers can live on the screen */
-.screen::before{
+/* spine */
+.projectCard::before{
+  content:"";
+  grid-column: 1;
+  grid-row: 1;
+  background: rgba(233,251,255,.03);
+  border-right: 1px solid rgba(233,251,255,.12);
+}
+
+/* Put your existing content into column 2 */
+.projectCard > *{
+  grid-column: 2;
+  padding-left: 12px;
+}
+
+.projectCard[aria-selected="true"]{
+  border-color: rgba(233,251,255,.42);
+  background: rgba(233,251,255,.03);
+}
+
+.projectCard[aria-selected="true"]::after{
   content:"";
   position:absolute;
-  inset:-8%;
-  border-radius: 22px;
-  background:
-    radial-gradient(120% 100% at 50% 45%, rgba(255,255,255,.06), transparent 55%),
-    radial-gradient(140% 120% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%);
-  mix-blend-mode: multiply;
-  pointer-events:none;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: rgba(233,251,255,.85);
 }
 
-.screen::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0) 0px,
-      rgba(0,0,0,0) 2px,
-      rgba(0,0,0,.20) 3px
-    );
-  opacity:.75;
-  mix-blend-mode: multiply;
-}
+/* ===========================
+   PANEL — SERVICE MENU BOX
+=========================== */
 
-/* CRT overlay divs (reuse your existing ones) */
-.screen .crt-layer{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-}
-
-.screen .crt-phosphor{ /* you already have this */ }
-.screen .crt-noise{ /* you already have this */ }
-.screen .crt-vignette{ /* you already have this */ }
-.screen .crt-roll{ /* you already have this */ }
-.screen .flicker{ /* you already have this */ }
-
-/* Page content lives above overlays */
-.screen-content{
+.projectPanel{
+  background: rgba(0,0,0,.08);
+  border: 1px solid rgba(233,251,255,.18);
+  border-radius: 10px;
+  overflow: hidden;
   position: relative;
-  z-index: 5;
-  height: 100%;
-  width: 100%;
 }
 
-/* Keep your existing .wrap/.grid/.tile styles as-is */
+.projectPanel::before{
+  content:"";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+  opacity: .95;
+}
 
+.panelTop{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(233,251,255,.14);
+  background: rgba(255,255,255,.025);
+}
+
+.panelLabel{
+  font-size: 10px;
+  letter-spacing: .26em;
+  opacity: .95;
+}
+
+.panelMeta{
+  font-size: 10px;
+  letter-spacing: .18em;
+  opacity: .85;
+  text-align: right;
+}
+
+.panelBody{
+  padding: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+/* “Signal window” placeholder */
+.panelCover{
+  height: 150px;
+  border-radius: 8px;
+  border: 1px solid rgba(233,251,255,.14);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));
+}
+
+/* faint per-panel scan */
+.panelCover::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 3px,
+    rgba(0,0,0,.10) 4px
+  );
+  opacity: .22;
+  mix-blend-mode: multiply;
+}
+
+.coverLabel{
+  position:absolute;
+  left: 10px;
+  bottom: 10px;
+  font-size: 10px;
+  opacity: .82;
+  letter-spacing: .20em;
+}
+
+/* keep your existing coverNoise markup working (optional) */
+.coverNoise{
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.10), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.08), transparent 45%),
+    radial-gradient(circle at 40% 80%, rgba(0,0,0,.18), transparent 50%);
+  opacity: .28;
+  animation: projNoise 280ms steps(2) infinite;
+  pointer-events:none;
+}
+
+@keyframes projNoise{
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-1px, 1px); }
+  50%  { transform: translate(1px, -1px); }
+  75%  { transform: translate(-1px, 0); }
+  100% { transform: translate(0,0); }
+}
+
+.panelTitleRow{
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.panelTitle{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+
+.panelBadges{
+  display:flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.badge{
+  font-size: 10px;
+  letter-spacing: .18em;
+  padding: 3px 7px;
+  border: 1px solid rgba(233,251,255,.18);
+  border-radius: 999px;
+  background: rgba(255,255,255,.02);
+  opacity: .92;
+}
+
+.panelLogline{
+  font-size: 11px;
+  opacity: .92;
+  line-height: 1.55;
+  margin-bottom: 10px;
+  letter-spacing: .12em;
+}
+
+.panelSection{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(233,251,255,.12);
+}
+
+.panelSectionTitle{
+  font-size: 10px;
+  letter-spacing: .26em;
+  opacity: .9;
+  margin-bottom: 8px;
+}
+
+.panelCredits{
+  display:grid;
+  gap: 8px;
+}
+
+.creditRow{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+}
+
+.creditKey{
+  opacity: .85;
+  letter-spacing: .18em;
+}
+
+.creditVal{
+  opacity: .95;
+  text-align: right;
+  letter-spacing: .14em;
+}
+
+.panelLinks{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.panelLink{
+  display:inline-block;
+  font-size: 10px;
+  letter-spacing: .26em;
+  text-decoration: none;
+  color: var(--osd);
+  border: 1px solid rgba(233,251,255,.18);
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.06);
+}
+
+.panelLink:hover{
+  border-color: rgba(233,251,255,.40);
+}
+
+/* footer hint */
+.projectsFooter{
+  margin-top: 14px;
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  opacity: .75;
+  letter-spacing: .22em;
+}
+
+/* L3: HARD DIVIDER OSD */
+
+.projectsLayout{
+  display: grid;
+  grid-template-columns: 1fr 520px;
+  gap: 0;
+  align-items: start;
+}
+
+.projectsGrid{
+  padding-right: 18px;
+  margin-right: 18px;
+  border-right: 1px solid rgba(233,251,255,.14);
+}
+
+.projectPanel{
+  padding-left: 18px;
+}
