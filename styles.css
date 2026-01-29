@@ -499,3 +499,153 @@ body::before{
 .projectPanel{
   padding-left: 18px;
 }
+/* =========================================================
+   PROJECTS BRANCH (INDEX) — STEPPED "GAME" DRAW
+   ========================================================= */
+
+.branchArea{
+  position: relative;
+  width: min(1100px, 100%);
+  margin: 18px auto 0;
+}
+
+.branchLines{
+  position: relative;
+  height: 76px;
+  pointer-events:none;
+}
+
+.bLine{
+  position:absolute;
+  background: rgba(233,251,255,.92);
+  box-shadow: 0 0 12px rgba(233,251,255,.18);
+  opacity: 0;
+  image-rendering: pixelated;
+
+  /* CRITICAL: prevent any old transform-based animation from affecting lines */
+  transform: none !important;
+  transition: none !important;
+}
+
+.bLine.v{
+  width: 2px;
+  height: var(--len, 0px);
+  clip-path: inset(0 0 calc(100% - var(--draw, 0%)) 0);
+}
+
+.bLine.h{
+  height: 2px;
+  width: var(--len, 0px);
+  clip-path: inset(0 calc(100% - var(--draw, 0%)) 0 0);
+}
+
+.subRow{
+  display:flex;
+  justify-content:center;
+  gap: 14px;
+  margin-top: 6px;
+  padding-top: var(--sub-top, 62px);
+
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events:none;
+  transition: opacity 120ms steps(2), transform 120ms steps(2);
+}
+
+.subBtn{
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.10);
+  color: var(--osd);
+  font-family: inherit;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.subBtn:hover{ background: rgba(0,0,0,.14); }
+
+.subBtn[aria-current="true"]{
+  border-color: rgba(233,251,255,.42);
+  background: rgba(233,251,255,.03);
+  box-shadow: 0 0 24px rgba(233,251,255,.10);
+}
+
+.branchPanel{
+  margin-top: 14px;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events:none;
+  transition: opacity 120ms steps(2), transform 120ms steps(2);
+}
+
+/* open: visible */
+.branchArea.is-open .bLine{ opacity: 1; }
+
+@keyframes drawSteps{
+  from { --draw: 0%; }
+  to   { --draw: 100%; }
+}
+
+.branchArea.is-drawing #projTrunk{
+  animation: drawSteps 260ms steps(10) forwards;
+}
+.branchArea.is-drawing #projBar{
+  animation: drawSteps 320ms steps(12) forwards;
+  animation-delay: 260ms;
+}
+.branchArea.is-drawing #projDropA,
+.branchArea.is-drawing #projDropB,
+.branchArea.is-drawing #projDropC{
+  animation: drawSteps 220ms steps(8) forwards;
+  animation-delay: 580ms;
+}
+
+/* reveal buttons/panel after draw */
+.branchArea.is-drawing .subRow,
+.branchArea.is-drawing .branchPanel{
+  transition-delay: 820ms;
+}
+
+.branchArea.is-open .subRow,
+.branchArea.is-open .branchPanel{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events:auto;
+}
+
+@media (max-width: 700px){
+  .subRow{ flex-direction: column; align-items: center; }
+}
+
+/* Services branch draw timing (mirrors Projects) */
+.branchArea.is-drawing #srvTrunk{
+  animation: drawSteps 260ms steps(10) forwards;
+}
+.branchArea.is-drawing #srvBar{
+  animation: drawSteps 320ms steps(12) forwards;
+  animation-delay: 260ms;
+}
+.branchArea.is-drawing #srvDropA,
+.branchArea.is-drawing #srvDropB,
+.branchArea.is-drawing #srvDropC{
+  animation: drawSteps 220ms steps(8) forwards;
+  animation-delay: 580ms;
+}
+
+/* Branch slot: one shared area under the grid */
+.branchSlot{
+  width: min(1100px, 100%);
+  margin: 18px auto 0;
+}
+
+/* Hide all branches by default — JS will open one */
+.branchSlot .branchArea{
+  display: none;
+}
+
+/* The active one takes the slot */
+.branchSlot .branchArea.is-open{
+  display: block;
+}

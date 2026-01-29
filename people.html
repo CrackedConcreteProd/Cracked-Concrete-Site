@@ -61,50 +61,11 @@
 
     .wrap{
       width:min(1100px, 94vw);
-      margin: 22px auto 40px;
+      margin: 32px auto 40px;
       border-radius: 14px;
       overflow:hidden;
       box-shadow: 0 0 0 2px rgba(255,255,255,.10);
       background: rgba(0,0,0,.06);
-    }
-
-    /* Header (simplified, no fluff) */
-    .osd-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      background: rgba(0,0,0,.08);
-      text-shadow: 0 0 12px var(--glow);
-      position:sticky;
-      top:0;
-      z-index:3;
-      backdrop-filter: blur(2px);
-    }
-
-    .osd-title{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      white-space:nowrap;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:4px 10px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      background: rgba(0,0,0,.10);
-    }
-
-    .dot{
-      width:8px; height:8px; border-radius:2px;
-      background: var(--osd);
-      box-shadow: 0 0 14px var(--glow);
-      opacity:.9;
     }
 
     .section{
@@ -129,6 +90,13 @@
       gap:10px;
       font-size:12px;
       color: var(--dim);
+    }
+
+    .dot{
+      width:8px; height:8px; border-radius:2px;
+      background: var(--osd);
+      box-shadow: 0 0 14px var(--glow);
+      opacity:.9;
     }
 
     .count{
@@ -393,22 +361,13 @@
       .client{ min-width: 230px; }
     }
   </style>
-  <link rel="stylesheet" href="tv-bezel.css">
-</head>
 
-<script src="tv-bezel.js"></script>
+  <link rel="stylesheet" href="tv-bezel.css">
+  <script src="tv-bezel.js" defer></script>
+</head>
 
 <body>
   <div class="wrap">
-    <header class="osd-header">
-      <div class="osd-title">
-        <span class="pill"><span class="dot"></span> CRACKED CONCRETE</span>
-        <span class="pill">PEOPLE</span>
-      </div>
-      <div class="osd-title">
-        <span class="pill" id="nowLabel">00:00</span>
-      </div>
-    </header>
 
     <!-- TOP -->
     <section class="section" id="team">
@@ -451,7 +410,7 @@
         <div class="ticker-bar">
           <div>
             <span class="kbd">SCROLL</span> /
-            <span class="kbd">DRAG</span> 
+            <span class="kbd">DRAG</span>
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
             <button class="btn" id="toggleBtn" type="button">PAUSE</button>
@@ -506,16 +465,6 @@
       { title:"[CLIENT / STUDIO]", meta:"POST SERVICES • PROXIES • COLOR PREP • FINISHING • QC", chips:["COLOR","QC","EXPORT"] },
       { title:"[CLIENT / ARTIST]", meta:"PORTRAITS • BTS • ARCHIVAL EDITS", chips:["BTS","STILLS","EDIT"] },
     ];
-
-    // ---------- TIME PILL ----------
-    const nowLabel = document.getElementById("nowLabel");
-    function tickTime(){
-      const d = new Date();
-      const hh = String(d.getHours()).padStart(2,"0");
-      const mm = String(d.getMinutes()).padStart(2,"0");
-      nowLabel.textContent = `${hh}:${mm}`;
-    }
-    tickTime(); setInterval(tickTime, 5000);
 
     // ---------- TOP: LIST + BIO ----------
     const peopleList = document.getElementById("peopleList");
@@ -578,34 +527,13 @@
       }
     }
 
-    document.addEventListener("keydown", (e) => {
-      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
-      if(tag === "input" || tag === "textarea") return;
-
-      if(e.key === "ArrowUp"){ e.preventDefault(); selectPerson(selectedIndex - 1, true); }
-      if(e.key === "ArrowDown"){ e.preventDefault(); selectPerson(selectedIndex + 1, true); }
-      if(e.key === "Enter"){ e.preventDefault(); renderBio(selectedIndex); }
-
-      // ticker control
-      if(e.key === "ArrowLeft"){ nudgeTicker(-80); }
-      if(e.key === "ArrowRight"){ nudgeTicker(80); }
-      if(e.key === " "){ // space toggles pause
-        const active = document.activeElement;
-        // don't toggle if focus is on a button in people list
-        if(active && active.classList && active.classList.contains("person-btn")) return;
-        e.preventDefault();
-        toggleAuto();
-      }
-    });
-
-    // ---------- BOTTOM: LOOPING TICKER (auto + user control) ----------
+    // ---------- BOTTOM: LOOPING TICKER (auto + user controlled) ----------
     const ticker = document.getElementById("ticker");
     const tickerTrack = document.getElementById("tickerTrack");
     const clientCount = document.getElementById("clientCount");
     const toggleBtn = document.getElementById("toggleBtn");
     const speedLabel = document.getElementById("speedLabel");
 
-    // build A + A for seamless wrap
     function clientCardHTML(c){
       const chips = (c.chips || []).map(x => `<span class="chip">${x}</span>`).join("");
       return `
@@ -689,9 +617,37 @@
       }, 900);
     }
 
+    document.addEventListener("keydown", (e) => {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+      if(tag === "input" || tag === "textarea") return;
+
+      if(e.key === "ArrowUp"){ e.preventDefault(); selectPerson(selectedIndex - 1, true); }
+      if(e.key === "ArrowDown"){ e.preventDefault(); selectPerson(selectedIndex + 1, true); }
+      if(e.key === "Enter"){ e.preventDefault(); renderBio(selectedIndex); }
+
+      // ticker control
+      if(e.key === "ArrowLeft"){ nudgeTicker(-80); }
+      if(e.key === "ArrowRight"){ nudgeTicker(80); }
+      if(e.key === " "){
+        const active = document.activeElement;
+        if(active && active.classList && active.classList.contains("person-btn")) return;
+        e.preventDefault();
+        toggleAuto();
+      }
+
+      // Optional speed control via +/- keys
+      if(e.key === "+" || e.key === "="){
+        speedMult = Math.min(3.0, speedMult + 0.1);
+        renderSpeed();
+      }
+      if(e.key === "-" || e.key === "_"){
+        speedMult = Math.max(0.2, speedMult - 0.1);
+        renderSpeed();
+      }
+    });
+
     ticker.addEventListener("wheel", (e) => {
       e.preventDefault();
-      // trackpad vertical scroll moves ticker horizontally
       const delta = (e.deltaY + e.deltaX) * 0.8;
       nudgeTicker(delta);
     }, { passive:false });
@@ -712,7 +668,7 @@
       if(!dragging) return;
       const dx = e.clientX - lastX;
       lastX = e.clientX;
-      offset -= dx; // drag direction feels natural
+      offset -= dx;
       if(setWidth > 0){
         offset = ((offset % setWidth) + setWidth) % setWidth;
       }
@@ -726,18 +682,6 @@
         paused = false;
         toggleBtn.textContent = "PAUSE";
       }, 800);
-    });
-
-    // Optional speed control via +/- keys
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "+" || e.key === "="){
-        speedMult = Math.min(3.0, speedMult + 0.1);
-        renderSpeed();
-      }
-      if(e.key === "-" || e.key === "_"){
-        speedMult = Math.max(0.2, speedMult - 0.1);
-        renderSpeed();
-      }
     });
 
     window.addEventListener("resize", () => {

@@ -1,4 +1,7 @@
 (() => {
+  // Change this if your home lives somewhere else (GitHub Pages subfolder, etc.)
+  const HOME_URL = "/index.html";
+
   function inject() {
     if (document.getElementById("tvb-root")) return;
 
@@ -127,6 +130,22 @@
       );
     }
 
+    // Helper: navigate home (works with GitHub Pages if you later change HOME_URL)
+    function goHome() {
+      // If already on home, just toggle the menu class like before
+      const path = window.location.pathname.replace(/\/+$/, "");
+      const homePath = HOME_URL.replace(/\/+$/, "");
+
+      if (path.endsWith(homePath) || path === "" && homePath === "/index.html") {
+        document.documentElement.classList.toggle("tvb-menu");
+        flash();
+        return;
+      }
+
+      flash();
+      window.location.href = HOME_URL;
+    }
+
     root.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-tvb]");
       if (!btn) return;
@@ -140,8 +159,7 @@
       }
 
       if (action === "menu") {
-        document.documentElement.classList.toggle("tvb-menu");
-        flash();
+        goHome(); // ✅ MENU returns to home
         return;
       }
 
@@ -155,3 +173,6 @@
     inject();
   }
 })();
+
+const HOME_URL = "./index.html";
+

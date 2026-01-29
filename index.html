@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Cracked Concrete — OSD</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="tv-bezel.css">
-</head>
 
-<script src="tv-bezel.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="tv-bezel.css" />
+
+  <!-- Load bezel after parse -->
+  <script src="tv-bezel.js" defer></script>
+</head>
 
 <body>
   <!-- FULL-PAGE CRT -->
@@ -17,50 +19,260 @@
   <div class="crt-layer crt-noise"></div>
   <div class="crt-layer crt-vignette"></div>
   <div class="crt-roll"></div>
+
   <div class="boot-overlay" id="boot" aria-label="Boot sequence">
-  <div class="boot-vhs"></div>
-  <div class="boot-flash" id="bootFlash"></div>
+    <div class="boot-vhs"></div>
+    <div class="boot-flash" id="bootFlash"></div>
 
-  <div class="boot-ui" id="bootUI">
+    <div class="boot-ui" id="bootUI">
+      <div class="boot-logo" id="bootLogo" style="display:none;">
+        CRACKED CONCRETE
+        <span class="mini">SYSTEM STARTUP</span>
+      </div>
 
-    <div class="boot-logo" id="bootLogo" style="display:none;">
-      CRACKED CONCRETE
-      <span class="mini">SYSTEM STARTUP</span>
+      <div class="boot-bar" id="bootBar" style="display:none;">
+        <div class="boot-fill" id="bootFill"></div>
+      </div>
+
+      <div class="boot-status" id="bootStatus" style="display:none;">LOADING…</div>
     </div>
-
-    <div class="boot-bar" id="bootBar" style="display:none;">
-      <div class="boot-fill" id="bootFill"></div>
-    </div>
-
-    <div class="boot-status" id="bootStatus" style="display:none;">LOADING…</div>
   </div>
-</div>
-
 
   <!-- CONTENT -->
   <div class="stage">
     <div class="wrap">
+
+      <!-- HOME ICON GRID -->
       <section class="grid" id="grid" aria-label="OSD Homepage">
-        <a class="tile item" href="projects.html" data-page="projects" aria-selected="true">
+        <a class="tile item" href="projects.html" data-page="projects" aria-selected="true" id="tile-projects">
           <div class="iconbox" aria-hidden="true"><div class="pixel" data-icon="projects"></div></div>
           <div class="label">Projects</div>
         </a>
 
-        <a class="tile item" href="services.html" data-page="services" aria-selected="false">
+        <a class="tile item" href="services.html" data-page="services" aria-selected="false" id="tile-services">
           <div class="iconbox" aria-hidden="true"><div class="pixel" data-icon="services"></div></div>
           <div class="label">Services</div>
         </a>
 
-        <a class="tile item" href="people.html" data-page="people" aria-selected="false">
+        <a class="tile item" href="people.html" data-page="people" aria-selected="false" id="tile-people">
           <div class="iconbox" aria-hidden="true"><div class="pixel" data-icon="people"></div></div>
           <div class="label">People</div>
         </a>
 
-        <a class="tile item" href="connect.html" data-page="connect" aria-selected="false">
+        <a class="tile item" href="connect.html" data-page="connect" aria-selected="false" id="tile-connect">
           <div class="iconbox" aria-hidden="true"><div class="pixel" data-icon="connect"></div></div>
           <div class="label">Connect</div>
         </a>
       </section>
+
+      <!--
+        BRANCH SLOT (one branch visible at a time)
+        all branches share same width + spacing
+      -->
+      <div class="branchSlot" id="branchSlot" aria-label="Branch slot">
+
+        <!-- PROJECTS BRANCH -->
+        <section class="branchArea" id="projectsBranch" aria-label="Projects branch">
+          <div class="branchLines" aria-hidden="true">
+            <div class="bLine v" id="projTrunk"></div>
+            <div class="bLine h" id="projBar"></div>
+            <div class="bLine v" id="projDropA"></div>
+            <div class="bLine v" id="projDropB"></div>
+            <div class="bLine v" id="projDropC"></div>
+          </div>
+
+          <div class="subRow" id="projectsSubRow" aria-label="Projects categories">
+            <button class="subBtn" type="button" data-sub="films">FILMS</button>
+            <button class="subBtn" type="button" data-sub="musicvideos">MUSIC VIDEOS</button>
+            <button class="subBtn" type="button" data-sub="docs">DOCUMENTARIES</button>
+          </div>
+
+          <div class="branchPanel" id="projectsPanel">
+            <div class="projectPanel">
+              <div class="panelTop">
+                <div class="panelLabel">PROJECTS</div>
+                <div class="panelMeta" id="projMeta">SELECT A CATEGORY</div>
+              </div>
+
+              <div class="panelBody">
+                <div class="panelCover">
+                  <div class="coverNoise"></div>
+                  <div class="coverLabel" id="projCoverLabel">READY</div>
+                </div>
+
+                <div class="panelTitleRow">
+                  <div class="panelTitle" id="projTitle">PROJECTS MENU</div>
+                  <div class="panelBadges" id="projBadges">
+                    <span class="badge">INDEX</span>
+                    <span class="badge">OSD</span>
+                  </div>
+                </div>
+
+                <div class="panelLogline" id="projLogline">
+                  CLICK “PROJECTS” AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
+                </div>
+
+                <div class="projectsFooter">
+                  <div>ENTER: SELECT</div>
+                  <div>MENU: HOME</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SERVICES BRANCH -->
+        <section class="branchArea" id="servicesBranch" aria-label="Services branch">
+          <div class="branchLines" aria-hidden="true">
+            <div class="bLine v" id="srvTrunk"></div>
+            <div class="bLine h" id="srvBar"></div>
+            <div class="bLine v" id="srvDropA"></div>
+            <div class="bLine v" id="srvDropB"></div>
+            <div class="bLine v" id="srvDropC"></div>
+          </div>
+
+          <div class="subRow" id="servicesSubRow" aria-label="Services categories">
+            <button class="subBtn" type="button" data-sub="video">VIDEO / POST</button>
+            <button class="subBtn" type="button" data-sub="gear">GEAR RENTAL</button>
+            <button class="subBtn" type="button" data-sub="tape">TAPE TRANSFER</button>
+          </div>
+
+          <div class="branchPanel" id="servicesPanel">
+            <div class="projectPanel">
+              <div class="panelTop">
+                <div class="panelLabel">SERVICES</div>
+                <div class="panelMeta" id="srvMeta">SELECT A CATEGORY</div>
+              </div>
+
+              <div class="panelBody">
+                <div class="panelCover">
+                  <div class="coverNoise"></div>
+                  <div class="coverLabel" id="srvCoverLabel">READY</div>
+                </div>
+
+                <div class="panelTitleRow">
+                  <div class="panelTitle" id="srvTitle">SERVICES MENU</div>
+                  <div class="panelBadges" id="srvBadges">
+                    <span class="badge">INDEX</span>
+                    <span class="badge">OSD</span>
+                  </div>
+                </div>
+
+                <div class="panelLogline" id="srvLogline">
+                  CLICK “SERVICES” AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
+                </div>
+
+                <div class="projectsFooter">
+                  <div>ENTER: SELECT</div>
+                  <div>MENU: HOME</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PEOPLE BRANCH -->
+        <section class="branchArea" id="peopleBranch" aria-label="People branch">
+          <div class="branchLines" aria-hidden="true">
+            <div class="bLine v" id="pplTrunk"></div>
+            <div class="bLine h" id="pplBar"></div>
+            <div class="bLine v" id="pplDropA"></div>
+            <div class="bLine v" id="pplDropB"></div>
+            <div class="bLine v" id="pplDropC"></div>
+          </div>
+
+          <div class="subRow" id="peopleSubRow" aria-label="People categories">
+            <button class="subBtn" type="button" data-sub="team">TEAM</button>
+            <button class="subBtn" type="button" data-sub="collabs">COLLABS</button>
+            <button class="subBtn" type="button" data-sub="clients">CLIENTS</button>
+          </div>
+
+          <div class="branchPanel" id="peoplePanel">
+            <div class="projectPanel">
+              <div class="panelTop">
+                <div class="panelLabel">PEOPLE</div>
+                <div class="panelMeta" id="pplMeta">SELECT A CATEGORY</div>
+              </div>
+
+              <div class="panelBody">
+                <div class="panelCover">
+                  <div class="coverNoise"></div>
+                  <div class="coverLabel" id="pplCoverLabel">READY</div>
+                </div>
+
+                <div class="panelTitleRow">
+                  <div class="panelTitle" id="pplTitle">PEOPLE MENU</div>
+                  <div class="panelBadges" id="pplBadges">
+                    <span class="badge">INDEX</span>
+                    <span class="badge">OSD</span>
+                  </div>
+                </div>
+
+                <div class="panelLogline" id="pplLogline">
+                  PLACEHOLDER. SELECT “TEAM / COLLABS / CLIENTS” TO UPDATE THIS PANEL.
+                </div>
+
+                <div class="projectsFooter">
+                  <div>ENTER: SELECT</div>
+                  <div>MENU: HOME</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONNECT BRANCH -->
+        <section class="branchArea" id="connectBranch" aria-label="Connect branch">
+          <div class="branchLines" aria-hidden="true">
+            <div class="bLine v" id="conTrunk"></div>
+            <div class="bLine h" id="conBar"></div>
+            <div class="bLine v" id="conDropA"></div>
+            <div class="bLine v" id="conDropB"></div>
+            <div class="bLine v" id="conDropC"></div>
+          </div>
+
+          <div class="subRow" id="connectSubRow" aria-label="Connect options">
+            <button class="subBtn" type="button" data-sub="email">EMAIL</button>
+            <button class="subBtn" type="button" data-sub="ig">INSTAGRAM</button>
+            <button class="subBtn" type="button" data-sub="book">BOOKING</button>
+          </div>
+
+          <div class="branchPanel" id="connectPanel">
+            <div class="projectPanel">
+              <div class="panelTop">
+                <div class="panelLabel">CONNECT</div>
+                <div class="panelMeta" id="conMeta">SELECT A CATEGORY</div>
+              </div>
+
+              <div class="panelBody">
+                <div class="panelCover">
+                  <div class="coverNoise"></div>
+                  <div class="coverLabel" id="conCoverLabel">READY</div>
+                </div>
+
+                <div class="panelTitleRow">
+                  <div class="panelTitle" id="conTitle">CONNECT MENU</div>
+                  <div class="panelBadges" id="conBadges">
+                    <span class="badge">INDEX</span>
+                    <span class="badge">OSD</span>
+                  </div>
+                </div>
+
+                <div class="panelLogline" id="conLogline">
+                  PLACEHOLDER. SELECT AN OPTION TO UPDATE THIS PANEL.
+                </div>
+
+                <div class="projectsFooter">
+                  <div>ENTER: SELECT</div>
+                  <div>MENU: HOME</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /branchSlot -->
+
     </div>
   </div>
 
