@@ -21,17 +21,169 @@
 }
 
 *{ box-sizing:border-box; }
-html, body{ height:100%; }
+
+html, body{
+  min-height: 100%;
+  margin: 0;
+  overscroll-behavior: none; /* prevents “rubber band” showing white */
+}
+
+html{
+  background: linear-gradient(180deg, var(--blueA), var(--blueB) 45%, var(--blueC));
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
 body{
-  margin:0;
-  overflow:hidden;
+  background: transparent; /* html owns the gradient */
+  overflow-x: hidden;
+  overflow-y: auto;
   color: var(--osd);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing: .10em;
   text-transform: uppercase;
-  background: linear-gradient(180deg, var(--blueA), var(--blueB) 45%, var(--blueC));
 }
+
+/* ===========================
+   PROJECTS (split list + panel)
+   Used on Projects page + Home Projects panel
+=========================== */
+
+.projectsLayout{
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.homeProjectsLayout{
+  max-height: 420px;
+}
+
+.projectsGrid{
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 10px;
+  padding-right: 2px;
+  overflow: auto;
+  max-height: 420px;
+}
+
+@media (max-width: 780px){
+  .projectsLayout{
+    grid-template-columns: 1fr;
+  }
+  .projectsGrid{
+    max-height: 240px;
+  }
+  .homeProjectsLayout{
+    max-height: none;
+  }
+}
+
+/* project “cards” in the left list */
+.projectCard{
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.08);
+  color: var(--osd);
+  border-radius: 10px;
+  padding: 10px 10px 9px;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  position: relative;
+}
+
+.projectCard:hover{
+  background: rgba(0,0,0,.12);
+}
+
+.projectCard[aria-selected="true"]{
+  border-color: rgba(233,251,255,.42);
+  box-shadow: 0 0 22px rgba(233,251,255,.10);
+  background: rgba(233,251,255,.03);
+}
+
+.cardTop{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cardTitle{
+  font-size: 12px;
+  letter-spacing: .14em;
+}
+
+.cardYear{
+  font-size: 10px;
+  opacity: .75;
+  letter-spacing: .18em;
+}
+
+.cardMid{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+  opacity: .85;
+  margin-bottom: 6px;
+}
+
+.cardBottom{
+  font-size: 10px;
+  opacity: .72;
+}
+
+.panelCredits{
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.creditRow{
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  opacity: .92;
+}
+
+.creditKey{
+  opacity: .72;
+}
+
+.panelLinks{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.panelLink{
+  display:inline-flex;
+  align-items:center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.08);
+  color: var(--osd);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: .18em;
+}
+
+.panelLink:hover{
+  background: rgba(0,0,0,.12);
+  border-color: rgba(233,251,255,.32);
+}
+
+
 
 /* =========================================================
    FULL-PAGE CRT

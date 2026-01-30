@@ -68,79 +68,70 @@
       <!-- BRANCH SLOT (one visible at a time) -->
       <div class="branchSlot" id="branchSlot" aria-label="Branch slot">
 
-        <!-- PROJECTS BRANCH -->
-        <section class="branchArea" id="projectsBranch" aria-label="Projects branch">
-          <div class="branchLines" aria-hidden="true">
-            <div class="bLine v trunk" id="projTrunk"></div>
-            <div class="bLine h bar"   id="projBar"></div>
-            <div class="bLine v drop"  id="projDropA"></div>
-            <div class="bLine v drop"  id="projDropB"></div>
-            <div class="bLine v drop"  id="projDropC"></div>
+<!-- PROJECTS BRANCH -->
+<section class="branchArea" id="projectsBranch" aria-label="Projects branch">
+  <div class="branchLines" aria-hidden="true">
+    <div class="bLine v trunk" id="projTrunk"></div>
+    <div class="bLine h bar"   id="projBar"></div>
+    <div class="bLine v drop"  id="projDropA"></div>
+    <div class="bLine v drop"  id="projDropB"></div>
+    <div class="bLine v drop"  id="projDropC"></div>
 
-            <div class="bLine v stem"  id="projStem"></div>
+    <div class="bLine v stem"  id="projStem"></div>
 
-            <!-- second-level branch into panel sections -->
-            <div class="bLine h pbar"  id="projPBar"></div>
-            <div class="bLine v pdrop" id="projPDropA"></div>
-            <div class="bLine v pdrop" id="projPDropB"></div>
-            <div class="bLine v pdrop" id="projPDropC"></div>
+    <!-- second-level branch into panel sections -->
+    <div class="bLine h pbar"  id="projPBar"></div>
+    <div class="bLine v pdrop" id="projPDropA"></div>
+    <div class="bLine v pdrop" id="projPDropB"></div>
+    <div class="bLine v pdrop" id="projPDropC"></div>
+  </div>
+
+  <div class="subRow" id="projectsSubRow" aria-label="Projects categories">
+    <button class="subBtn" type="button" data-sub="films">FILMS</button>
+    <button class="subBtn" type="button" data-sub="musicvideos">MUSIC VIDEOS</button>
+    <button class="subBtn" type="button" data-sub="docs">DOCUMENTARIES</button>
+  </div>
+
+  <div class="branchPanel" id="projectsPanel">
+    <div class="projectsLayout homeProjectsLayout" aria-label="Projects layout">
+      <section class="projectsGrid" id="projectsGrid" aria-label="Project list"></section>
+
+      <aside class="projectPanel" id="projectPanel" aria-label="Project details">
+        <div class="panelTop">
+          <div class="panelLabel">INFO</div>
+          <div class="panelMeta" id="panelMeta">SELECT A PROJECT</div>
+        </div>
+
+        <div class="panelBody">
+          <div class="panelCover" id="panelCover" aria-hidden="true"></div>
+
+          <div class="panelTitleRow">
+            <div class="panelTitle" id="panelTitle">—</div>
+            <div class="panelBadges" id="panelBadges"></div>
           </div>
 
-          <div class="subRow" id="projectsSubRow" aria-label="Projects categories">
-            <button class="subBtn" type="button" data-sub="films">FILMS</button>
-            <button class="subBtn" type="button" data-sub="musicvideos">MUSIC VIDEOS</button>
-            <button class="subBtn" type="button" data-sub="docs">DOCUMENTARIES</button>
+          <div class="panelLogline" id="panelLogline">Select a project from the list.</div>
+
+          <div class="panelSection">
+            <div class="panelSectionTitle">CREDITS</div>
+            <div class="panelCredits" id="panelCredits"></div>
           </div>
 
-          <div class="branchPanel" id="projectsPanel">
-            <div class="projectPanel">
-              <div class="panelTop">
-                <div class="panelLabel">PROJECTS</div>
-                <div class="panelMeta" id="projMeta">SELECT A CATEGORY</div>
-              </div>
-
-              <div class="panelBody">
-                <div class="panelCover">
-                  <div class="coverNoise"></div>
-                  <div class="coverLabel" id="projCoverLabel">READY</div>
-                </div>
-
-                <div class="panelTitleRow">
-                  <div class="panelTitle" id="projTitle">PROJECTS MENU</div>
-                  <div class="panelBadges" id="projBadges">
-                    <span class="badge">INDEX</span>
-                    <span class="badge">OSD</span>
-                  </div>
-                </div>
-
-                <div class="panelLogline" id="projLogline">
-                  CLICK “PROJECTS” AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
-                </div>
-
-                <!-- panel sections (targets for second-level branch) -->
-                <div class="panelSection" id="projSecA">
-                  <div class="panelSectionTitle">OVERVIEW</div>
-                  <div class="panelLogline">PLACEHOLDER OVERVIEW TEXT.</div>
-                </div>
-
-                <div class="panelSection" id="projSecB">
-                  <div class="panelSectionTitle">CREDITS</div>
-                  <div class="panelLogline">PLACEHOLDER CREDITS TEXT.</div>
-                </div>
-
-                <div class="panelSection" id="projSecC">
-                  <div class="panelSectionTitle">LINKS</div>
-                  <div class="panelLogline">PLACEHOLDER LINKS TEXT.</div>
-                </div>
-
-                <div class="projectsFooter">
-                  <div>ENTER: SELECT</div>
-                  <div>MENU: HOME</div>
-                </div>
-              </div>
-            </div>
+          <div class="panelSection">
+            <div class="panelSectionTitle">LINKS</div>
+            <div class="panelLinks" id="panelLinks"></div>
           </div>
-        </section>
+
+          <div class="projectsFooter">
+            <div>ENTER: SELECT</div>
+            <div>MENU: HOME</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
 
         <!-- SERVICES BRANCH -->
         <section class="branchArea" id="servicesBranch" aria-label="Services branch">
@@ -363,6 +354,7 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="projects.js" defer></script>
+<script src="app.js"></script>
 </body>
 </html>
