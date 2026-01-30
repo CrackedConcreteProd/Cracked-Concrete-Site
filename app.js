@@ -176,8 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Force layout AFTER it is visible
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          this.layoutLines();
-          if (this.defaultKey) this.setActive(this.defaultKey);
+this.layoutLines();
+requestAnimationFrame(() => this.layoutLines()); // second pass after --sub-top affects layout
+if (this.defaultKey) this.setActive(this.defaultKey);
+
 
           // Restart chunky draw (CSS controls the stepped chunks)
           this.branch.classList.remove("is-drawing");

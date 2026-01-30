@@ -1,4 +1,6 @@
 :root{
+    --stepX: 18; /* more = chunkier */
+  --stepY: 14;
   --branchGlow: .45;
 
   /* NEW: “old game” step feel */
@@ -392,8 +394,15 @@ body::before{
 }
 
 /* =========================================================
-   BRANCH SYSTEM — CONTINUOUS + CHUNKY DRAW
+   BRANCH SYSTEM — CONTINUOUS + CHUNKY DRAW (FIXED)
    ========================================================= */
+
+:root{
+  --branchGlow: .45;
+  --stepX: 18;      /* more = chunkier horizontal */
+  --stepY: 14;      /* more = chunkier vertical */
+  --segGap: 60ms;   /* pause between segments */
+}
 
 .branchSlot{
   width: min(1100px, 100%);
@@ -412,7 +421,7 @@ body::before{
 
 .branchLines{
   position: relative;
-  height: 76px;           /* top branch area height */
+  height: 76px;
   pointer-events:none;
 }
 
@@ -423,51 +432,39 @@ body::before{
   box-shadow: 0 0 12px rgba(233,251,255,.18);
   filter: drop-shadow(0 0 calc(var(--branchW) * var(--branchGlow)) rgba(233,251,255,.35));
   opacity: 0;
-
-  /* hidden until animated */
-  transform: scale(0);
+  image-rendering: pixelated;
 }
 
+/* IMPORTANT: correct “hidden” transforms by orientation */
 .bLine.v{
   width: var(--branchW);
   height: var(--len, 0px);
   transform-origin: top;
+  transform: scaleY(0);
 }
 
 .bLine.h{
   height: var(--branchW);
   width: var(--len, 0px);
   transform-origin: left;
-}
-
-/* second-level bar/drops share same base */
-.bLine.h.pbar{
-  height: var(--branchW);
-  transform-origin: left;
-}
-.bLine.v.pdrop{
-  width: var(--branchW);
-  transform-origin: top;
+  transform: scaleX(0);
 }
 
 .branchArea.is-open .bLine{
   opacity: 1;
-  image-rendering: pixelated;
 }
-
 
 /* Chunky “video game” draw */
 @keyframes drawYsteps { from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
 @keyframes drawXsteps { from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
 
-/* Optional tiny “zap” flicker at the end of each segment */
 @keyframes segZap {
   0%   { filter: brightness(1); }
   40%  { filter: brightness(1.35); }
   100% { filter: brightness(1); }
 }
 
-/* Order: trunk -> bar -> drops -> stem */
+/* trunk -> bar -> drops -> stem */
 .branchArea.is-drawing .bLine.v.trunk{
   animation:
     drawYsteps 260ms steps(var(--stepY), end) forwards,
@@ -477,7 +474,7 @@ body::before{
 .branchArea.is-drawing .bLine.h.bar{
   animation:
     drawXsteps 320ms steps(var(--stepX), end) forwards,
-    segZap 120ms steps(2, end) calc(260ms + var(--segGap)) 1;
+    segZap 120ms steps(2, end) calc(260ms + var(--segGap) + 320ms) 1;
 
   animation-delay: calc(260ms + var(--segGap));
 }
@@ -498,7 +495,7 @@ body::before{
   animation-delay: calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms + var(--segGap));
 }
 
-
+/* UI reveal */
 .subRow{
   display:flex;
   justify-content:center;
@@ -507,23 +504,20 @@ body::before{
   padding-top: var(--sub-top, 62px);
 
   opacity: 0;
-  transform: translateY(-6px);
   pointer-events:none;
-  transition: opacity 140ms linear, transform 140ms ease;
+  transition: opacity 140ms linear;
 }
 
 .branchPanel{
   margin-top: 14px;
   opacity: 0;
-  transform: translateY(-6px);
   pointer-events:none;
-  transition: opacity 140ms linear, transform 140ms ease;
+  transition: opacity 140ms linear;
 }
 
 .branchArea.is-open.is-ready .subRow,
 .branchArea.is-open.is-ready .branchPanel{
   opacity: 1;
-  transform: translateY(0);
   pointer-events:auto;
 }
 
