@@ -65,20 +65,25 @@
         </a>
       </section>
 
-      <!--
-        BRANCH SLOT (one branch visible at a time)
-        all branches share same width + spacing
-      -->
+      <!-- BRANCH SLOT (one visible at a time) -->
       <div class="branchSlot" id="branchSlot" aria-label="Branch slot">
 
         <!-- PROJECTS BRANCH -->
         <section class="branchArea" id="projectsBranch" aria-label="Projects branch">
           <div class="branchLines" aria-hidden="true">
-            <div class="bLine v" id="projTrunk"></div>
-            <div class="bLine h" id="projBar"></div>
-            <div class="bLine v" id="projDropA"></div>
-            <div class="bLine v" id="projDropB"></div>
-            <div class="bLine v" id="projDropC"></div>
+            <div class="bLine v trunk" id="projTrunk"></div>
+            <div class="bLine h bar"   id="projBar"></div>
+            <div class="bLine v drop"  id="projDropA"></div>
+            <div class="bLine v drop"  id="projDropB"></div>
+            <div class="bLine v drop"  id="projDropC"></div>
+
+            <div class="bLine v stem"  id="projStem"></div>
+
+            <!-- second-level branch into panel sections -->
+            <div class="bLine h pbar"  id="projPBar"></div>
+            <div class="bLine v pdrop" id="projPDropA"></div>
+            <div class="bLine v pdrop" id="projPDropB"></div>
+            <div class="bLine v pdrop" id="projPDropC"></div>
           </div>
 
           <div class="subRow" id="projectsSubRow" aria-label="Projects categories">
@@ -112,6 +117,22 @@
                   CLICK “PROJECTS” AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
                 </div>
 
+                <!-- panel sections (targets for second-level branch) -->
+                <div class="panelSection" id="projSecA">
+                  <div class="panelSectionTitle">OVERVIEW</div>
+                  <div class="panelLogline">PLACEHOLDER OVERVIEW TEXT.</div>
+                </div>
+
+                <div class="panelSection" id="projSecB">
+                  <div class="panelSectionTitle">CREDITS</div>
+                  <div class="panelLogline">PLACEHOLDER CREDITS TEXT.</div>
+                </div>
+
+                <div class="panelSection" id="projSecC">
+                  <div class="panelSectionTitle">LINKS</div>
+                  <div class="panelLogline">PLACEHOLDER LINKS TEXT.</div>
+                </div>
+
                 <div class="projectsFooter">
                   <div>ENTER: SELECT</div>
                   <div>MENU: HOME</div>
@@ -124,11 +145,18 @@
         <!-- SERVICES BRANCH -->
         <section class="branchArea" id="servicesBranch" aria-label="Services branch">
           <div class="branchLines" aria-hidden="true">
-            <div class="bLine v" id="srvTrunk"></div>
-            <div class="bLine h" id="srvBar"></div>
-            <div class="bLine v" id="srvDropA"></div>
-            <div class="bLine v" id="srvDropB"></div>
-            <div class="bLine v" id="srvDropC"></div>
+            <div class="bLine v trunk" id="srvTrunk"></div>
+            <div class="bLine h bar"   id="srvBar"></div>
+            <div class="bLine v drop"  id="srvDropA"></div>
+            <div class="bLine v drop"  id="srvDropB"></div>
+            <div class="bLine v drop"  id="srvDropC"></div>
+
+            <div class="bLine v stem"  id="srvStem"></div>
+
+            <div class="bLine h pbar"  id="srvPBar"></div>
+            <div class="bLine v pdrop" id="srvPDropA"></div>
+            <div class="bLine v pdrop" id="srvPDropB"></div>
+            <div class="bLine v pdrop" id="srvPDropC"></div>
           </div>
 
           <div class="subRow" id="servicesSubRow" aria-label="Services categories">
@@ -162,6 +190,21 @@
                   CLICK “SERVICES” AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
                 </div>
 
+                <div class="panelSection" id="srvSecA">
+                  <div class="panelSectionTitle">OVERVIEW</div>
+                  <div class="panelLogline">PLACEHOLDER OVERVIEW TEXT.</div>
+                </div>
+
+                <div class="panelSection" id="srvSecB">
+                  <div class="panelSectionTitle">DETAILS</div>
+                  <div class="panelLogline">PLACEHOLDER DETAILS TEXT.</div>
+                </div>
+
+                <div class="panelSection" id="srvSecC">
+                  <div class="panelSectionTitle">CONTACT</div>
+                  <div class="panelLogline">PLACEHOLDER CONTACT TEXT.</div>
+                </div>
+
                 <div class="projectsFooter">
                   <div>ENTER: SELECT</div>
                   <div>MENU: HOME</div>
@@ -174,11 +217,18 @@
         <!-- PEOPLE BRANCH -->
         <section class="branchArea" id="peopleBranch" aria-label="People branch">
           <div class="branchLines" aria-hidden="true">
-            <div class="bLine v" id="pplTrunk"></div>
-            <div class="bLine h" id="pplBar"></div>
-            <div class="bLine v" id="pplDropA"></div>
-            <div class="bLine v" id="pplDropB"></div>
-            <div class="bLine v" id="pplDropC"></div>
+            <div class="bLine v trunk" id="pplTrunk"></div>
+            <div class="bLine h bar"   id="pplBar"></div>
+            <div class="bLine v drop"  id="pplDropA"></div>
+            <div class="bLine v drop"  id="pplDropB"></div>
+            <div class="bLine v drop"  id="pplDropC"></div>
+
+            <div class="bLine v stem"  id="pplStem"></div>
+
+            <div class="bLine h pbar"  id="pplPBar"></div>
+            <div class="bLine v pdrop" id="pplPDropA"></div>
+            <div class="bLine v pdrop" id="pplPDropB"></div>
+            <div class="bLine v pdrop" id="pplPDropC"></div>
           </div>
 
           <div class="subRow" id="peopleSubRow" aria-label="People categories">
@@ -212,6 +262,21 @@
                   PLACEHOLDER. SELECT “TEAM / COLLABS / CLIENTS” TO UPDATE THIS PANEL.
                 </div>
 
+                <div class="panelSection" id="pplSecA">
+                  <div class="panelSectionTitle">OVERVIEW</div>
+                  <div class="panelLogline">PLACEHOLDER OVERVIEW TEXT.</div>
+                </div>
+
+                <div class="panelSection" id="pplSecB">
+                  <div class="panelSectionTitle">ROSTER</div>
+                  <div class="panelLogline">PLACEHOLDER ROSTER TEXT.</div>
+                </div>
+
+                <div class="panelSection" id="pplSecC">
+                  <div class="panelSectionTitle">NOTES</div>
+                  <div class="panelLogline">PLACEHOLDER NOTES TEXT.</div>
+                </div>
+
                 <div class="projectsFooter">
                   <div>ENTER: SELECT</div>
                   <div>MENU: HOME</div>
@@ -224,11 +289,18 @@
         <!-- CONNECT BRANCH -->
         <section class="branchArea" id="connectBranch" aria-label="Connect branch">
           <div class="branchLines" aria-hidden="true">
-            <div class="bLine v" id="conTrunk"></div>
-            <div class="bLine h" id="conBar"></div>
-            <div class="bLine v" id="conDropA"></div>
-            <div class="bLine v" id="conDropB"></div>
-            <div class="bLine v" id="conDropC"></div>
+            <div class="bLine v trunk" id="conTrunk"></div>
+            <div class="bLine h bar"   id="conBar"></div>
+            <div class="bLine v drop"  id="conDropA"></div>
+            <div class="bLine v drop"  id="conDropB"></div>
+            <div class="bLine v drop"  id="conDropC"></div>
+
+            <div class="bLine v stem"  id="conStem"></div>
+
+            <div class="bLine h pbar"  id="conPBar"></div>
+            <div class="bLine v pdrop" id="conPDropA"></div>
+            <div class="bLine v pdrop" id="conPDropB"></div>
+            <div class="bLine v pdrop" id="conPDropC"></div>
           </div>
 
           <div class="subRow" id="connectSubRow" aria-label="Connect options">
@@ -260,6 +332,21 @@
 
                 <div class="panelLogline" id="conLogline">
                   PLACEHOLDER. SELECT AN OPTION TO UPDATE THIS PANEL.
+                </div>
+
+                <div class="panelSection" id="conSecA">
+                  <div class="panelSectionTitle">PRIMARY</div>
+                  <div class="panelLogline">PLACEHOLDER PRIMARY CONTACT.</div>
+                </div>
+
+                <div class="panelSection" id="conSecB">
+                  <div class="panelSectionTitle">SOCIAL</div>
+                  <div class="panelLogline">PLACEHOLDER SOCIAL LINKS.</div>
+                </div>
+
+                <div class="panelSection" id="conSecC">
+                  <div class="panelSectionTitle">BOOKING</div>
+                  <div class="panelLogline">PLACEHOLDER BOOKING FLOW.</div>
                 </div>
 
                 <div class="projectsFooter">

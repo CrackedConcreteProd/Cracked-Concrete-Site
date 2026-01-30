@@ -1,10 +1,14 @@
 // ==============================
 // Cracked Concrete — app.js
-// One reusable BranchController
-// Ensures ONLY ONE branch open at once
-// All branches use the Projects panel format
+// FIXES:
+// 1) NO MORE global line IDs (prevents everything breaking when IDs get duplicated)
+//    -> Each branch finds its own .bLine.trunk/.bar/.drop/.stem INSIDE that branch.
+// 2) Stem goes DOWN to the panel, anchored under the ACTIVE sub button.
+// 3) “Chunky” retro draw is driven by CSS steps — JS just retriggers is-drawing cleanly.
 // ==============================
 
+
+// ===== ICONS =====
 const ICONS = {
   projects: [
     "0000000000000000","0000000000000000","0000000000000000","0000001111111000",
@@ -44,11 +48,13 @@ function buildIcon(el, pattern){
 }
 
 document.querySelectorAll(".pixel").forEach((el) => {
-  buildIcon(el, ICONS[el.dataset.icon]);
+  const key = el.dataset.icon;
+  if (ICONS[key]) buildIcon(el, ICONS[key]);
 });
 
+
 // ==============================
-// Branch Controller (reusable)
+// Branch Controller
 // ==============================
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -72,9 +78,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return style.gridTemplateColumns.split(" ").length;
   }
 
-  const state = {
-    activeBranch: null
-  };
+  // Read branch thickness from CSS so JS stays in sync
+  function getBranchW(){
+    const v = getComputedStyle(document.documentElement).getPropertyValue("--branchW").trim();
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : 8;
+  }
+
+  // Match your CSS timing (update if you change CSS delays)
+  const REVEAL_AFTER_MS = 1150;
+
+  const state = { activeBranch: null };
 
   class BranchController {
     constructor(opts){
@@ -87,15 +101,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       this.linesEl = this.branch ? this.branch.querySelector(".branchLines") : null;
 
-      this.trunk = document.getElementById(opts.lines.trunk);
-      this.bar   = document.getElementById(opts.lines.bar);
-      this.drops = opts.lines.drops.map(id => document.getElementById(id));
+      // ✅ IMPORTANT: find lines INSIDE this branch (no global IDs)
+      // Your HTML must have:
+      // .bLine.v.trunk
+      // .bLine.h.bar
+      // .bLine.v.drop   (x3)
+      // .bLine.v.stem
+      this.trunk = this.branch ? this.branch.querySelector(".bLine.trunk") : null;
+      this.bar   = this.branch ? this.branch.querySelector(".bLine.bar") : null;
+      this.drops = this.branch ? Array.from(this.branch.querySelectorAll(".bLine.drop")) : [];
+      this.stem  = this.branch ? this.branch.querySelector(".bLine.stem") : null;
 
       this.ui = {
-        meta: document.getElementById(opts.ui.meta),
-        title: document.getElementById(opts.ui.title),
-        cover: document.getElementById(opts.ui.cover),
-        logline: document.getElementById(opts.ui.logline),
+        meta:   document.getElementById(opts.ui.meta),
+        title:  document.getElementById(opts.ui.title),
+        cover:  document.getElementById(opts.ui.cover),
+        logline:document.getElementById(opts.ui.logline),
         badges: document.getElementById(opts.ui.badges),
       };
 
@@ -103,9 +124,21 @@ document.addEventListener("DOMContentLoaded", () => {
       this.defaultKey = opts.defaultKey || (this.subBtns[0] ? this.subBtns[0].dataset.sub : null);
 
       this.isOpen = false;
-      this.valid = !!(this.tile && this.branch && this.subRow && this.linesEl && this.trunk && this.bar && this.subBtns.length === 3 && !this.drops.some(d => !d));
+
+      this.valid = !!(
+        this.tile &&
+        this.branch &&
+        this.subRow &&
+        this.linesEl &&
+        this.trunk &&
+        this.bar &&
+        this.stem &&
+        this.subBtns.length === 3 &&
+        this.drops.length === 3
+      );
       if (!this.valid) return;
 
+      // Tile click toggles this branch (no navigation on index)
       this.tile.addEventListener("click", (e) => {
         e.preventDefault();
         this.toggle();
@@ -125,8 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     close(){
       this.isOpen = false;
-      this.branch.classList.remove("is-open");
-      this.branch.classList.remove("is-drawing");
+      this.branch.classList.remove("is-open", "is-drawing", "is-ready");
     }
 
     open(){
@@ -136,16 +168,25 @@ document.addEventListener("DOMContentLoaded", () => {
       state.activeBranch = this;
 
       this.isOpen = true;
-      this.branch.classList.add("is-open");
 
+      // Open, but keep content hidden until ready
+      this.branch.classList.add("is-open");
+      this.branch.classList.remove("is-ready");
+
+      // Force layout AFTER it is visible
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           this.layoutLines();
           if (this.defaultKey) this.setActive(this.defaultKey);
 
+          // Restart chunky draw (CSS controls the stepped chunks)
           this.branch.classList.remove("is-drawing");
           void this.branch.offsetHeight;
           this.branch.classList.add("is-drawing");
+
+          window.setTimeout(() => {
+            if (this.isOpen) this.branch.classList.add("is-ready");
+          }, REVEAL_AFTER_MS);
         });
       });
     }
@@ -156,14 +197,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setActive(key){
-      this.subBtns.forEach(b => b.setAttribute("aria-current", b.dataset.sub === key ? "true" : "false"));
-      const c = this.content[key];
-      if (!c) return;
+      this.subBtns.forEach(b =>
+        b.setAttribute("aria-current", b.dataset.sub === key ? "true" : "false")
+      );
 
-      if (this.ui.meta) this.ui.meta.textContent = c.meta || "";
-      if (this.ui.title) this.ui.title.textContent = c.title || "";
-      if (this.ui.cover) this.ui.cover.textContent = c.cover || "";
-      if (this.ui.logline) this.ui.logline.textContent = c.logline || "";
+      const c = this.content[key];
+      if (!c) {
+        // still move stem even if content missing
+        if (this.isOpen) this.layoutLines();
+        return;
+      }
+
+      if (this.ui.meta)   this.ui.meta.textContent   = c.meta || "";
+      if (this.ui.title)  this.ui.title.textContent  = c.title || "";
+      if (this.ui.cover)  this.ui.cover.textContent  = c.cover || "";
+      if (this.ui.logline)this.ui.logline.textContent= c.logline || "";
 
       if (this.ui.badges){
         this.ui.badges.innerHTML = "";
@@ -174,6 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
           this.ui.badges.appendChild(s);
         });
       }
+
+      // ✅ Update branch geometry so stem snaps under active section
+      if (this.isOpen) this.layoutLines();
     }
 
     layoutLines(){
@@ -181,8 +232,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const tRect = this.tile.getBoundingClientRect();
       const subRect = this.subRow.getBoundingClientRect();
 
+      const branchW = getBranchW();
+
+      // Start X = center of tile (relative to branchLines box)
       const startX = (tRect.left + tRect.width / 2) - linesRect.left;
 
+      // Button centers (relative)
       const centers = this.subBtns.map(btn => {
         const r = btn.getBoundingClientRect();
         return (r.left + r.width / 2) - linesRect.left;
@@ -192,27 +247,60 @@ document.addEventListener("DOMContentLoaded", () => {
       const maxX = Math.max(...centers);
 
       const dropGap = 10;
+
+      // Where trunk starts (bottom of tile) and where bar sits (just above buttons)
       const startY = (tRect.bottom - linesRect.top);
-      const barY = (subRect.top - linesRect.top) - dropGap;
+      const barY   = (subRect.top  - linesRect.top) - dropGap;
 
       const trunkH = Math.max(6, barY - startY);
       const dropH  = Math.max(6, (subRect.top - linesRect.top) - barY);
 
-      this.trunk.style.left = `${startX}px`;
+      // Bar includes trunk so it always intersects
+      const barLeft  = Math.min(minX, startX);
+      const barRight = Math.max(maxX, startX);
+      const barLen   = Math.max(6, barRight - barLeft);
+
+      // Trunk
+      this.trunk.style.left = `${startX - (branchW / 2)}px`;
       this.trunk.style.top  = `${startY}px`;
       this.trunk.style.setProperty("--len", `${trunkH}px`);
 
-      this.bar.style.left = `${minX}px`;
+      // Bar
+      this.bar.style.left = `${barLeft}px`;
       this.bar.style.top  = `${barY}px`;
-      this.bar.style.setProperty("--len", `${maxX - minX}px`);
+      this.bar.style.setProperty("--len", `${barLen}px`);
 
+      // Drops go down to each sub button
       this.drops.forEach((d, i) => {
-        d.style.left = `${centers[i]}px`;
+        d.style.left = `${centers[i] - (branchW / 2)}px`;
         d.style.top  = `${barY}px`;
         d.style.setProperty("--len", `${dropH}px`);
       });
 
+      // Place the buttons row after drops
       this.branch.style.setProperty("--sub-top", `${barY + dropH}px`);
+
+      // ===== STEM: connect ACTIVE category to the panel =====
+      const panel = this.branch.querySelector(".branchPanel");
+      if (panel && this.stem) {
+        const panelRect = panel.getBoundingClientRect();
+
+        const activeBtn = this.subRow.querySelector('.subBtn[aria-current="true"]');
+        const anchorX = activeBtn
+          ? ((activeBtn.getBoundingClientRect().left + activeBtn.getBoundingClientRect().width / 2) - linesRect.left)
+          : centers[1]; // fallback: middle button
+
+        // Start stem BELOW the button row so it doesn’t slice through buttons
+        const STEM_GAP = 10;
+        const stemTop = (subRect.bottom - linesRect.top) + STEM_GAP;
+
+        // Reach panel top
+        const stemH = Math.max(6, (panelRect.top - linesRect.top) - stemTop);
+
+        this.stem.style.left = `${anchorX - (branchW / 2)}px`;
+        this.stem.style.top  = `${stemTop}px`;
+        this.stem.style.setProperty("--len", `${stemH}px`);
+      }
     }
   }
 
@@ -225,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tileId: "tile-projects",
       branchId: "projectsBranch",
       subRowId: "projectsSubRow",
-      lines: { trunk: "projTrunk", bar: "projBar", drops: ["projDropA","projDropB","projDropC"] },
       ui: { meta: "projMeta", title: "projTitle", cover: "projCoverLabel", logline: "projLogline", badges: "projBadges" },
       defaultKey: "films",
       content: {
@@ -240,7 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tileId: "tile-services",
       branchId: "servicesBranch",
       subRowId: "servicesSubRow",
-      lines: { trunk: "srvTrunk", bar: "srvBar", drops: ["srvDropA","srvDropB","srvDropC"] },
       ui: { meta: "srvMeta", title: "srvTitle", cover: "srvCoverLabel", logline: "srvLogline", badges: "srvBadges" },
       defaultKey: "video",
       content: {
@@ -255,7 +341,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tileId: "tile-people",
       branchId: "peopleBranch",
       subRowId: "peopleSubRow",
-      lines: { trunk: "pplTrunk", bar: "pplBar", drops: ["pplDropA","pplDropB","pplDropC"] },
       ui: { meta: "pplMeta", title: "pplTitle", cover: "pplCoverLabel", logline: "pplLogline", badges: "pplBadges" },
       defaultKey: "team",
       content: {
@@ -270,7 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tileId: "tile-connect",
       branchId: "connectBranch",
       subRowId: "connectSubRow",
-      lines: { trunk: "conTrunk", bar: "conBar", drops: ["conDropA","conDropB","conDropC"] },
       ui: { meta: "conMeta", title: "conTitle", cover: "conCoverLabel", logline: "conLogline", badges: "conBadges" },
       defaultKey: "email",
       content: {
@@ -288,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return branches.find(b => b.tile && b.tile.id === el.id) || null;
   }
 
-  // Single keyboard handler:
+  // Keyboard handler:
   // - arrows move selection
   // - Enter toggles branch if available; otherwise navigates
   // - Escape closes active branch

@@ -1,8 +1,21 @@
 :root{
+  --branchGlow: .45;
+
+  /* NEW: “old game” step feel */
+  --stepY: 10;       /* how many chunks a vertical line draws in */
+  --stepX: 14;       /* how many chunks a horizontal line draws in */
+  --segGap: 90ms;    /* pause between segments */
   --blueA: #1a55ff;
   --blueB: #1242ff;
   --blueC: #0b34ff;
   --osd: #e9fbff;
+
+  --branchW: 8px;
+  --branchGlow: .45;
+
+  /* retro chunk “ticks” */
+  --drawStepsY: 8;
+  --drawStepsX: 10;
 }
 
 *{ box-sizing:border-box; }
@@ -124,12 +137,14 @@ body::before{
    CONTENT
    ========================================================= */
 
+/* IMPORTANT: start at top (no center “teleport”) */
 .stage{
   position: relative;
   z-index: 5;
-  height: 100%;
-  display:grid;
-  place-items:center;
+  min-height: 100%;
+  display: grid;
+  justify-items: center;
+  align-content: start;
 }
 
 .wrap{
@@ -195,7 +210,6 @@ body::before{
   font-weight: 900;
 }
 
-/* Responsive */
 @media (max-width: 980px){
   .grid{ grid-template-columns: repeat(2, 1fr); }
 }
@@ -211,62 +225,8 @@ body::before{
   .px{ width:6px; height:6px; }
 }
 
-/* D4: SPLIT ARCHIVE PANELS */
-
-.projectsGrid{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.projectCard{
-  position: relative;
-  background: transparent;
-  color: var(--osd);
-  border: 1px solid rgba(233,251,255,.16);
-  border-radius: 10px;
-  padding: 12px 12px 12px 0;
-  cursor: pointer;
-  text-align: left;
-  overflow: hidden;
-
-  display: grid;
-  grid-template-columns: 34px 1fr;
-  gap: 0;
-}
-
-/* spine */
-.projectCard::before{
-  content:"";
-  grid-column: 1;
-  grid-row: 1;
-  background: rgba(233,251,255,.03);
-  border-right: 1px solid rgba(233,251,255,.12);
-}
-
-/* Put your existing content into column 2 */
-.projectCard > *{
-  grid-column: 2;
-  padding-left: 12px;
-}
-
-.projectCard[aria-selected="true"]{
-  border-color: rgba(233,251,255,.42);
-  background: rgba(233,251,255,.03);
-}
-
-.projectCard[aria-selected="true"]::after{
-  content:"";
-  position:absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: rgba(233,251,255,.85);
-}
-
 /* ===========================
-   PANEL — SERVICE MENU BOX
+   PANEL
 =========================== */
 
 .projectPanel{
@@ -315,7 +275,6 @@ body::before{
   z-index: 1;
 }
 
-/* “Signal window” placeholder */
 .panelCover{
   height: 150px;
   border-radius: 8px;
@@ -323,11 +282,9 @@ body::before{
   position: relative;
   overflow: hidden;
   margin-bottom: 12px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));
 }
 
-/* faint per-panel scan */
 .panelCover::after{
   content:"";
   position:absolute;
@@ -352,7 +309,6 @@ body::before{
   letter-spacing: .20em;
 }
 
-/* keep your existing coverNoise markup working (optional) */
 .coverNoise{
   position:absolute;
   inset:-20%;
@@ -425,52 +381,6 @@ body::before{
   margin-bottom: 8px;
 }
 
-.panelCredits{
-  display:grid;
-  gap: 8px;
-}
-
-.creditRow{
-  display:flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 11px;
-}
-
-.creditKey{
-  opacity: .85;
-  letter-spacing: .18em;
-}
-
-.creditVal{
-  opacity: .95;
-  text-align: right;
-  letter-spacing: .14em;
-}
-
-.panelLinks{
-  display:flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.panelLink{
-  display:inline-block;
-  font-size: 10px;
-  letter-spacing: .26em;
-  text-decoration: none;
-  color: var(--osd);
-  border: 1px solid rgba(233,251,255,.18);
-  padding: 6px 9px;
-  border-radius: 8px;
-  background: rgba(0,0,0,.06);
-}
-
-.panelLink:hover{
-  border-color: rgba(233,251,255,.40);
-}
-
-/* footer hint */
 .projectsFooter{
   margin-top: 14px;
   display:flex;
@@ -481,27 +391,18 @@ body::before{
   letter-spacing: .22em;
 }
 
-/* L3: HARD DIVIDER OSD */
-
-.projectsLayout{
-  display: grid;
-  grid-template-columns: 1fr 520px;
-  gap: 0;
-  align-items: start;
-}
-
-.projectsGrid{
-  padding-right: 18px;
-  margin-right: 18px;
-  border-right: 1px solid rgba(233,251,255,.14);
-}
-
-.projectPanel{
-  padding-left: 18px;
-}
 /* =========================================================
-   PROJECTS BRANCH (INDEX) — STEPPED "GAME" DRAW
+   BRANCH SYSTEM — CONTINUOUS + CHUNKY DRAW
    ========================================================= */
+
+.branchSlot{
+  width: min(1100px, 100%);
+  margin: 18px auto 0;
+}
+
+/* Hide all branches by default — JS opens one */
+.branchSlot .branchArea{ display:none; }
+.branchSlot .branchArea.is-open{ display:block; }
 
 .branchArea{
   position: relative;
@@ -511,33 +412,92 @@ body::before{
 
 .branchLines{
   position: relative;
-  height: 76px;
+  height: 76px;           /* top branch area height */
   pointer-events:none;
 }
 
 .bLine{
   position:absolute;
   background: rgba(233,251,255,.92);
+  border-radius: 999px;
   box-shadow: 0 0 12px rgba(233,251,255,.18);
+  filter: drop-shadow(0 0 calc(var(--branchW) * var(--branchGlow)) rgba(233,251,255,.35));
   opacity: 0;
-  image-rendering: pixelated;
 
-  /* CRITICAL: prevent any old transform-based animation from affecting lines */
-  transform: none !important;
-  transition: none !important;
+  /* hidden until animated */
+  transform: scale(0);
 }
 
 .bLine.v{
-  width: 2px;
+  width: var(--branchW);
   height: var(--len, 0px);
-  clip-path: inset(0 0 calc(100% - var(--draw, 0%)) 0);
+  transform-origin: top;
 }
 
 .bLine.h{
-  height: 2px;
+  height: var(--branchW);
   width: var(--len, 0px);
-  clip-path: inset(0 calc(100% - var(--draw, 0%)) 0 0);
+  transform-origin: left;
 }
+
+/* second-level bar/drops share same base */
+.bLine.h.pbar{
+  height: var(--branchW);
+  transform-origin: left;
+}
+.bLine.v.pdrop{
+  width: var(--branchW);
+  transform-origin: top;
+}
+
+.branchArea.is-open .bLine{
+  opacity: 1;
+  image-rendering: pixelated;
+}
+
+
+/* Chunky “video game” draw */
+@keyframes drawYsteps { from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
+@keyframes drawXsteps { from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
+
+/* Optional tiny “zap” flicker at the end of each segment */
+@keyframes segZap {
+  0%   { filter: brightness(1); }
+  40%  { filter: brightness(1.35); }
+  100% { filter: brightness(1); }
+}
+
+/* Order: trunk -> bar -> drops -> stem */
+.branchArea.is-drawing .bLine.v.trunk{
+  animation:
+    drawYsteps 260ms steps(var(--stepY), end) forwards,
+    segZap 120ms steps(2, end) 260ms 1;
+}
+
+.branchArea.is-drawing .bLine.h.bar{
+  animation:
+    drawXsteps 320ms steps(var(--stepX), end) forwards,
+    segZap 120ms steps(2, end) calc(260ms + var(--segGap)) 1;
+
+  animation-delay: calc(260ms + var(--segGap));
+}
+
+.branchArea.is-drawing .bLine.v.drop{
+  animation:
+    drawYsteps 220ms steps(var(--stepY), end) forwards,
+    segZap 120ms steps(2, end) calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms) 1;
+
+  animation-delay: calc(260ms + var(--segGap) + 320ms + var(--segGap));
+}
+
+.branchArea.is-drawing .bLine.v.stem{
+  animation:
+    drawYsteps 260ms steps(var(--stepY), end) forwards,
+    segZap 120ms steps(2, end) calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms + var(--segGap) + 260ms) 1;
+
+  animation-delay: calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms + var(--segGap));
+}
+
 
 .subRow{
   display:flex;
@@ -549,7 +509,22 @@ body::before{
   opacity: 0;
   transform: translateY(-6px);
   pointer-events:none;
-  transition: opacity 120ms steps(2), transform 120ms steps(2);
+  transition: opacity 140ms linear, transform 140ms ease;
+}
+
+.branchPanel{
+  margin-top: 14px;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events:none;
+  transition: opacity 140ms linear, transform 140ms ease;
+}
+
+.branchArea.is-open.is-ready .subRow,
+.branchArea.is-open.is-ready .branchPanel{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events:auto;
 }
 
 .subBtn{
@@ -572,80 +547,6 @@ body::before{
   box-shadow: 0 0 24px rgba(233,251,255,.10);
 }
 
-.branchPanel{
-  margin-top: 14px;
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events:none;
-  transition: opacity 120ms steps(2), transform 120ms steps(2);
-}
-
-/* open: visible */
-.branchArea.is-open .bLine{ opacity: 1; }
-
-@keyframes drawSteps{
-  from { --draw: 0%; }
-  to   { --draw: 100%; }
-}
-
-.branchArea.is-drawing #projTrunk{
-  animation: drawSteps 260ms steps(10) forwards;
-}
-.branchArea.is-drawing #projBar{
-  animation: drawSteps 320ms steps(12) forwards;
-  animation-delay: 260ms;
-}
-.branchArea.is-drawing #projDropA,
-.branchArea.is-drawing #projDropB,
-.branchArea.is-drawing #projDropC{
-  animation: drawSteps 220ms steps(8) forwards;
-  animation-delay: 580ms;
-}
-
-/* reveal buttons/panel after draw */
-.branchArea.is-drawing .subRow,
-.branchArea.is-drawing .branchPanel{
-  transition-delay: 820ms;
-}
-
-.branchArea.is-open .subRow,
-.branchArea.is-open .branchPanel{
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events:auto;
-}
-
 @media (max-width: 700px){
   .subRow{ flex-direction: column; align-items: center; }
-}
-
-/* Services branch draw timing (mirrors Projects) */
-.branchArea.is-drawing #srvTrunk{
-  animation: drawSteps 260ms steps(10) forwards;
-}
-.branchArea.is-drawing #srvBar{
-  animation: drawSteps 320ms steps(12) forwards;
-  animation-delay: 260ms;
-}
-.branchArea.is-drawing #srvDropA,
-.branchArea.is-drawing #srvDropB,
-.branchArea.is-drawing #srvDropC{
-  animation: drawSteps 220ms steps(8) forwards;
-  animation-delay: 580ms;
-}
-
-/* Branch slot: one shared area under the grid */
-.branchSlot{
-  width: min(1100px, 100%);
-  margin: 18px auto 0;
-}
-
-/* Hide all branches by default — JS will open one */
-.branchSlot .branchArea{
-  display: none;
-}
-
-/* The active one takes the slot */
-.branchSlot .branchArea.is-open{
-  display: block;
 }
