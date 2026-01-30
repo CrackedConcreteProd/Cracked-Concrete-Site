@@ -1,12 +1,4 @@
 :root{
-    --stepX: 18; /* more = chunkier */
-  --stepY: 14;
-  --branchGlow: .45;
-
-  /* NEW: “old game” step feel */
-  --stepY: 10;       /* how many chunks a vertical line draws in */
-  --stepX: 14;       /* how many chunks a horizontal line draws in */
-  --segGap: 90ms;    /* pause between segments */
   --blueA: #1a55ff;
   --blueB: #1242ff;
   --blueC: #0b34ff;
@@ -15,9 +7,9 @@
   --branchW: 8px;
   --branchGlow: .45;
 
-  /* retro chunk “ticks” */
-  --drawStepsY: 8;
-  --drawStepsX: 10;
+  --stepX: 18;
+  --stepY: 14;
+  --segGap: 60ms;
 }
 
 *{ box-sizing:border-box; }
@@ -25,7 +17,7 @@
 html, body{
   min-height: 100%;
   margin: 0;
-  overscroll-behavior: none; /* prevents “rubber band” showing white */
+  overscroll-behavior: none; /* prevents “rubber band” white */
 }
 
 html{
@@ -36,7 +28,7 @@ html{
 }
 
 body{
-  background: transparent; /* html owns the gradient */
+  background: transparent;
   overflow-x: hidden;
   overflow-y: auto;
   color: var(--osd);
@@ -44,146 +36,6 @@ body{
   letter-spacing: .10em;
   text-transform: uppercase;
 }
-
-/* ===========================
-   PROJECTS (split list + panel)
-   Used on Projects page + Home Projects panel
-=========================== */
-
-.projectsLayout{
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 14px;
-  align-items: start;
-}
-
-.homeProjectsLayout{
-  max-height: 420px;
-}
-
-.projectsGrid{
-  display: grid;
-  grid-auto-rows: min-content;
-  gap: 10px;
-  padding-right: 2px;
-  overflow: auto;
-  max-height: 420px;
-}
-
-@media (max-width: 780px){
-  .projectsLayout{
-    grid-template-columns: 1fr;
-  }
-  .projectsGrid{
-    max-height: 240px;
-  }
-  .homeProjectsLayout{
-    max-height: none;
-  }
-}
-
-/* project “cards” in the left list */
-.projectCard{
-  width: 100%;
-  text-align: left;
-  border: 1px solid rgba(233,251,255,.18);
-  background: rgba(0,0,0,.08);
-  color: var(--osd);
-  border-radius: 10px;
-  padding: 10px 10px 9px;
-  cursor: pointer;
-  font-family: inherit;
-  text-transform: uppercase;
-  letter-spacing: .10em;
-  position: relative;
-}
-
-.projectCard:hover{
-  background: rgba(0,0,0,.12);
-}
-
-.projectCard[aria-selected="true"]{
-  border-color: rgba(233,251,255,.42);
-  box-shadow: 0 0 22px rgba(233,251,255,.10);
-  background: rgba(233,251,255,.03);
-}
-
-.cardTop{
-  display:flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.cardTitle{
-  font-size: 12px;
-  letter-spacing: .14em;
-}
-
-.cardYear{
-  font-size: 10px;
-  opacity: .75;
-  letter-spacing: .18em;
-}
-
-.cardMid{
-  display:flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 10px;
-  opacity: .85;
-  margin-bottom: 6px;
-}
-
-.cardBottom{
-  font-size: 10px;
-  opacity: .72;
-}
-
-.panelCredits{
-  display: grid;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.creditRow{
-  display:flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 10px;
-  opacity: .92;
-}
-
-.creditKey{
-  opacity: .72;
-}
-
-.panelLinks{
-  display:flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.panelLink{
-  display:inline-flex;
-  align-items:center;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(233,251,255,.18);
-  background: rgba(0,0,0,.08);
-  color: var(--osd);
-  text-decoration: none;
-  font-size: 10px;
-  letter-spacing: .18em;
-}
-
-.panelLink:hover{
-  background: rgba(0,0,0,.12);
-  border-color: rgba(233,251,255,.32);
-}
-
-
 
 /* =========================================================
    FULL-PAGE CRT
@@ -291,7 +143,6 @@ body::before{
    CONTENT
    ========================================================= */
 
-/* IMPORTANT: start at top (no center “teleport”) */
 .stage{
   position: relative;
   z-index: 5;
@@ -327,9 +178,7 @@ body::before{
   text-align:center;
 }
 
-.tile[aria-selected="true"]{
-  filter: brightness(1.18);
-}
+.tile[aria-selected="true"]{ filter: brightness(1.18); }
 
 .iconbox{
   width: 150px;
@@ -369,7 +218,6 @@ body::before{
 }
 
 @media (max-width: 600px){
-  body{ overflow:auto; }
   .pixel{
     width: calc(16 * 6px);
     height: calc(16 * 6px);
@@ -377,6 +225,117 @@ body::before{
     grid-template-rows: repeat(16, 6px);
   }
   .px{ width:6px; height:6px; }
+}
+
+/* ===========================
+   PROJECTS (split list + panel)
+=========================== */
+
+.projectsLayout{
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.homeProjectsLayout{
+  max-height: 420px;
+}
+
+.projectsGrid{
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 10px;
+  padding-right: 2px;
+  overflow: auto;
+  max-height: 420px;
+}
+
+@media (max-width: 780px){
+  .projectsLayout{ grid-template-columns: 1fr; }
+  .projectsGrid{ max-height: 240px; }
+  .homeProjectsLayout{ max-height: none; }
+}
+
+.projectCard{
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.08);
+  color: var(--osd);
+  border-radius: 10px;
+  padding: 10px 10px 9px;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: .10em;
+  position: relative;
+}
+
+.projectCard:hover{ background: rgba(0,0,0,.12); }
+
+.projectCard[aria-selected="true"]{
+  border-color: rgba(233,251,255,.42);
+  box-shadow: 0 0 22px rgba(233,251,255,.10);
+  background: rgba(233,251,255,.03);
+}
+
+.cardTop{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cardTitle{ font-size: 12px; letter-spacing: .14em; }
+.cardYear{ font-size: 10px; opacity: .75; letter-spacing: .18em; }
+
+.cardMid{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+  opacity: .85;
+  margin-bottom: 6px;
+}
+
+.cardBottom{ font-size: 10px; opacity: .72; }
+
+.panelCredits{ display: grid; gap: 6px; margin-top: 8px; }
+
+.creditRow{
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  opacity: .92;
+}
+
+.creditKey{ opacity: .72; }
+
+.panelLinks{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.panelLink{
+  display:inline-flex;
+  align-items:center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.08);
+  color: var(--osd);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: .18em;
+}
+
+.panelLink:hover{
+  background: rgba(0,0,0,.12);
+  border-color: rgba(233,251,255,.32);
 }
 
 /* ===========================
@@ -491,11 +450,7 @@ body::before{
   margin-bottom: 8px;
 }
 
-.panelTitle{
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .18em;
-}
+.panelTitle{ font-size: 12px; font-weight: 900; letter-spacing: .18em; }
 
 .panelBadges{
   display:flex;
@@ -546,22 +501,39 @@ body::before{
 }
 
 /* =========================================================
-   BRANCH SYSTEM — CONTINUOUS + CHUNKY DRAW (FIXED)
+   BRANCH SYSTEM — V2 (CSS-ONLY, STABLE)
+   - Slow chunky render
+   - Thick confident lines
+   - Cleaner glow + “electron beam” pass
+   - Same JS + same HTML structure
    ========================================================= */
 
 :root{
-  --branchGlow: .45;
-  --stepX: 18;      /* more = chunkier horizontal */
-  --stepY: 14;      /* more = chunkier vertical */
-  --segGap: 60ms;   /* pause between segments */
+  /* visual */
+  --branchW: 12px;         /* thicker */
+  --branchGlow: .30;
+
+  /* motion */
+  --segGap: 140ms;         /* longer pause between phases */
+  --trunkT: 520ms;
+  --barT:   640ms;
+  --dropT:  520ms;
+  --stemT:  560ms;
+
+  /* chunky feel (lower = chunkier steps) */
+  --stepY: 9;
+  --stepX: 10;
+
+  /* little “beam sweep” */
+  --beamT: 180ms;
 }
 
+/* layout wrapper unchanged */
 .branchSlot{
   width: min(1100px, 100%);
   margin: 18px auto 0;
 }
 
-/* Hide all branches by default — JS opens one */
 .branchSlot .branchArea{ display:none; }
 .branchSlot .branchArea.is-open{ display:block; }
 
@@ -571,9 +543,10 @@ body::before{
   margin: 18px auto 0;
 }
 
+/* give drops + stem more room so they can reach panel cleanly */
 .branchLines{
   position: relative;
-  height: 76px;
+  height: 140px;
   pointer-events:none;
 }
 
@@ -581,13 +554,18 @@ body::before{
   position:absolute;
   background: rgba(233,251,255,.92);
   border-radius: 999px;
-  box-shadow: 0 0 12px rgba(233,251,255,.18);
-  filter: drop-shadow(0 0 calc(var(--branchW) * var(--branchGlow)) rgba(233,251,255,.35));
   opacity: 0;
   image-rendering: pixelated;
+
+  /* cleaner glow: tighter, less fog */
+  box-shadow:
+    0 0 10px rgba(233,251,255,.16),
+    0 0 24px rgba(233,251,255,.10);
+  filter:
+    drop-shadow(0 0 calc(var(--branchW) * var(--branchGlow)) rgba(233,251,255,.32));
 }
 
-/* IMPORTANT: correct “hidden” transforms by orientation */
+/* hidden transforms */
 .bLine.v{
   width: var(--branchW);
   height: var(--len, 0px);
@@ -602,52 +580,55 @@ body::before{
   transform: scaleX(0);
 }
 
-.branchArea.is-open .bLine{
-  opacity: 1;
+.branchArea.is-open .bLine{ opacity: 1; }
+
+/* --- draw keyframes (same idea, better cadence) --- */
+@keyframes drawY { from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
+@keyframes drawX { from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
+
+/* subtle “electron beam” highlight pass after each segment completes */
+@keyframes beamPass {
+  0%   { filter: brightness(1) drop-shadow(0 0 calc(var(--branchW)*var(--branchGlow)) rgba(233,251,255,.32)); }
+  40%  { filter: brightness(1.35) drop-shadow(0 0 calc(var(--branchW)*.55) rgba(233,251,255,.40)); }
+  100% { filter: brightness(1) drop-shadow(0 0 calc(var(--branchW)*var(--branchGlow)) rgba(233,251,255,.32)); }
 }
 
-/* Chunky “video game” draw */
-@keyframes drawYsteps { from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
-@keyframes drawXsteps { from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
-
-@keyframes segZap {
-  0%   { filter: brightness(1); }
-  40%  { filter: brightness(1.35); }
-  100% { filter: brightness(1); }
-}
-
-/* trunk -> bar -> drops -> stem */
+/* trunk */
 .branchArea.is-drawing .bLine.v.trunk{
   animation:
-    drawYsteps 260ms steps(var(--stepY), end) forwards,
-    segZap 120ms steps(2, end) 260ms 1;
+    drawY var(--trunkT) steps(var(--stepY), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--trunkT) - 40ms) 1;
 }
 
+/* bar */
 .branchArea.is-drawing .bLine.h.bar{
   animation:
-    drawXsteps 320ms steps(var(--stepX), end) forwards,
-    segZap 120ms steps(2, end) calc(260ms + var(--segGap) + 320ms) 1;
-
-  animation-delay: calc(260ms + var(--segGap));
+    drawX var(--barT) steps(var(--stepX), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--barT) - 40ms) 1;
+  animation-delay: calc(var(--trunkT) + var(--segGap));
 }
 
+/* drops */
 .branchArea.is-drawing .bLine.v.drop{
   animation:
-    drawYsteps 220ms steps(var(--stepY), end) forwards,
-    segZap 120ms steps(2, end) calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms) 1;
-
-  animation-delay: calc(260ms + var(--segGap) + 320ms + var(--segGap));
+    drawY var(--dropT) steps(var(--stepY), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--dropT) - 40ms) 1;
+  animation-delay: calc(var(--trunkT) + var(--segGap) + var(--barT) + var(--segGap));
 }
 
+/* stem */
 .branchArea.is-drawing .bLine.v.stem{
   animation:
-    drawYsteps 260ms steps(var(--stepY), end) forwards,
-    segZap 120ms steps(2, end) calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms + var(--segGap) + 260ms) 1;
-
-  animation-delay: calc(260ms + var(--segGap) + 320ms + var(--segGap) + 220ms + var(--segGap));
+    drawY var(--stemT) steps(var(--stepY), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--stemT) - 40ms) 1;
+  animation-delay: calc(
+    var(--trunkT) + var(--segGap) +
+    var(--barT)   + var(--segGap) +
+    var(--dropT)  + var(--segGap)
+  );
 }
 
-/* UI reveal */
+/* UI reveal stays tied to your existing JS (.is-ready) */
 .subRow{
   display:flex;
   justify-content:center;
@@ -657,14 +638,14 @@ body::before{
 
   opacity: 0;
   pointer-events:none;
-  transition: opacity 140ms linear;
+  transition: opacity 180ms linear;
 }
 
 .branchPanel{
   margin-top: 14px;
   opacity: 0;
   pointer-events:none;
-  transition: opacity 140ms linear;
+  transition: opacity 180ms linear;
 }
 
 .branchArea.is-open.is-ready .subRow,
@@ -673,6 +654,7 @@ body::before{
   pointer-events:auto;
 }
 
+/* buttons unchanged */
 .subBtn{
   border: 1px solid rgba(233,251,255,.18);
   background: rgba(0,0,0,.10);
