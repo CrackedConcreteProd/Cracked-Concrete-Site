@@ -107,17 +107,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       this.isOpen = false;
 
-      this.valid = !!(
-        this.tile &&
-        this.branch &&
-        this.subRow &&
-        this.linesEl &&
-        this.trunk &&
-        this.bar &&
-        this.stem &&
-        this.subBtns.length === 3 &&
-        this.drops.length === 3
-      );
+this.valid = !!(
+  this.tile &&
+  this.branch &&
+  this.subRow &&
+  this.linesEl &&
+  this.trunk &&
+  this.bar &&
+  this.stem &&
+  this.subBtns.length > 0 &&
+  this.drops.length === this.subBtns.length
+);
+
       if (!this.valid) return;
 
       this.tile.addEventListener("click", (e) => {
@@ -194,6 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         }
       }
+  // Notify other scripts (like projects.js) that a sub-tab changed
+  this.subRow.dispatchEvent(new CustomEvent("branch:subchange", {
+    bubbles: true,
+    detail: { branchId: this.id, key }
+  }));
 
       if (this.isOpen) this.layoutLines();
     }

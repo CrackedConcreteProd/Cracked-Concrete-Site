@@ -3,75 +3,98 @@
 const PROJECTS = [
   {
     slug: "project-01",
-    title: "LIVE AT THE COURT",
+    category: "films",
+    title: "LIVE at the Court",
     year: "2026",
     type: "SHORT DOC",
-    involvement: ["SHOT", "PRODUCED"],
-    status: "IN PROGRESS",
-    logline: "A jazz band translates basketball playstyles into music — a portrait of movement, rhythm, and local courts.",
+    involvement: ["Cracked Concrete Original"],
+    status: "FESTIVAL CIRCUIT",
+    logline: "Three basketball players step onto the court, each with a rhythm of their own. As their movements are studied and reimagined, their game is recontextualized into jazz, revealing the artistry within sport and the music hidden in motion.",
     credits: [
       ["DIRECTOR", "BEN MOULAND"],
-      ["DP", "BEN MOULAND"],
-      ["PRODUCER", "CRACKED CONCRETE"],
+      ["Cinematographer", "JAMIE MITRI"],
+      ["PRODUCER", "Satchel Ramraj"],
+      ["Editor(s)", "Ben Mouland & Joshua Garrido"],
+      ["Composer", "Mafuba"],
+      ["B-Cam", "Chris Berry"],
+      ["C-Cam", "Andrew Lee"],
+      ["Location Sound Mixer", "Juliette Leach"],
     ],
     links: [
-      ["TRAILER", "#"],
-      ["STILLS", "#"],
+      ["TRAILER", "TBD"],
+      ["IMDB", "https://www.imdb.com/title/tt39393828/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/10j7e"],
     ],
   },
   {
     slug: "project-02",
-    title: "CONCRETE SESSIONS",
+    category: "films",
+    title: "Pulse",
     year: "2025",
-    type: "LIVE SESSION",
-    involvement: ["PRODUCED", "SUPPORTED"],
-    status: "RELEASED",
-    logline: "A stripped-down performance series: one room, one take, raw sound, real texture.",
+    type: "Short Film",
+    involvement: ["Cracked Concrete Original"],
+    status: "Festival Circuit",
+    logline: "Two young boys make the most of their time together in a hospital room.",
     credits: [
-      ["DIRECTOR", "—"],
-      ["AUDIO", "—"],
-      ["PRODUCTION", "CRACKED CONCRETE"],
+      ["DIRECTOR", "Ben Mouland"],
+      ["Cinematographer", "Juliette Leach"],
+      ["PRODUCER", "Alexandra Sirola"],
+      ["Editor", "Ben Mouland"],
+      ["Composer", "Mungo McLaggan"],
+      ["B-Cam", "Tyler Wu"],
+      ["Location Sound Mixer", "Chris Berry"],
     ],
     links: [
-      ["WATCH", "#"],
-      ["PRESS", "#"],
+      ["TRAILER", "TBD"],
+      ["IMDB", "https://www.imdb.com/title/tt34894135/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/QwHE"],
     ],
   },
   {
     slug: "project-03",
-    title: "NIGHT DRIVE PROMO",
-    year: "2025",
-    type: "COMMERCIAL",
-    involvement: ["SHOT"],
+    category: "films",
+    title: "Goldfish",
+    year: "2024",
+    type: "Feature Film",
+    involvement: ["Cracked Concrete Original"],
     status: "RELEASED",
     logline: "A neon-forward product promo built around motion, reflections, and analog grit.",
     credits: [
-      ["DP", "BEN MOULAND"],
-      ["EDITOR", "—"],
-      ["CLIENT", "—"],
+      ["DIRECTOR", "Ben Mouland"],
+      ["Cinematographer", "Ben Mouland"],
+      ["Editor", "Ben Mouland"],
+      ["B-Cam", "Andrew Lee"],
     ],
     links: [
       ["WATCH", "#"],
+      ["TRAILER", "TBD"],
+      ["IMDB", "https://www.imdb.com/title/tt36260793/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/SZog"],
     ],
   },
   {
     slug: "project-04",
-    title: "COMMUNITY PORTRAITS",
-    year: "2024",
-    type: "MINI DOCS",
-    involvement: ["SUPPORTED"],
+    category: "films",
+    title: "Ultra Violent Light",
+    year: "2023",
+    type: "Short Film",
+    involvement: ["Cracked Concrete Original"],
     status: "RELEASED",
-    logline: "Short profiles celebrating local artists and organizers — community as archive.",
+    logline: "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
     credits: [
-      ["PRODUCTION SUPPORT", "CRACKED CONCRETE"],
-      ["DIRECTOR", "—"],
+      ["Director", "Ben Mouland"],
+      ["Cinematographer", "Arsh Buttan"],
     ],
     links: [
-      ["PLAYLIST", "#"],
+      ["WATCH", "#"],
+      ["TRAILER", "TBD"],
+      ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/JeVk"],
     ],
   },
   {
     slug: "project-05",
+    category: "films",
     title: "ARCHIVE EXPERIMENT #1",
     year: "2024",
     type: "EXPERIMENTAL",
@@ -104,6 +127,13 @@ const els = {
 
 let selectedIndex = 0;
 
+let activeCategory = "films";
+
+function getVisible(){
+  return PROJECTS.filter(p => (p.category || "films") === activeCategory);
+}
+
+
 function badge(text) {
   const b = document.createElement("span");
   b.className = "badge";
@@ -114,7 +144,17 @@ function badge(text) {
 function renderGrid() {
   els.grid.innerHTML = "";
 
-  PROJECTS.forEach((p, i) => {
+  const visible = getVisible();
+
+  if (visible.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "projectsEmpty";
+    empty.textContent = "NO PROJECTS YET";
+    els.grid.appendChild(empty);
+    return;
+  }
+
+  visible.forEach((p, i) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "projectCard";
@@ -139,6 +179,7 @@ function renderGrid() {
     els.grid.appendChild(btn);
   });
 }
+
 
 function renderPanel(p) {
   els.meta.textContent = `${p.year} • ${p.type} • ${p.status}`;
@@ -177,11 +218,41 @@ function renderPanel(p) {
 }
 
 function selectIndex(i) {
-  selectedIndex = i;
+  const visible = getVisible();
+  if (visible.length === 0) return;
+
+  selectedIndex = Math.max(0, Math.min(i, visible.length - 1));
   renderGrid();
-  renderPanel(PROJECTS[selectedIndex]);
+  renderPanel(visible[selectedIndex]);
 }
+
+document.addEventListener("branch:subchange", (e) => {
+  if (!e.detail || e.detail.branchId !== "projects") return;
+
+  activeCategory = e.detail.key;
+
+  // Always default to the first project in that category
+  selectedIndex = 0;
+
+  renderGrid();
+
+  const visible = getVisible();
+
+  if (visible.length) {
+    renderPanel(visible[0]);
+  } else {
+    // If no projects in this category, clear the panel cleanly
+    els.meta.textContent = "SELECT A PROJECT";
+    els.title.textContent = "—";
+    els.badges.innerHTML = "";
+    els.logline.textContent = "No projects in this category yet.";
+    els.credits.innerHTML = "";
+    els.links.innerHTML = "";
+  }
+});
+
 
 // Initial paint
 renderGrid();
-renderPanel(PROJECTS[selectedIndex]);
+const initialVisible = getVisible();
+if (initialVisible.length) renderPanel(initialVisible[selectedIndex]);
