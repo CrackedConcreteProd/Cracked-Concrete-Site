@@ -86,6 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
       this.branch = document.getElementById(opts.branchId);
       this.subRow = document.getElementById(opts.subRowId);
       this.subBtns = this.subRow ? Array.from(this.subRow.querySelectorAll(".subBtn")) : [];
+      
+      this.barFrom = (opts.barFrom || "left").toLowerCase();
+
 
       this.linesEl = this.branch ? this.branch.querySelector(".branchLines") : null;
 
@@ -204,68 +207,122 @@ this.valid = !!(
       if (this.isOpen) this.layoutLines();
     }
 
-    layoutLines(){
-      const linesRect = this.linesEl.getBoundingClientRect();
+    layoutLines() {
+      if (!this.tile || !this.subRow || !this.linesEl) return;
       const tRect = this.tile.getBoundingClientRect();
       const subRect = this.subRow.getBoundingClientRect();
-      const branchW = getBranchW();
+      const linesRect = this.linesEl.getBoundingClientRect();
 
-      const startX = (tRect.left + tRect.width / 2) - linesRect.left;
 
-      const centers = this.subBtns.map(btn => {
-        const r = btn.getBoundingClientRect();
-        return (r.left + r.width / 2) - linesRect.left;
-      });
+  const branchW = getBranchW();
+  const overlap = Math.ceil(branchW / 2);
 
-      const minX = Math.min(...centers);
-      const maxX = Math.max(...centers);
+  // --- X positions (pixel-snapped) ---
+  const startX = Math.round(
+    (tRect.left + tRect.width / 2) - linesRect.left
+  );
 
-      const dropGap = 10;
+  const centers = this.subBtns.map(btn => {
+    const r = btn.getBoundingClientRect();
+    return Math.round(
+      (r.left + r.width / 2) - linesRect.left
+    );
+  });
 
-      const startY = (tRect.bottom - linesRect.top);
-      const barY   = (subRect.top  - linesRect.top) - dropGap;
+  const minX = Math.min(...centers);
+  const maxX = Math.max(...centers);
 
-      const trunkH = Math.max(6, barY - startY);
-      const dropH  = Math.max(6, (subRect.top - linesRect.top) - barY);
+  // --- Y positions (pixel-snapped) ---
+const startY = Math.round(tRect.bottom - linesRect.top);
 
-      const barLeft  = Math.min(minX, startX);
-      const barRight = Math.max(maxX, startX);
-      const barLen   = Math.max(6, barRight - barLeft);
+// How far below the tile you want the horizontal bar to sit
+const BAR_DROP = 140; // tweak: 110–170
 
-      this.trunk.style.left = `${startX - (branchW / 2)}px`;
-      this.trunk.style.top  = `${startY}px`;
-      this.trunk.style.setProperty("--len", `${trunkH}px`);
+const barY = startY + BAR_DROP;
 
-      this.bar.style.left = `${barLeft}px`;
-      this.bar.style.top  = `${barY}px`;
-      this.bar.style.setProperty("--len", `${barLen}px`);
 
-      this.drops.forEach((d, i) => {
-        d.style.left = `${centers[i] - (branchW / 2)}px`;
-        d.style.top  = `${barY}px`;
-        d.style.setProperty("--len", `${dropH}px`);
-      });
+  // Trunk overlaps INTO the bar
+  const trunkH = Math.max(
+    6,
+    (barY - startY) + overlap
+  );
 
-      this.branch.style.setProperty("--sub-top", `${barY + dropH}px`);
+// Bar overlaps trunk + drops
+let barLeft  = Math.min(minX, startX) - overlap;
+let barRight = Math.max(maxX, startX) + overlap;
 
-      const panel = this.branch.querySelector(".branchPanel");
-      if (panel && this.stem) {
-        const panelRect = panel.getBoundingClientRect();
+// --- remove the “lip” ONLY for SERVICES (left-drawing) ---
+if (this.id === "services" && this.barFrom !== "right") {
+  // trunk’s outer left edge (not centerline)
+  const trunkLeftEdge = Math.round(startX - branchW / 2);
 
-        const activeBtn = this.subRow.querySelector('.subBtn[aria-current="true"]');
-        const anchorX = activeBtn
-          ? ((activeBtn.getBoundingClientRect().left + activeBtn.getBoundingClientRect().width / 2) - linesRect.left)
-          : centers[1];
+  // Don't allow the bar to extend left of the trunk edge
+  barLeft = Math.max(barLeft, trunkLeftEdge);
+}
 
-        const STEM_GAP = 10;
-        const stemTop = (subRect.bottom - linesRect.top) + STEM_GAP;
-        const stemH = Math.max(6, (panelRect.top - linesRect.top) - stemTop);
+const barLen = Math.max(6, barRight - barLeft);
 
-        this.stem.style.left = `${anchorX - (branchW / 2)}px`;
-        this.stem.style.top  = `${stemTop}px`;
-        this.stem.style.setProperty("--len", `${stemH}px`);
-      }
-    }
+
+
+  // Apply styles (TRUNK + BAR) — REQUIRED for animation
+this.trunk.style.left = `${Math.round(startX - branchW / 2)}px`;
+this.trunk.style.top = `${startY}px`;
+this.trunk.style.setProperty("--len", `${trunkH}px`);
+
+this.bar.style.top = `${barY}px`;
+this.bar.style.left = `${barLeft}px`;          // always position with left
+this.bar.style.right = "auto";                 // clear any old right value
+this.bar.style.setProperty("--len", `${barLen}px`);
+
+// only change draw direction
+this.bar.style.transformOrigin = (this.barFrom === "right") ? "right" : "left";
+
+
+
+
+// Drops start INSIDE the bar
+const dropTop = barY;
+
+
+// Short, consistent drops (CRT OSD style)
+const DROP_DEPTH = 110; // <- tweak this number (80–140 usually feels right)
+
+this.drops.forEach((d, i) => {
+  const dropLen = Math.max(6, DROP_DEPTH);
+
+  // default: align to button center
+  let dropLeft = Math.round(centers[i] - branchW / 2);
+
+// SNAP RULE — only for SERVICES
+if (this.id === "services" && i === 0 && this.barFrom !== "right") {
+  dropLeft = Math.round(barLeft);
+}
+
+
+  // If you ever want the mirror behavior when barFrom is right:
+  // if (i === this.drops.length - 1 && this.barFrom === "right") {
+  //   dropLeft = Math.round(barRight - branchW);
+  // }
+
+  d.style.left = `${dropLeft}px`;
+  d.style.top = `${dropTop}px`;
+  d.style.setProperty("--len", `${dropLen}px`);
+});
+
+
+// Baseline for sub UI reveal (keep it just below the drops)
+// Sub-row TOUCHES the drop ends
+const TOUCH_TRIM = -6.5; // tweak 6–14 until it kisses perfectly
+this.branch.style.setProperty(
+  "--sub-top",
+  `${barY + DROP_DEPTH - TOUCH_TRIM}px`
+);
+
+
+
+
+}
+
   }
 
   const branches = [
@@ -295,6 +352,7 @@ this.valid = !!(
       branchId: "peopleBranch",
       subRowId: "peopleSubRow",
       defaultKey: "team",
+      barFrom: "right",
       ui: { meta: "pplMeta", title: "pplTitle", cover: "pplCoverLabel", logline: "pplLogline", badges: "pplBadges" },
       content: {
         team:   { meta:"TEAM", title:"TEAM", cover:"CORE CREW", badges:["DIRECTOR","DP","PRODUCER"], logline:"PLACEHOLDER: YOUR CORE TEAM LIST + ROLES WILL LIVE HERE." },
@@ -308,6 +366,7 @@ this.valid = !!(
       branchId: "connectBranch",
       subRowId: "connectSubRow",
       defaultKey: "email",
+      barFrom: "right",
       ui: { meta: "conMeta", title: "conTitle", cover: "conCoverLabel", logline: "conLogline", badges: "conBadges" },
       content: {
         email:{ meta:"EMAIL", title:"EMAIL", cover:"DIRECT", badges:["FASTEST","INQUIRIES"], logline:"PLACEHOLDER: YOUR EMAIL + A SIMPLE CONTACT CTA." },

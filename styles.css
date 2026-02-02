@@ -10,6 +10,8 @@
   --stepX: 18;
   --stepY: 14;
   --segGap: 60ms;
+
+  --uiStroke: 2px;
 }
 
 *{ box-sizing:border-box; }
@@ -546,14 +548,16 @@ body::before{
 /* give drops + stem more room so they can reach panel cleanly */
 .branchLines{
   position: relative;
-  height: 140px;
-  pointer-events:none;
+  height: var(--sub-top, 140px);
+
+  pointer-events: none;
+  overflow: visible;
 }
 
 .bLine{
   position:absolute;
   background: rgba(233,251,255,.92);
-  border-radius: 999px;
+  border-radius: 0px;
   opacity: 0;
   image-rendering: pixelated;
 
@@ -564,6 +568,13 @@ body::before{
   filter:
     drop-shadow(0 0 calc(var(--branchW) * var(--branchGlow)) rgba(233,251,255,.32));
 }
+
+/* Make the trunk connect cleanly into the bar (no rounded cap at the joint) */
+.bLine.v.trunk{
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 
 /* hidden transforms */
 .bLine.v{
@@ -630,19 +641,26 @@ body::before{
 
 /* UI reveal stays tied to your existing JS (.is-ready) */
 .subRow{
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
   gap: 14px;
-  margin-top: 6px;
-  padding-top: var(--sub-top, 62px);
+
+  position: relative;
+
+  /* TOUCH: overlap by half the branch thickness */
+  margin-top: calc(var(--branchW) * -0.5);
+
+  padding-top: 0;
 
   opacity: 0;
-  pointer-events:none;
+  pointer-events: none;
   transition: opacity 180ms linear;
 }
 
+
+
 .branchPanel{
-  margin-top: 14px;
+  margin-top: 6px;
   opacity: 0;
   pointer-events:none;
   transition: opacity 180ms linear;
@@ -656,7 +674,7 @@ body::before{
 
 /* buttons unchanged */
 .subBtn{
-  border: 1px solid rgba(233,251,255,.18);
+  border: var(--uiStroke) solid rgba(233,251,255,.26);
   background: rgba(0,0,0,.10);
   color: var(--osd);
   font-family: inherit;
@@ -665,16 +683,42 @@ body::before{
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
+
+  /* extra “OSD” heft */
+  box-shadow: inset 0 0 0 1px rgba(233,251,255,.06);
 }
+
 
 .subBtn:hover{ background: rgba(0,0,0,.14); }
 
 .subBtn[aria-current="true"]{
-  border-color: rgba(233,251,255,.42);
+  border-color: rgba(233,251,255,.55);
   background: rgba(233,251,255,.03);
-  box-shadow: 0 0 24px rgba(233,251,255,.10);
+  box-shadow:
+    inset 0 0 0 1px rgba(233,251,255,.10),
+    0 0 24px rgba(233,251,255,.12);
 }
+
 
 @media (max-width: 700px){
   .subRow{ flex-direction: column; align-items: center; }
+}
+
+@keyframes scanReveal {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+.branchArea.is-open .subRow,
+.branchArea.is-open .branchPanel{
+  opacity: 1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.branchArea.is-open.is-ready .subRow,
+.branchArea.is-open.is-ready .branchPanel{
+  visibility: visible;
+  pointer-events: auto;
+  animation: scanReveal 220ms steps(10, end) both;
 }
