@@ -10,6 +10,12 @@ const PROJECTS = [
     involvement: ["Cracked Concrete Original"],
     status: "FESTIVAL CIRCUIT",
     logline: "Three basketball players step onto the court, each with a rhythm of their own. As their movements are studied and reimagined, their game is recontextualized into jazz, revealing the artistry within sport and the music hidden in motion.",
+    poster: "assets/projects/live-at-the-court/poster.jpg",
+    stills: [
+    "assets/projects/live-at-the-court/still-01.jpg",
+    "assets/projects/live-at-the-court/still-02.jpg",
+    "assets/projects/live-at-the-court/still-03.jpg",
+   ],
     credits: [
       ["DIRECTOR", "BEN MOULAND"],
       ["Cinematographer", "JAMIE MITRI"],
@@ -92,25 +98,6 @@ const PROJECTS = [
       ["LETTERBOXD", "https://boxd.it/JeVk"],
     ],
   },
-  {
-    slug: "project-05",
-    category: "films",
-    title: "ARCHIVE EXPERIMENT #1",
-    year: "2024",
-    type: "EXPERIMENTAL",
-    involvement: ["SHOT", "PRODUCED"],
-    status: "RELEASED",
-    logline: "Found footage reprocessed through CRT artifacts — memory, signal, distortion.",
-    credits: [
-      ["DIRECTOR", "BEN MOULAND"],
-      ["PRODUCER", "CRACKED CONCRETE"],
-      ["POST", "—"],
-    ],
-    links: [
-      ["WATCH", "#"],
-      ["NOTES", "#"],
-    ],
-  },
 ];
 
 const els = {
@@ -180,15 +167,119 @@ function renderGrid() {
   });
 }
 
+// =========================================================
+// LIGHTBOX
+// =========================================================
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+const lightboxLabel = document.getElementById("lightboxLabel");
+
+function openLightbox(src, labelText = "") {
+  if (!lightbox || !lightboxImg) return;
+
+  lightboxImg.src = src;
+  lightboxImg.alt = labelText ? labelText : "Image preview";
+  if (lightboxLabel) lightboxLabel.textContent = labelText;
+
+  lightbox.classList.add("is-open");
+  lightbox.setAttribute("aria-hidden", "false");
+
+  // prevent background scroll (nice on smaller screens)
+  document.documentElement.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  if (!lightbox || !lightboxImg) return;
+
+  lightbox.classList.remove("is-open");
+  lightbox.setAttribute("aria-hidden", "true");
+
+  // clear src after close so it doesn't flash old image next open
+  lightboxImg.src = "";
+
+  document.documentElement.style.overflow = "";
+}
+
+// Close on backdrop / close button
+if (lightbox) {
+  lightbox.addEventListener("click", (e) => {
+    const t = e.target;
+    if (t && t.matches("[data-close]")) closeLightbox();
+  });
+}
+
+// Close on ESC
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && lightbox && lightbox.classList.contains("is-open")) {
+    closeLightbox();
+  }
+});
+
 
 function renderPanel(p) {
   els.meta.textContent = `${p.year} • ${p.type} • ${p.status}`;
 
-  // cover is intentionally “analog placeholder”
-  els.cover.innerHTML = `
-    <div class="coverLabel">STILL / POSTER PLACEHOLDER</div>
-    <div class="coverNoise"></div>
-  `;
+  // Media (poster + stills). Falls back to analog placeholder if missing.
+  const hasPoster = Boolean(p.poster);
+  const hasStills = Array.isArray(p.stills) && p.stills.length > 0;
+
+  if (!hasPoster && !hasStills) {
+    els.cover.innerHTML = `
+      <div class="coverLabel">STILL / POSTER PLACEHOLDER</div>
+      <div class="coverNoise"></div>
+    `;
+  } else {
+    const stills = (p.stills || []).slice(0, 3);
+
+    els.cover.innerHTML = `
+      <div class="panelMedia">
+        <div class="panelPoster ${hasPoster ? "" : "is-missing"}">
+          ${
+            hasPoster
+              ? `<img src="${p.poster}" alt="${p.title} poster" loading="lazy" />`
+              : `<div class="mediaLabel">POSTER</div><div class="coverNoise"></div>`
+          }
+        </div>
+
+        <div class="panelStills">
+          ${stills
+            .map(
+              (src, idx) => `
+                <div class="panelStill">
+                  <img src="${src}" alt="${p.title} still ${idx + 1}" loading="lazy" />
+                </div>
+              `
+            )
+            .join("")}
+
+          ${stills.length < 3
+            ? Array.from({ length: 3 - stills.length })
+                .map(
+                  () => `
+                    <div class="panelStill is-missing">
+                      <div class="mediaLabel">STILL</div>
+                      <div class="coverNoise"></div>
+                    </div>
+                  `
+                )
+                .join("")
+            : ""}
+        </div>
+      </div>
+    `;
+  }
+
+  // ✅ Bind clicks AFTER the HTML is injected (covers poster + stills)
+  const clickableImgs = els.cover.querySelectorAll(".panelPoster img, .panelStill img");
+  clickableImgs.forEach((img) => {
+    img.style.cursor = "zoom-in";
+    img.addEventListener("click", () => {
+      const label = img.alt || p.title || "Preview";
+      openLightbox(img.src, label);
+    });
+  });
+
+
 
   els.title.textContent = p.title;
 

@@ -241,7 +241,7 @@ body::before{
 }
 
 .homeProjectsLayout{
-  max-height: 420px;
+  max-height: none;
 }
 
 .projectsGrid{
@@ -249,8 +249,8 @@ body::before{
   grid-auto-rows: min-content;
   gap: 10px;
   padding-right: 2px;
-  overflow: auto;
-  max-height: 420px;
+  overflow: visible;
+  max-height: none;
 }
 
 @media (max-width: 780px){
@@ -390,6 +390,9 @@ body::before{
   z-index: 1;
 }
 
+
+
+
 .panelCover{
   height: 150px;
   border-radius: 8px;
@@ -413,6 +416,96 @@ body::before{
   );
   opacity: .22;
   mix-blend-mode: multiply;
+}
+/* =========================================================
+   PROJECTS — PANEL MEDIA (POSTER + 3 STILLS)
+   ========================================================= */
+
+.panelCover{
+  height: auto;              /* was fixed 150px */
+  padding: 10px;
+}
+
+.panelMedia{
+  height: 343px;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 10px;
+  flex: 0 0 auto; /* do not shrink, do not grow */
+}
+
+.panelPoster,
+.panelStill{
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(233,251,255,.14);
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.10));
+}
+
+.panelPoster img,
+.panelStill img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: zoom-in;
+}
+
+
+
+/* Poster preview: match old look (fills box / may crop) */
+.panelPoster img{
+  object-fit: cover;
+  background: transparent;
+}
+
+
+.panelPoster{
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
+}
+
+/* Still frames: keep them cover (cropped) in grid, but full aspect in lightbox */
+.panelStill img{
+  object-fit: cover;
+}
+
+.panelStills{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.mediaLabel{
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  font-size: 10px;
+  opacity: .82;
+  letter-spacing: .20em;
+  pointer-events: none;
+}
+
+.panelPoster.is-missing,
+.panelStill.is-missing{
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.12));
+}
+
+/* Responsive: stack poster above stills on narrow widths */
+@media (max-width: 720px){
+  .panelMedia{
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+  .panelPoster{
+    height: 240px;
+  }
+  .panelStills{
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .panelStill{
+    height: 90px;
+  }
 }
 
 .coverLabel{
@@ -573,6 +666,8 @@ body::before{
 .bLine.v.trunk{
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+
+  top: calc(100% - var(--branchW));
 }
 
 
@@ -722,3 +817,77 @@ body::before{
   pointer-events: auto;
   animation: scanReveal 220ms steps(10, end) both;
 }
+
+/* =========================================================
+   LIGHTBOX (CLICK TO ENLARGE)
+   ========================================================= */
+
+.lightbox{
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9999;
+}
+
+.lightbox.is-open{ display: flex; }
+
+.lightboxBackdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.68);
+  backdrop-filter: blur(2px);
+}
+
+.lightboxFrame{
+  position: relative;
+  z-index: 1;
+  width: min(1100px, 96vw);
+  height: min(78vh, 860px);
+  border-radius: 12px;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.35);
+  box-shadow: 0 12px 50px rgba(0,0,0,.55);
+  overflow: hidden;
+}
+
+/* Image: full aspect ratio, never cropped */
+.lightboxFrame img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: rgba(0,0,0,.25);
+}
+
+/* Tiny OSD label */
+.lightboxLabel{
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 10px;
+  letter-spacing: .22em;
+  opacity: .85;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Close button (optional but nice) */
+.lightboxClose{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.35);
+  color: var(--osd);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 10px;
+  letter-spacing: .22em;
+  cursor: pointer;
+}
+
+.lightboxClose:hover{ background: rgba(255,255,255,.06); }

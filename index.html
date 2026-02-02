@@ -97,10 +97,6 @@
                     <div class="panelLinks" id="panelLinks"></div>
                   </div>
 
-                  <div class="projectsFooter">
-                    <div>ENTER: SELECT</div>
-                    <div>MENU: HOME</div>
-                  </div>
                 </div>
               </aside>
             </div>
@@ -264,6 +260,17 @@
 
     </div>
   </div>
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightboxBackdrop" data-close></div>
+
+  <div class="lightboxFrame" role="dialog" aria-modal="true" aria-label="Image preview">
+    <button class="lightboxClose" type="button" data-close>close</button>
+    <div class="lightboxLabel" id="lightboxLabel"></div>
+    <img id="lightboxImg" alt="" />
+  </div>
+</div>
+
 
   <script src="projects.js" defer></script>
   <script src="app.js"></script>

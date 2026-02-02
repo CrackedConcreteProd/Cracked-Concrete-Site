@@ -233,7 +233,10 @@ this.valid = !!(
   const maxX = Math.max(...centers);
 
   // --- Y positions (pixel-snapped) ---
-const startY = Math.round(tRect.bottom - linesRect.top);
+// Start trunk exactly at the bottom edge of the tile box
+const CONNECT_Y = 2; // tweak 0–4 if you want micro-adjust
+const startY = Math.round(tRect.bottom - linesRect.top + CONNECT_Y);
+
 
 // How far below the tile you want the horizontal bar to sit
 const BAR_DROP = 140; // tweak: 110–170
