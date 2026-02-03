@@ -1128,3 +1128,44 @@ body::before{
   display: none !important;
 }
 
+/* ================================
+   PATCH: enable normal page scroll
+   Paste at very bottom of styles.css
+================================== */
+
+html, body{
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+body{
+  /* if anything set overflow:hidden earlier, this wins */
+  overflow-y: auto !important;
+}
+
+/* if your layout wrapper was forcing a fixed height, this prevents “no scroll” */
+.stage{
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+/* PATCH: allow page scrolling (append at end) */
+html, body{
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+body{
+  overflow-y: auto !important;
+}
+
+/* if .stage was forcing a locked viewport */
+.stage{
+  height: auto !important;
+  min-height: 100vh !important;
+  align-items: flex-start !important; /* if you were vertically centering */
+}

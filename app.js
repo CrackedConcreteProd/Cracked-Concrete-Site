@@ -222,22 +222,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // - If inside #peopleBranch.wheelOnly -> normal wheel scrubs
     // - Else -> Shift+wheel scrubs (so page scroll remains normal)
     function onWheel(e){
-      const inWheelOnly = !!root.closest("#peopleBranch.wheelOnly");
-      const shouldScrub = inWheelOnly || e.shiftKey;
-      if (!shouldScrub) return;
+  // Only hijack wheel when we actually want marquee scrubbing:
+  // - wheelOnly mode: always scrub (and prevent page scroll)
+  // - normal mode: ONLY scrub when Shift is held
+  const wheelOnly = !!root.closest("#peopleBranch.wheelOnly");
 
-      e.preventDefault();
-      interactive = true;
-      paused = true;
+   if (!wheelOnly && !e.shiftKey) {
+    // allow normal page scroll
+    return;
+  }
 
-      mx -= e.deltaY * 0.85;
+  e.preventDefault();
 
-      const halfWidth = track.scrollWidth / 2;
-      if (halfWidth > 0 && Math.abs(mx) >= halfWidth) mx = 0;
+  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+  mx -= d * 0.85;
+  apply();
+}
 
-      apply();
-    }
-    root.addEventListener("wheel", onWheel, { passive:false });
+// Attach ONCE (passive:false is required for preventDefault)
+root.addEventListener("wheel", onWheel, { passive: false });
+
 
     function onKey(e){
       if (!interactive) return;
