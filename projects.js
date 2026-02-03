@@ -90,9 +90,12 @@ const PROJECTS = [
     credits: [
       ["Director", "Ben Mouland"],
       ["Cinematographer", "Arsh Buttan"],
+      ["PRODUCER", "Ngaire Le"],
+      ["Editor", "Chris Berry"],
+      ["Composer", "Trevor-J"],
     ],
     links: [
-      ["WATCH", "#"],
+      ["WATCH", "TBD"],
       ["TRAILER", "TBD"],
       ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
       ["LETTERBOXD", "https://boxd.it/JeVk"],
@@ -168,50 +171,115 @@ function renderGrid() {
 }
 
 // =========================================================
-// LIGHTBOX
+// LIGHTBOX GALLERY (CLICK + ARROWS + KEYBOARD)
 // =========================================================
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightboxImg");
 const lightboxLabel = document.getElementById("lightboxLabel");
+const lightboxCount = document.getElementById("lightboxCount");
 
-function openLightbox(src, labelText = "") {
+let lbItems = [];   // [{ src, label }]
+let lbIndex = 0;
+
+function renderLightbox() {
   if (!lightbox || !lightboxImg) return;
 
-  lightboxImg.src = src;
-  lightboxImg.alt = labelText ? labelText : "Image preview";
-  if (lightboxLabel) lightboxLabel.textContent = labelText;
+  const item = lbItems[lbIndex];
+  if (!item) return;
+
+  lightboxImg.src = item.src;
+  lightboxImg.alt = item.label || "Image preview";
+
+  if (lightboxLabel) lightboxLabel.textContent = item.label || "";
+  if (lightboxCount) lightboxCount.textContent = lbItems.length > 1 ? `${lbIndex + 1} / ${lbItems.length}` : "";
+}
+
+function setLightboxIndex(nextIndex) {
+  if (!lbItems.length) return;
+
+  // Wrap-around (so you can keep cycling)
+  const len = lbItems.length;
+  lbIndex = ((nextIndex % len) + len) % len;
+
+  renderLightbox();
+}
+
+function openLightboxGallery(items, startIndex = 0) {
+  if (!lightbox || !lightboxImg) return;
+
+  lbItems = Array.isArray(items) ? items.filter(Boolean) : [];
+  lbIndex = Math.max(0, Math.min(startIndex, lbItems.length - 1));
+
+  if (!lbItems.length) return;
+
+  lightbox.classList.toggle("has-multi", lbItems.length > 1);
 
   lightbox.classList.add("is-open");
   lightbox.setAttribute("aria-hidden", "false");
 
-  // prevent background scroll (nice on smaller screens)
   document.documentElement.style.overflow = "hidden";
+
+  renderLightbox();
 }
 
 function closeLightbox() {
   if (!lightbox || !lightboxImg) return;
 
-  lightbox.classList.remove("is-open");
+  lightbox.classList.remove("is-open", "has-multi");
   lightbox.setAttribute("aria-hidden", "true");
 
-  // clear src after close so it doesn't flash old image next open
   lightboxImg.src = "";
+  if (lightboxLabel) lightboxLabel.textContent = "";
+  if (lightboxCount) lightboxCount.textContent = "";
+
+  lbItems = [];
+  lbIndex = 0;
 
   document.documentElement.style.overflow = "";
 }
 
-// Close on backdrop / close button
+// Click handling: backdrop/close + arrows
 if (lightbox) {
   lightbox.addEventListener("click", (e) => {
     const t = e.target;
-    if (t && t.matches("[data-close]")) closeLightbox();
+    if (!t) return;
+
+    if (t.matches("[data-close]")) {
+      closeLightbox();
+      return;
+    }
+
+    if (t.matches("[data-nav='prev']")) {
+      setLightboxIndex(lbIndex - 1);
+      return;
+    }
+
+    if (t.matches("[data-nav='next']")) {
+      setLightboxIndex(lbIndex + 1);
+      return;
+    }
   });
 }
 
-// Close on ESC
+// Keyboard: ESC closes, Left/Right navigates (only when open)
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && lightbox && lightbox.classList.contains("is-open")) {
+  if (!lightbox || !lightbox.classList.contains("is-open")) return;
+
+  if (e.key === "Escape") {
     closeLightbox();
+    return;
+  }
+
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    setLightboxIndex(lbIndex - 1);
+    return;
+  }
+
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    setLightboxIndex(lbIndex + 1);
+    return;
   }
 });
 
@@ -219,9 +287,23 @@ window.addEventListener("keydown", (e) => {
 function renderPanel(p) {
   els.meta.textContent = `${p.year} • ${p.type} • ${p.status}`;
 
-  // Media (poster + stills). Falls back to analog placeholder if missing.
+   // Media (poster + stills). Falls back to analog placeholder if missing.
   const hasPoster = Boolean(p.poster);
   const hasStills = Array.isArray(p.stills) && p.stills.length > 0;
+
+  // Build gallery list in the order you want to scroll through:
+  // poster first, then all stills
+  const gallery = [];
+  let posterOffset = 0;
+
+  if (hasPoster) {
+    gallery.push({ src: p.poster, label: `${p.title} poster` });
+    posterOffset = 1;
+  }
+
+  (p.stills || []).forEach((src, i) => {
+    gallery.push({ src, label: `${p.title} still ${i + 1}` });
+  });
 
   if (!hasPoster && !hasStills) {
     els.cover.innerHTML = `
@@ -229,31 +311,32 @@ function renderPanel(p) {
       <div class="coverNoise"></div>
     `;
   } else {
-    const stills = (p.stills || []).slice(0, 3);
+    // stills shown in panel (keep your 3-up UI), but gallery can include more
+    const stillsShown = (p.stills || []).slice(0, 3);
 
     els.cover.innerHTML = `
       <div class="panelMedia">
         <div class="panelPoster ${hasPoster ? "" : "is-missing"}">
           ${
             hasPoster
-              ? `<img src="${p.poster}" alt="${p.title} poster" loading="lazy" />`
+              ? `<img src="${p.poster}" data-gindex="0" alt="${p.title} poster" loading="lazy" />`
               : `<div class="mediaLabel">POSTER</div><div class="coverNoise"></div>`
           }
         </div>
 
         <div class="panelStills">
-          ${stills
+          ${stillsShown
             .map(
               (src, idx) => `
                 <div class="panelStill">
-                  <img src="${src}" alt="${p.title} still ${idx + 1}" loading="lazy" />
+                  <img src="${src}" data-gindex="${hasPoster ? (idx + 1) : idx}" alt="${p.title} still ${idx + 1}" loading="lazy" />
                 </div>
               `
             )
             .join("")}
 
-          ${stills.length < 3
-            ? Array.from({ length: 3 - stills.length })
+          ${stillsShown.length < 3
+            ? Array.from({ length: 3 - stillsShown.length })
                 .map(
                   () => `
                     <div class="panelStill is-missing">
@@ -269,15 +352,16 @@ function renderPanel(p) {
     `;
   }
 
-  // ✅ Bind clicks AFTER the HTML is injected (covers poster + stills)
+  // ✅ Bind clicks AFTER HTML is injected (poster + stills)
   const clickableImgs = els.cover.querySelectorAll(".panelPoster img, .panelStill img");
   clickableImgs.forEach((img) => {
     img.style.cursor = "zoom-in";
     img.addEventListener("click", () => {
-      const label = img.alt || p.title || "Preview";
-      openLightbox(img.src, label);
+      const startAt = Number(img.dataset.gindex || 0);
+      openLightboxGallery(gallery, startAt);
     });
   });
+
 
 
 

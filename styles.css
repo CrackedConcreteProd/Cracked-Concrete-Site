@@ -16,6 +16,14 @@
 
 *{ box-sizing:border-box; }
 
+img{ max-width: 100%; }
+
+html{ overflow-x: hidden; }
+
+html, body { width: 100%; }
+.stage, .wrap { overflow-x: hidden; }
+
+
 html, body{
   min-height: 100%;
   margin: 0;
@@ -340,9 +348,173 @@ body::before{
   border-color: rgba(233,251,255,.32);
 }
 
+/* =========================================================
+   MARQUEE (horizontal always-moving, controllable)
+   ========================================================= */
+
+.marquee{
+  position: relative;
+  margin-top: 6px;
+  border: 1px solid rgba(233,251,255,.10);
+  border-radius: 12px;
+  background: rgba(0,0,0,.10);
+  padding: 10px 10px;
+  overflow: hidden;
+}
+
+.marquee::before,
+.marquee::after{
+  content:"";
+  position:absolute;
+  top:0; bottom:0;
+  width: 38px;
+  pointer-events:none;
+  z-index: 3;
+}
+.marquee::before{
+  left:0;
+  background: linear-gradient(to right, rgba(26,85,255,.65), rgba(26,85,255,0));
+}
+.marquee::after{
+  right:0;
+  background: linear-gradient(to left, rgba(26,85,255,.65), rgba(26,85,255,0));
+}
+
+.marqueeViewport{ overflow: hidden; }
+
+.marqueeTrack{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  will-change: transform;
+  transform: translateX(var(--mx, 0px));
+}
+
+.mCard{
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(233,251,255,.12);
+  background: rgba(0,0,0,.14);
+  cursor: pointer;
+  user-select: none;
+}
+
+.mCard:hover{ background: rgba(255,255,255,.05); }
+
+.mAvatar{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(233,251,255,.16);
+  overflow: hidden;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.mAvatar img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: auto;
+}
+
+.mName{
+  font-size: 11px;
+  letter-spacing: .18em;
+  opacity: .95;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   MARQUEE — CARD INFO + SOCIAL LINKS
+   ========================================================= */
+
+.mInfo{
+  display: grid;
+  gap: 6px;
+}
+
+.mLinks{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mLink{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.10);
+  color: var(--osd);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: .22em;
+  opacity: .9;
+  user-select: none;
+}
+
+.mLink:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(233,251,255,.35);
+  opacity: 1;
+}
+
+/* Prevent the link text from forcing the card super wide */
+.mLinks .mLink{ white-space: nowrap; }
+
+.mHint{
+  margin-top: 8px;
+  font-size: 10px;
+  opacity: .7;
+  letter-spacing: .22em;
+  white-space: normal;
+  max-width: 100%;
+}
+
 /* ===========================
    PANEL
 =========================== */
+/* =========================================================
+   PEOPLE — WHEEL ONLY MODE (hide the header chrome)
+   Applies when #peopleBranch has .wheelOnly
+   ========================================================= */
+
+#peopleBranch.wheelOnly .panelTop,
+#peopleBranch.wheelOnly .panelLabel,
+#peopleBranch.wheelOnly .panelMeta{
+  display: none !important;
+}
+
+#peopleBranch.wheelOnly .panelCover{
+  display: none !important;
+}
+
+/* If your People panel uses the same title row as Projects */
+#peopleBranch.wheelOnly .panelTitleRow,
+#peopleBranch.wheelOnly .panelBadges{
+  display: none !important;
+}
+
+/* Tighten spacing so the marquee sits nicely */
+#peopleBranch.wheelOnly .panelBody{
+  padding-top: 10px;
+}
+
+#peopleBranch.wheelOnly .panelLogline{
+  margin-bottom: 0;
+}
+/* In your #peopleBranch bigger section */
+#peopleBranch .mInfo{ gap: 8px; }
+#peopleBranch .mLink{ padding: 7px 10px; font-size: 11px; }
+
 
 .projectPanel{
   background: rgba(0,0,0,.08);
@@ -390,9 +562,6 @@ body::before{
   z-index: 1;
 }
 
-
-
-
 .panelCover{
   height: 150px;
   border-radius: 8px;
@@ -417,12 +586,13 @@ body::before{
   opacity: .22;
   mix-blend-mode: multiply;
 }
+
 /* =========================================================
    PROJECTS — PANEL MEDIA (POSTER + 3 STILLS)
    ========================================================= */
 
 .panelCover{
-  height: auto;              /* was fixed 150px */
+  height: auto;
   padding: 10px;
 }
 
@@ -431,7 +601,7 @@ body::before{
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: 10px;
-  flex: 0 0 auto; /* do not shrink, do not grow */
+  flex: 0 0 auto;
 }
 
 .panelPoster,
@@ -452,23 +622,16 @@ body::before{
   cursor: zoom-in;
 }
 
-
-
-/* Poster preview: match old look (fills box / may crop) */
 .panelPoster img{
   object-fit: cover;
   background: transparent;
 }
 
-
 .panelPoster{
   background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
 }
 
-/* Still frames: keep them cover (cropped) in grid, but full aspect in lightbox */
-.panelStill img{
-  object-fit: cover;
-}
+.panelStill img{ object-fit: cover; }
 
 .panelStills{
   display: grid;
@@ -491,21 +654,14 @@ body::before{
   background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.12));
 }
 
-/* Responsive: stack poster above stills on narrow widths */
 @media (max-width: 720px){
   .panelMedia{
     height: auto;
     grid-template-columns: 1fr;
   }
-  .panelPoster{
-    height: 240px;
-  }
-  .panelStills{
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .panelStill{
-    height: 90px;
-  }
+  .panelPoster{ height: 240px; }
+  .panelStills{ grid-template-columns: repeat(3, 1fr); }
+  .panelStill{ height: 90px; }
 }
 
 .coverLabel{
@@ -597,33 +753,24 @@ body::before{
 
 /* =========================================================
    BRANCH SYSTEM — V2 (CSS-ONLY, STABLE)
-   - Slow chunky render
-   - Thick confident lines
-   - Cleaner glow + “electron beam” pass
-   - Same JS + same HTML structure
    ========================================================= */
 
 :root{
-  /* visual */
-  --branchW: 12px;         /* thicker */
+  --branchW: 12px;
   --branchGlow: .30;
 
-  /* motion */
-  --segGap: 140ms;         /* longer pause between phases */
+  --segGap: 140ms;
   --trunkT: 520ms;
   --barT:   640ms;
   --dropT:  520ms;
   --stemT:  560ms;
 
-  /* chunky feel (lower = chunkier steps) */
   --stepY: 9;
   --stepX: 10;
 
-  /* little “beam sweep” */
   --beamT: 180ms;
 }
 
-/* layout wrapper unchanged */
 .branchSlot{
   width: min(1100px, 100%);
   margin: 18px auto 0;
@@ -638,11 +785,9 @@ body::before{
   margin: 18px auto 0;
 }
 
-/* give drops + stem more room so they can reach panel cleanly */
 .branchLines{
   position: relative;
   height: var(--sub-top, 140px);
-
   pointer-events: none;
   overflow: visible;
 }
@@ -653,8 +798,6 @@ body::before{
   border-radius: 0px;
   opacity: 0;
   image-rendering: pixelated;
-
-  /* cleaner glow: tighter, less fog */
   box-shadow:
     0 0 10px rgba(233,251,255,.16),
     0 0 24px rgba(233,251,255,.10);
@@ -662,16 +805,12 @@ body::before{
     drop-shadow(0 0 calc(var(--branchW) * var(--branchGlow)) rgba(233,251,255,.32));
 }
 
-/* Make the trunk connect cleanly into the bar (no rounded cap at the joint) */
 .bLine.v.trunk{
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-
   top: calc(100% - var(--branchW));
 }
 
-
-/* hidden transforms */
 .bLine.v{
   width: var(--branchW);
   height: var(--len, 0px);
@@ -688,25 +827,21 @@ body::before{
 
 .branchArea.is-open .bLine{ opacity: 1; }
 
-/* --- draw keyframes (same idea, better cadence) --- */
 @keyframes drawY { from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
 @keyframes drawX { from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
 
-/* subtle “electron beam” highlight pass after each segment completes */
 @keyframes beamPass {
   0%   { filter: brightness(1) drop-shadow(0 0 calc(var(--branchW)*var(--branchGlow)) rgba(233,251,255,.32)); }
   40%  { filter: brightness(1.35) drop-shadow(0 0 calc(var(--branchW)*.55) rgba(233,251,255,.40)); }
   100% { filter: brightness(1) drop-shadow(0 0 calc(var(--branchW)*var(--branchGlow)) rgba(233,251,255,.32)); }
 }
 
-/* trunk */
 .branchArea.is-drawing .bLine.v.trunk{
   animation:
     drawY var(--trunkT) steps(var(--stepY), end) forwards,
     beamPass var(--beamT) steps(2,end) calc(var(--trunkT) - 40ms) 1;
 }
 
-/* bar */
 .branchArea.is-drawing .bLine.h.bar{
   animation:
     drawX var(--barT) steps(var(--stepX), end) forwards,
@@ -714,7 +849,6 @@ body::before{
   animation-delay: calc(var(--trunkT) + var(--segGap));
 }
 
-/* drops */
 .branchArea.is-drawing .bLine.v.drop{
   animation:
     drawY var(--dropT) steps(var(--stepY), end) forwards,
@@ -722,7 +856,6 @@ body::before{
   animation-delay: calc(var(--trunkT) + var(--segGap) + var(--barT) + var(--segGap));
 }
 
-/* stem */
 .branchArea.is-drawing .bLine.v.stem{
   animation:
     drawY var(--stemT) steps(var(--stepY), end) forwards,
@@ -734,25 +867,17 @@ body::before{
   );
 }
 
-/* UI reveal stays tied to your existing JS (.is-ready) */
 .subRow{
   display: flex;
   justify-content: center;
   gap: 14px;
-
   position: relative;
-
-  /* TOUCH: overlap by half the branch thickness */
   margin-top: calc(var(--branchW) * -0.5);
-
   padding-top: 0;
-
   opacity: 0;
   pointer-events: none;
   transition: opacity 180ms linear;
 }
-
-
 
 .branchPanel{
   margin-top: 6px;
@@ -767,7 +892,6 @@ body::before{
   pointer-events:auto;
 }
 
-/* buttons unchanged */
 .subBtn{
   border: var(--uiStroke) solid rgba(233,251,255,.26);
   background: rgba(0,0,0,.10);
@@ -778,11 +902,8 @@ body::before{
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
-
-  /* extra “OSD” heft */
   box-shadow: inset 0 0 0 1px rgba(233,251,255,.06);
 }
-
 
 .subBtn:hover{ background: rgba(0,0,0,.14); }
 
@@ -793,7 +914,6 @@ body::before{
     inset 0 0 0 1px rgba(233,251,255,.10),
     0 0 24px rgba(233,251,255,.12);
 }
-
 
 @media (max-width: 700px){
   .subRow{ flex-direction: column; align-items: center; }
@@ -853,7 +973,6 @@ body::before{
   overflow: hidden;
 }
 
-/* Image: full aspect ratio, never cropped */
 .lightboxFrame img{
   width: 100%;
   height: 100%;
@@ -862,7 +981,6 @@ body::before{
   background: rgba(0,0,0,.25);
 }
 
-/* Tiny OSD label */
 .lightboxLabel{
   position: absolute;
   left: 12px;
@@ -874,7 +992,6 @@ body::before{
   pointer-events: none;
 }
 
-/* Close button (optional but nice) */
 .lightboxClose{
   position: absolute;
   right: 10px;
@@ -891,3 +1008,123 @@ body::before{
 }
 
 .lightboxClose:hover{ background: rgba(255,255,255,.06); }
+
+.lightboxNav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(233,251,255,.18);
+  background: rgba(0,0,0,.35);
+  color: var(--osd);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightboxNav:hover{ background: rgba(255,255,255,.06); }
+
+.lightboxNav.prev{ left: 10px; }
+.lightboxNav.next{ right: 10px; }
+
+.lightbox:not(.has-multi) .lightboxNav{ display: none; }
+
+.lightboxCount{
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  font-size: 10px;
+  letter-spacing: .22em;
+  opacity: .78;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* =========================================================
+   PEOPLE — BIGGER WHEEL / MARQUEE
+   (paste at very bottom of styles.css)
+   ========================================================= */
+
+/* Make the People branch panel itself take more vertical space */
+#peopleBranch .branchPanel{
+  margin-top: 14px;
+}
+
+/* If you're using wheelOnly mode, let the marquee become the hero */
+#peopleBranch.wheelOnly .marquee{
+  padding: 18px 18px;
+  border-radius: 16px;
+}
+
+/* Make the marquee track/cards larger */
+#peopleBranch .marqueeTrack{
+  gap: 18px;
+}
+
+/* Bigger cards */
+#peopleBranch .mCard{
+  padding: 14px 16px;
+  border-radius: 16px;
+  border-width: 2px; /* optional: feels more 'UI' */
+}
+
+/* Bigger avatars */
+#peopleBranch .mAvatar{
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+}
+
+/* Bigger name text */
+#peopleBranch .mName{
+  font-size: 14px;
+  letter-spacing: .20em;
+}
+
+/* Bigger hint (or comment this out if you want to hide it) */
+#peopleBranch .mHint{
+  margin-top: 12px;
+  font-size: 12px;
+  letter-spacing: .22em;
+  opacity: .7;
+}
+
+/* Hide OSD footer text everywhere */
+.projectsFooter,
+.panelFooter,
+.osdFooter,
+.footerHints{
+  display: none !important;
+}
+
+/* =========================================================
+   REMOVE ALL OSD / CONTROL HINTS (ENTER, MENU, ETC.)
+   ========================================================= */
+
+/* Marquee hint text */
+.mHint{
+  display: none !important;
+}
+
+/* Any footer-style OSD hints */
+.projectsFooter,
+.panelFooter,
+.osdFooter,
+.footerHints{
+  display: none !important;
+}
+
+/* Safety: hide any generic “hint / help” text */
+[class*="hint"],
+[class*="Hint"],
+[class*="osd"]{
+  display: none !important;
+}
+

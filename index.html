@@ -115,7 +115,7 @@
           </div>
 
           <div class="subRow" id="servicesSubRow" aria-label="Services categories">
-            <button class="subBtn" type="button" data-sub="video">VIDEO / POST</button>
+            <button class="subBtn" type="button" data-sub="video">Production</button>
             <button class="subBtn" type="button" data-sub="gear">GEAR RENTAL</button>
             <button class="subBtn" type="button" data-sub="tape">TAPE TRANSFER</button>
           </div>
@@ -167,7 +167,7 @@
 
           <div class="subRow" id="peopleSubRow" aria-label="People categories">
             <button class="subBtn" type="button" data-sub="team">TEAM</button>
-            <button class="subBtn" type="button" data-sub="collabs">COLLABS</button>
+            <button class="subBtn" type="button" data-sub="collabs">collaborators</button>
             <button class="subBtn" type="button" data-sub="clients">CLIENTS</button>
           </div>
 
@@ -266,10 +266,17 @@
 
   <div class="lightboxFrame" role="dialog" aria-modal="true" aria-label="Image preview">
     <button class="lightboxClose" type="button" data-close>close</button>
+
+    <button class="lightboxNav prev" type="button" data-nav="prev" aria-label="Previous image">‹</button>
+    <button class="lightboxNav next" type="button" data-nav="next" aria-label="Next image">›</button>
+
     <div class="lightboxLabel" id="lightboxLabel"></div>
+    <div class="lightboxCount" id="lightboxCount"></div>
+
     <img id="lightboxImg" alt="" />
   </div>
 </div>
+
 
 
   <script src="projects.js" defer></script>
