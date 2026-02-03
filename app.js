@@ -1,9 +1,11 @@
 // ==============================
-// Cracked Concrete — app.js (RESTORED)
-// - Working branching animation order (CSS-driven)
+// Cracked Concrete — app.js
+// - Home: branching animation order (CSS-driven)
 // - People: marquee for COLLABS + CLIENTS
 // - Marquee cards support: photo + name + social links
-// - Optional: click card background opens first link (if present)
+// - Wheel behavior:
+//    * wheelOnly mode: normal wheel scrubs marquee
+//    * otherwise: Shift + wheel scrubs marquee (page can scroll)
 // ==============================
 
 // ===== ICONS =====
@@ -45,12 +47,23 @@ function buildIcon(el, pattern){
   }
 }
 
+// Render icons anywhere they exist (safe on all pages)
 document.querySelectorAll(".pixel").forEach((el) => {
   const key = el.dataset.icon;
   if (ICONS[key]) buildIcon(el, ICONS[key]);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ---------- PAGE GUARD (HOME ONLY) ----------
+  // Don't infer home from element IDs — other pages may reuse them.
+  const path = (window.location.pathname || "").toLowerCase();
+  const isHome =
+    path === "/" ||
+    path.endsWith("/index.html") ||
+    path.endsWith("index.html");
+
+  if (!isHome) return;
+
   const items = Array.from(document.querySelectorAll(".item"));
   const grid = document.getElementById("grid");
   if (!items.length || !grid) return;
@@ -77,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return Number.isFinite(n) ? n : 8;
   }
 
-  // If anything ever causes horizontal scroll, snap back.
+  // Only ever reset horizontal scroll (never vertical)
   function hardResetXScroll(){
     document.documentElement.scrollLeft = 0;
     document.body.scrollLeft = 0;
@@ -109,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const title = opts.title || "MARQUEE";
     const speed = Number.isFinite(opts.speed) ? opts.speed : 0.60;
-    const hint  = opts.hint || "HOVER: PAUSE • SCROLL: SCRUB • ←/→: NUDGE • SPACE: PLAY/PAUSE";
 
     const data = (Array.isArray(items) ? items : []).map(normMarqueeItem);
     if (!data.length) {
@@ -122,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="marqueeViewport">
           <div class="marqueeTrack"></div>
         </div>
-        <div class="mHint">${hint}</div>
       </div>
     `;
 
@@ -160,8 +171,8 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }).join("");
 
-    // OPTIONAL: clicking the card background opens the first social link
-    // (but clicking a link button behaves normally)
+    // Clicking the card background opens the first social link
+    // (clicking a link button behaves normally)
     track.addEventListener("click", (e) => {
       if (e.target.closest("a")) return;
       const card = e.target.closest(".mCard");
@@ -174,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let paused = false;
     let raf = 0;
     let last = performance.now();
-    let interactive = false; // hovered/focused
+    let interactive = false;
 
     function apply(){
       track.style.setProperty("--mx", `${mx}px`);
@@ -207,7 +218,14 @@ document.addEventListener("DOMContentLoaded", () => {
     root.addEventListener("focusin", enterInteractive);
     root.addEventListener("focusout", leaveInteractive);
 
+    // Wheel scrubbing rules:
+    // - If inside #peopleBranch.wheelOnly -> normal wheel scrubs
+    // - Else -> Shift+wheel scrubs (so page scroll remains normal)
     function onWheel(e){
+      const inWheelOnly = !!root.closest("#peopleBranch.wheelOnly");
+      const shouldScrub = inWheelOnly || e.shiftKey;
+      if (!shouldScrub) return;
+
       e.preventDefault();
       interactive = true;
       paused = true;
@@ -480,6 +498,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ==============================
+  // EXISTING BRANCHES (YOUR BLOCK)
+  // ==============================
   const branches = [
     new BranchController({
       id: "projects",
@@ -526,44 +547,32 @@ document.addEventListener("DOMContentLoaded", () => {
             {
               name:"MAFUBA",
               img:"assets/people/mafuba.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             },
             {
               name:"VANCOUVER BANDITS",
               img:"assets/people/bandits.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             },
             {
               name:"FIRST FLOOR COLLECTIVE",
               img:"assets/people/firstfloor.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             },
             {
               name:"JAMIE MITRI",
               img:"assets/people/jamie.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             },
             {
               name:"SATCHEL RAMRAJ",
               img:"assets/people/satchel.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             },
             {
               name:"JOSHUA GARRIDO",
               img:"assets/people/joshua.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             }
           ]
         },
@@ -584,23 +593,17 @@ document.addEventListener("DOMContentLoaded", () => {
             {
               name:"PLACEHOLDER CLIENT 02",
               img:"assets/clients/client-02.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             },
             {
               name:"PLACEHOLDER CLIENT 03",
               img:"assets/clients/client-03.jpg",
-              links: [
-                { label:"WEB", url:"https://example.com" }
-              ]
+              links: [{ label:"WEB", url:"https://example.com" }]
             },
             {
               name:"PLACEHOLDER CLIENT 04",
               img:"assets/clients/client-04.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" }
-              ]
+              links: [{ label:"IG", url:"https://instagram.com/" }]
             }
           ]
         }
