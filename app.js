@@ -55,7 +55,6 @@ document.querySelectorAll(".pixel").forEach((el) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   // ---------- PAGE GUARD (HOME ONLY) ----------
-  // Don't infer home from element IDs — other pages may reuse them.
   const path = (window.location.pathname || "").toLowerCase();
   const isHome =
     path === "/" ||
@@ -67,6 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const items = Array.from(document.querySelectorAll(".item"));
   const grid = document.getElementById("grid");
   if (!items.length || !grid) return;
+
+  // Safety: if a tile has a branch attached, never navigate away on click.
+  items.forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const page = a.dataset.page; // "projects/services/people/connect"
+      if (!page) return;
+      const branchEl = document.getElementById(`${page}Branch`);
+      if (branchEl) e.preventDefault();
+    }, true);
+  });
 
   function setSelected(i){
     items.forEach((b, idx) =>
@@ -101,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // =========================================================
   // PEOPLE MARQUEE (COLLABS + CLIENTS)
-  // - supports item.links: [{label:"IG", url:"..."}, ...]
   // =========================================================
   let activeMarquee = null;
 
@@ -140,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const root = loglineEl.querySelector(".marquee");
     const track = loglineEl.querySelector(".marqueeTrack");
 
-    // Duplicate for seamless loop
     const doubled = data.concat(data);
 
     track.innerHTML = doubled.map((it, idx) => {
@@ -171,8 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }).join("");
 
-    // Clicking the card background opens the first social link
-    // (clicking a link button behaves normally)
     track.addEventListener("click", (e) => {
       if (e.target.closest("a")) return;
       const card = e.target.closest(".mCard");
@@ -218,30 +223,17 @@ document.addEventListener("DOMContentLoaded", () => {
     root.addEventListener("focusin", enterInteractive);
     root.addEventListener("focusout", leaveInteractive);
 
-    // Wheel scrubbing rules:
-    // - If inside #peopleBranch.wheelOnly -> normal wheel scrubs
-    // - Else -> Shift+wheel scrubs (so page scroll remains normal)
     function onWheel(e){
-  // Only hijack wheel when we actually want marquee scrubbing:
-  // - wheelOnly mode: always scrub (and prevent page scroll)
-  // - normal mode: ONLY scrub when Shift is held
-  const wheelOnly = !!root.closest("#peopleBranch.wheelOnly");
+      const wheelOnly = !!root.closest("#peopleBranch.wheelOnly");
+      if (!wheelOnly && !e.shiftKey) return; // allow page scroll
+      e.preventDefault();
 
-   if (!wheelOnly && !e.shiftKey) {
-    // allow normal page scroll
-    return;
-  }
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      mx -= d * 0.85;
+      apply();
+    }
 
-  e.preventDefault();
-
-  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-  mx -= d * 0.85;
-  apply();
-}
-
-// Attach ONCE (passive:false is required for preventDefault)
-root.addEventListener("wheel", onWheel, { passive: false });
-
+    root.addEventListener("wheel", onWheel, { passive: false });
 
     function onKey(e){
       if (!interactive) return;
@@ -294,10 +286,58 @@ root.addEventListener("wheel", onWheel, { passive: false });
 
       this.linesEl = this.branch ? this.branch.querySelector(".branchLines") : null;
 
+      // --- IMPORTANT: these MUST exist for valid branches ---
+      // (PATCH: auto-create missing lines + force drops to match subBtns)
+      const ensureLine = (selector, className, parent) => {
+        if (!parent) return null;
+        let el = parent.querySelector(selector);
+        if (!el) {
+          el = document.createElement("div");
+          el.className = className;
+          parent.appendChild(el);
+        }
+        return el;
+      };
+
+      // Ensure .branchLines exists
+      if (this.branch && !this.linesEl) {
+        this.linesEl = document.createElement("div");
+        this.linesEl.className = "branchLines";
+        this.branch.prepend(this.linesEl);
+      }
+
+      // Ensure core segments exist
       this.trunk = this.branch ? this.branch.querySelector(".bLine.trunk") : null;
-      this.bar   = this.branch ? this.branch.querySelector(".bLine.bar") : null;
-      this.drops = this.branch ? Array.from(this.branch.querySelectorAll(".bLine.drop")) : [];
-      this.stem  = this.branch ? this.branch.querySelector(".bLine.stem") : null;
+      this.trunk = ensureLine(".bLine.trunk", "bLine v trunk", this.linesEl);
+
+      // Knee + stem are extra routing segments (to bend around icons)
+      this.knee = this.branch ? this.branch.querySelector(".bLine.knee") : null;
+      this.knee = ensureLine(".bLine.knee", "bLine h knee", this.linesEl);
+
+      this.stem = this.branch ? this.branch.querySelector(".bLine.stem") : null;
+      this.stem = ensureLine(".bLine.stem", "bLine v stem", this.linesEl);
+
+      this.bar = this.branch ? this.branch.querySelector(".bLine.bar") : null;
+      this.bar = ensureLine(".bLine.bar", "bLine h bar", this.linesEl);
+
+      // Drops
+      this.drops = this.linesEl ? Array.from(this.linesEl.querySelectorAll(".bLine.drop")) : [];
+      const need = this.subBtns.length;
+      const have = this.drops.length;
+
+      if (need > have) {
+        for (let i = have; i < need; i++) {
+          const d = document.createElement("div");
+          d.className = "bLine v drop";
+          this.linesEl.appendChild(d);
+          this.drops.push(d);
+        }
+      } else if (need < have) {
+        for (let i = have - 1; i >= need; i--) {
+          this.drops[i].remove();
+          this.drops.pop();
+        }
+      }
 
       this.ui = opts.ui ? {
         meta:   document.getElementById(opts.ui.meta),
@@ -318,8 +358,9 @@ root.addEventListener("wheel", onWheel, { passive: false });
         this.subRow &&
         this.linesEl &&
         this.trunk &&
-        this.bar &&
+        this.knee &&
         this.stem &&
+        this.bar &&
         this.subBtns.length > 0 &&
         this.drops.length === this.subBtns.length
       );
@@ -347,7 +388,6 @@ root.addEventListener("wheel", onWheel, { passive: false });
     close(){
       this.isOpen = false;
       this.branch.classList.remove("is-open", "is-drawing", "is-ready");
-
       if (activeMarquee) { activeMarquee.destroy(); activeMarquee = null; }
       hardResetXScroll();
     }
@@ -392,7 +432,6 @@ root.addEventListener("wheel", onWheel, { passive: false });
 
       const c = this.content[key];
       if (c && this.ui){
-        // PEOPLE: wheel-only mode for collabs/clients
         if (this.id === "people" && this.branch) {
           const wheelOnly = (key === "collabs" || key === "clients");
           this.branch.classList.toggle("wheelOnly", wheelOnly);
@@ -402,9 +441,6 @@ root.addEventListener("wheel", onWheel, { passive: false });
         if (this.ui.title)  this.ui.title.textContent  = c.title || "";
         if (this.ui.cover)  this.ui.cover.textContent  = c.cover || "";
 
-        // LOG-LINE AREA:
-        // - if c.marquee exists -> marquee
-        // - else -> plain text
         if (this.ui.logline){
           if (activeMarquee) { activeMarquee.destroy(); activeMarquee = null; }
 
@@ -435,16 +471,28 @@ root.addEventListener("wheel", onWheel, { passive: false });
       hardResetXScroll();
     }
 
-    layoutLines() {
+    // Bend-route layout:
+    // trunk down -> knee (horizontal to a safe corridor) -> stem down -> bar -> drops
+    layoutLines(){
       if (!this.tile || !this.subRow || !this.linesEl) return;
+
       const tRect = this.tile.getBoundingClientRect();
       const linesRect = this.linesEl.getBoundingClientRect();
 
       const branchW = getBranchW();
       const overlap = Math.ceil(branchW / 2);
 
+      // Safe corridor X: center of grid (keeps line away from icons/labels)
+      const gridEl = document.getElementById("grid");
+      const gridRect = gridEl ? gridEl.getBoundingClientRect() : null;
+      const routeX = gridRect
+        ? Math.round((gridRect.left + gridRect.width / 2) - linesRect.left)
+        : Math.round(linesRect.width / 2);
+
+      // Start from tile center
       const startX = Math.round((tRect.left + tRect.width / 2) - linesRect.left);
 
+      // Sub button centers (bar + drops)
       const centers = this.subBtns.map(btn => {
         const r = btn.getBoundingClientRect();
         return Math.round((r.left + r.width / 2) - linesRect.left);
@@ -453,39 +501,75 @@ root.addEventListener("wheel", onWheel, { passive: false });
       const minX = Math.min(...centers);
       const maxX = Math.max(...centers);
 
+      // Y positions
       const CONNECT_Y = 2;
       const startY = Math.round(tRect.bottom - linesRect.top + CONNECT_Y);
 
-      const BAR_DROP = 140;
-      const barY = startY + BAR_DROP;
+      // Elbow Y: try to sit between top row and lower row labels
+      const tilePeople = document.getElementById("tile-people");
+      const tileConnect = document.getElementById("tile-connect");
+      const pplRect = tilePeople ? tilePeople.getBoundingClientRect() : null;
+      const conRect = tileConnect ? tileConnect.getBoundingClientRect() : null;
 
-      const trunkH = Math.max(6, (barY - startY) + overlap);
+      let elbowY = startY + 56; // fallback
+      if (pplRect && conRect) {
+        const lowerRowTop = Math.min(pplRect.top, conRect.top);
+        elbowY = Math.round(lowerRowTop - linesRect.top - 22); // clearance above labels
+        elbowY = Math.max(elbowY, startY + 44);
+      }
 
-      let barLeft  = Math.min(minX, startX) - overlap;
-      let barRight = Math.max(maxX, startX) + overlap;
+      // Bar Y should sit above subRow
+      const subRect = this.subRow.getBoundingClientRect();
+      const desiredBarY = Math.round(subRect.top - linesRect.top - 18);
+
+      const minExtra = 80;
+      const maxExtra = 170;
+      const barY = Math.max(elbowY + minExtra, Math.min(desiredBarY, elbowY + maxExtra));
+
+      // --- TRUNK ---
+      const trunkH = Math.max(6, (elbowY - startY) + overlap);
+      this.trunk.style.left = `${Math.round(startX - branchW / 2)}px`;
+      this.trunk.style.top  = `${startY}px`;
+      this.trunk.style.setProperty("--len", `${trunkH}px`);
+
+      // --- KNEE ---
+      const kneeLeft = Math.min(startX, routeX) - overlap;
+      const kneeLen  = Math.max(6, Math.abs(routeX - startX) + overlap * 2);
+      this.knee.style.top  = `${elbowY}px`;
+      this.knee.style.left = `${kneeLeft}px`;
+      this.knee.style.setProperty("--len", `${kneeLen}px`);
+      this.knee.style.transformOrigin = (routeX < startX) ? "right" : "left";
+
+      // --- STEM ---
+      const stemH = Math.max(6, (barY - elbowY) + overlap);
+      this.stem.style.left = `${Math.round(routeX - branchW / 2)}px`;
+      this.stem.style.top  = `${elbowY}px`;
+      this.stem.style.setProperty("--len", `${stemH}px`);
+
+      // --- BAR ---
+      let barLeft  = Math.min(minX, routeX) - overlap;
+      let barRight = Math.max(maxX, routeX) + overlap;
 
       if (this.id === "services" && this.barFrom !== "right") {
-        const trunkLeftEdge = Math.round(startX - branchW / 2);
-        barLeft = Math.max(barLeft, trunkLeftEdge);
+        const stemLeftEdge = Math.round(routeX - branchW / 2);
+        barLeft = Math.max(barLeft, stemLeftEdge);
       }
 
       const barLen = Math.max(6, barRight - barLeft);
-
-      this.trunk.style.left = `${Math.round(startX - branchW / 2)}px`;
-      this.trunk.style.top = `${startY}px`;
-      this.trunk.style.setProperty("--len", `${trunkH}px`);
-
-      this.bar.style.top = `${barY}px`;
+      this.bar.style.top  = `${barY}px`;
       this.bar.style.left = `${barLeft}px`;
       this.bar.style.right = "auto";
       this.bar.style.setProperty("--len", `${barLen}px`);
       this.bar.style.transformOrigin = (this.barFrom === "right") ? "right" : "left";
 
+      // --- DROPS ---
       const dropTop = barY;
-      const DROP_DEPTH = 110;
+      const dropDepth = Math.max(
+        70,
+        Math.min(140, Math.round((subRect.top - linesRect.top) - barY + 20))
+      );
 
       this.drops.forEach((d, i) => {
-        const dropLen = Math.max(6, DROP_DEPTH);
         let dropLeft = Math.round(centers[i] - branchW / 2);
 
         if (this.id === "services" && i === 0 && this.barFrom !== "right") {
@@ -493,17 +577,17 @@ root.addEventListener("wheel", onWheel, { passive: false });
         }
 
         d.style.left = `${dropLeft}px`;
-        d.style.top = `${dropTop}px`;
-        d.style.setProperty("--len", `${dropLen}px`);
+        d.style.top  = `${dropTop}px`;
+        d.style.setProperty("--len", `${Math.max(6, dropDepth)}px`);
       });
 
       const TOUCH_TRIM = -6.5;
-      this.branch.style.setProperty("--sub-top", `${barY + DROP_DEPTH - TOUCH_TRIM}px`);
+      this.branch.style.setProperty("--sub-top", `${barY + dropDepth - TOUCH_TRIM}px`);
     }
   }
 
   // ==============================
-  // EXISTING BRANCHES (YOUR BLOCK)
+  // BRANCHES
   // ==============================
   const branches = [
     new BranchController({
@@ -548,36 +632,12 @@ root.addEventListener("wheel", onWheel, { passive: false });
           cover:"NETWORK",
           badges:["MUSIC","SPORT","ARTS"],
           marquee: [
-            {
-              name:"MAFUBA",
-              img:"assets/people/mafuba.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            },
-            {
-              name:"VANCOUVER BANDITS",
-              img:"assets/people/bandits.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            },
-            {
-              name:"FIRST FLOOR COLLECTIVE",
-              img:"assets/people/firstfloor.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            },
-            {
-              name:"JAMIE MITRI",
-              img:"assets/people/jamie.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            },
-            {
-              name:"SATCHEL RAMRAJ",
-              img:"assets/people/satchel.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            },
-            {
-              name:"JOSHUA GARRIDO",
-              img:"assets/people/joshua.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            }
+            { name:"MAFUBA", img:"assets/people/mafuba.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
+            { name:"VANCOUVER BANDITS", img:"assets/people/bandits.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
+            { name:"FIRST FLOOR COLLECTIVE", img:"assets/people/firstfloor.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
+            { name:"JAMIE MITRI", img:"assets/people/jamie.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
+            { name:"SATCHEL RAMRAJ", img:"assets/people/satchel.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
+            { name:"JOSHUA GARRIDO", img:"assets/people/joshua.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
           ]
         },
         clients:{
@@ -586,29 +646,10 @@ root.addEventListener("wheel", onWheel, { passive: false });
           cover:"BRANDS / ARTISTS",
           badges:["RETAINERS","PROJECT","LOCAL"],
           marquee: [
-            {
-              name:"PLACEHOLDER CLIENT 01",
-              img:"assets/clients/client-01.jpg",
-              links: [
-                { label:"IG", url:"https://instagram.com/" },
-                { label:"YT", url:"https://youtube.com/" }
-              ]
-            },
-            {
-              name:"PLACEHOLDER CLIENT 02",
-              img:"assets/clients/client-02.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            },
-            {
-              name:"PLACEHOLDER CLIENT 03",
-              img:"assets/clients/client-03.jpg",
-              links: [{ label:"WEB", url:"https://example.com" }]
-            },
-            {
-              name:"PLACEHOLDER CLIENT 04",
-              img:"assets/clients/client-04.jpg",
-              links: [{ label:"IG", url:"https://instagram.com/" }]
-            }
+            { name:"PLACEHOLDER CLIENT 01", img:"assets/clients/client-01.jpg", links: [{ label:"IG", url:"https://instagram.com/" }, { label:"YT", url:"https://youtube.com/" }] },
+            { name:"PLACEHOLDER CLIENT 02", img:"assets/clients/client-02.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
+            { name:"PLACEHOLDER CLIENT 03", img:"assets/clients/client-03.jpg", links: [{ label:"WEB", url:"https://example.com" }] },
+            { name:"PLACEHOLDER CLIENT 04", img:"assets/clients/client-04.jpg", links: [{ label:"IG", url:"https://instagram.com/" }] },
           ]
         }
       }

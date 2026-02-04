@@ -765,6 +765,9 @@ body::before{
   --dropT:  520ms;
   --stemT:  560ms;
 
+ --kneeT:  360ms;     /* new */
+  --elbowDrop: clamp(40px, 6vh, 70px); /* how far down before the bend */
+
   --stepY: 9;
   --stepX: 10;
 
@@ -810,6 +813,14 @@ body::before{
   border-bottom-right-radius: 0;
   top: calc(100% - var(--branchW));
 }
+/* Knee is just another horizontal line */
+.bLine.h.knee{
+  height: var(--branchW);
+  width: var(--len, 0px);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
 
 .bLine.v{
   width: var(--branchW);
@@ -841,6 +852,45 @@ body::before{
     drawY var(--trunkT) steps(var(--stepY), end) forwards,
     beamPass var(--beamT) steps(2,end) calc(var(--trunkT) - 40ms) 1;
 }
+.branchArea.is-drawing .bLine.h.knee{
+  animation:
+    drawX var(--kneeT) steps(var(--stepX), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--kneeT) - 40ms) 1;
+  animation-delay: calc(var(--trunkT) + var(--segGap));
+}
+
+.branchArea.is-drawing .bLine.v.stem{
+  animation:
+    drawY var(--stemT) steps(var(--stepY), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--stemT) - 40ms) 1;
+  animation-delay: calc(var(--trunkT) + var(--segGap) + var(--kneeT) + var(--segGap));
+}
+
+/* Move bar to after stem (was previously right after trunk) */
+.branchArea.is-drawing .bLine.h.bar{
+  animation:
+    drawX var(--barT) steps(var(--stepX), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--barT) - 40ms) 1;
+  animation-delay: calc(
+    var(--trunkT) + var(--segGap) +
+    var(--kneeT)  + var(--segGap) +
+    var(--stemT)  + var(--segGap)
+  );
+}
+
+/* Drops happen after bar */
+.branchArea.is-drawing .bLine.v.drop{
+  animation:
+    drawY var(--dropT) steps(var(--stepY), end) forwards,
+    beamPass var(--beamT) steps(2,end) calc(var(--dropT) - 40ms) 1;
+  animation-delay: calc(
+    var(--trunkT) + var(--segGap) +
+    var(--kneeT)  + var(--segGap) +
+    var(--stemT)  + var(--segGap) +
+    var(--barT)   + var(--segGap)
+  );
+}
+
 
 .branchArea.is-drawing .bLine.h.bar{
   animation:
@@ -1196,3 +1246,177 @@ body{
   min-height: 100% !important;
   overflow: visible !important; /* important: don't fight html scrolling */
 }
+
+/* =========================================================
+   RESPONSIVE CLEANUP (HOME + BRANCH)
+   Paste at very bottom of styles.css
+   ========================================================= */
+
+/* Scale key UI parts with viewport instead of hard px */
+:root{
+  --wrapPad: clamp(16px, 4vw, 40px);
+  --gridGap: clamp(16px, 4vw, 40px);
+  --iconBox: clamp(92px, 18vw, 150px);
+  --pxSize:  clamp(4px, 1.1vw, 7px);
+}
+
+/* Make wrap + grid adapt */
+.wrap{ padding: var(--wrapPad); }
+
+.grid{
+  gap: var(--gridGap);
+}
+
+/* Make icon box scale instead of staying 150x150 */
+.iconbox{
+  width: var(--iconBox);
+  height: var(--iconBox);
+}
+
+/* Make the “pixel” icon scale with a single variable */
+.pixel{
+  width: calc(16 * var(--pxSize));
+  height: calc(16 * var(--pxSize));
+  grid-template-columns: repeat(16, var(--pxSize));
+  grid-template-rows: repeat(16, var(--pxSize));
+}
+
+.px{
+  width: var(--pxSize);
+  height: var(--pxSize);
+}
+
+/* Slightly scale label down on smaller screens */
+.label{
+  font-size: clamp(12px, 2.1vw, 16px);
+}
+
+/* 2-column grid sooner + reduce crowding */
+@media (max-width: 980px){
+  .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Mobile layout: keep it clean and non-overlapping */
+@media (max-width: 720px){
+  .wrap{ padding: 16px; }
+  .grid{ gap: 18px; }
+
+  /* Branch: stop drawing lines on small screens (prevents collisions) */
+  .branchLines{ display: none !important; }
+
+  /* Make sub buttons stack cleanly */
+  .subRow{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 14px !important;
+    padding: 0 4px;
+  }
+
+  .subBtn{
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+  }
+
+  .branchPanel{
+    margin-top: 14px !important;
+  }
+}
+
+/* === LAYERING FIX: keep branch lines behind the icon grid === */
+.grid{
+  position: relative;
+  z-index: 20;
+}
+
+.tile{
+  position: relative;
+  z-index: 21;
+}
+
+/* Branch area stays below grid in stacking order */
+.branchArea,
+.branchLines{
+  position: relative;
+  z-index: 5;
+}
+
+.bLine{
+  z-index: 6;
+}
+
+/* === RESPONSIVE BRANCH GEOMETRY === */
+:root{
+  /* how far down from the tile the horizontal bar sits */
+  --barDrop: clamp(90px, 12vh, 140px);
+
+  /* how far the vertical drops go down from the bar */
+  --dropDepth: clamp(70px, 10vh, 110px);
+}
+
+/* Let sub buttons wrap instead of forcing weird layouts */
+.subRow{
+  flex-wrap: wrap;
+  row-gap: 10px;
+  padding-inline: 6px;
+}
+
+/* Slightly smaller buttons when tight */
+.subBtn{
+  font-size: clamp(9px, 1.6vw, 10px);
+  padding: 8px 12px;
+}
+
+/* On tighter screens, reduce the spacing so the buttons don't get shoved down */
+@media (max-width: 860px){
+  .branchSlot{ margin-top: 10px; }
+  .branchArea{ margin-top: 12px; }
+}
+
+.bLine.h.knee, .bLine.v.stem{
+  box-shadow:
+    0 0 12px rgba(233,251,255,.18),
+    0 0 28px rgba(233,251,255,.12);
+}
+
+/* =========================================================
+   BRANCH LAYERING: lines behind tiles/labels
+   (paste at very bottom)
+   ========================================================= */
+
+.grid{
+  position: relative;
+  z-index: 50;
+}
+
+.tile,
+.tile *{
+  position: relative;
+  z-index: 60;
+}
+
+/* Branch UI below */
+.branchSlot,
+.branchArea,
+.branchLines{
+  position: relative;
+  z-index: 10;
+}
+
+.bLine{
+  z-index: 12;
+}
+
+/* =========================================================
+   BRANCH VISIBILITY: show lines only when drawing starts
+   ========================================================= */
+
+/* Default hidden */
+.bLine{ opacity: 0; }
+
+/* When branch opens, don't force opacity */
+.branchArea.is-open .bLine{ opacity: 0; }
+
+/* Only reveal during draw */
+.branchArea.is-drawing .bLine{ opacity: 1; }
