@@ -35,7 +35,7 @@ const PROJECTS = [
     category: "films",
     title: "LIVE at the Court",
     year: "2026",
-    type: "SHORT DOC",
+    type: "SHORT DOCUMENTARY",
     involvement: ["Cracked Concrete Original"],
     status: "FESTIVAL CIRCUIT",
     logline:
@@ -99,11 +99,11 @@ const PROJECTS = [
     status: "RELEASED",
     logline:
       "A neon-forward product promo built around motion, reflections, and analog grit.",
-    poster: "assets/projects/goldfish/poster.jpg",
+    poster: "assets/projects/goldfish/poster.png",
   stills: [
-    "assets/projects/goldfish/still-01.jpg",
-    "assets/projects/goldfish/still-02.jpg",
-    "assets/projects/goldfish/still-03.jpg",
+    "assets/projects/goldfish/still-01.png",
+    "assets/projects/goldfish/still-02.png",
+    "assets/projects/goldfish/still-03.png",
   ],
     credits: [
       ["DIRECTOR", "Ben Mouland"],
@@ -130,18 +130,97 @@ const PROJECTS = [
       "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
     poster: "assets/projects/ultra-violent-light/poster.jpg",
     stills: [
-    ]
+    ],
       credits: [
-      ["Director", "Ben Mouland"],
-      ["Cinematographer", "Arsh Buttan"],
-      ["PRODUCER", "Ngaire Le"],
-      ["Editor", "Chris Berry"],
-      ["Composer", "Trevor-J"],
+        ["Director", "Ben Mouland"],
+       ["Cinematographer", "Arsh Buttan"],
+       ["PRODUCER", "Ngaire Le"],
+       ["Editor", "Chris Berry"],
+       ["Composer", "Trevor-J"],
     ],
     links: [
       ["WATCH", "TBD"],
       ["TRAILER", "TBD"],
       ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/JeVk"],
+    ],
+  },
+  {
+    slug: "project-04",
+    category: "films",
+    title: "Ultra Violent Light",
+    year: "2023",
+    type: "Short Film",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline:
+      "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
+    poster: "assets/projects/ultra-violent-light/poster.jpg",
+    stills: [
+    ],
+      credits: [
+        ["Director", "Ben Mouland"],
+       ["Cinematographer", "Arsh Buttan"],
+       ["PRODUCER", "Ngaire Le"],
+       ["Editor", "Chris Berry"],
+       ["Composer", "Trevor-J"],
+    ],
+    links: [
+      ["WATCH", "TBD"],
+      ["TRAILER", "TBD"],
+      ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/JeVk"],
+    ],
+  },
+  {
+    slug: "project-04",
+    category: "films",
+    title: "Ultra Violent Light",
+    year: "2023",
+    type: "Short Film",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline:
+      "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
+    poster: "assets/projects/ultra-violent-light/poster.jpg",
+    stills: [
+    ],
+      credits: [
+        ["Director", "Ben Mouland"],
+       ["Cinematographer", "Arsh Buttan"],
+       ["PRODUCER", "Ngaire Le"],
+       ["Editor", "Chris Berry"],
+       ["Composer", "Trevor-J"],
+    ],
+    links: [
+      ["WATCH", "TBD"],
+      ["TRAILER", "TBD"],
+      ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
+      ["LETTERBOXD", "https://boxd.it/JeVk"],
+    ],
+  },
+  {
+    slug: "project-05",
+    category: "films",
+    title: "Sunny Chibas: The Shit Hot Eatery",
+    year: "2022",
+    type: "Short Documentary",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline:
+      "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
+    poster: "assets/projects/sunny-chiba/poster.jpg",
+    stills: [
+    ],
+      credits: [
+        ["Director", "Ben Mouland"],
+       ["Cinematographer", "Ben Mouland"],
+       ["Editor", "Ben Mouland"],
+       ["Additional Photography", "Chris Berry"],
+       ["Location Sound Mixer", "Chris Berry"],
+       ],
+    links: [
+      ["WATCH", "https://youtu.be/Ae76BGpjYjU"],
       ["LETTERBOXD", "https://boxd.it/JeVk"],
     ],
   },
