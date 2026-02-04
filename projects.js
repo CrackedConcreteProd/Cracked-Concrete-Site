@@ -71,6 +71,9 @@ const PROJECTS = [
     involvement: ["Cracked Concrete Original"],
     status: "Festival Circuit",
     logline: "Two young boys make the most of their time together in a hospital room.",
+    poster: "assets/projects/pulse/poster.jpg",
+  stills: [
+  ],
     credits: [
       ["DIRECTOR", "Ben Mouland"],
       ["Cinematographer", "Juliette Leach"],
@@ -96,6 +99,12 @@ const PROJECTS = [
     status: "RELEASED",
     logline:
       "A neon-forward product promo built around motion, reflections, and analog grit.",
+    poster: "assets/projects/goldfish/poster.jpg",
+  stills: [
+    "assets/projects/goldfish/still-01.jpg",
+    "assets/projects/goldfish/still-02.jpg",
+    "assets/projects/goldfish/still-03.jpg",
+  ],
     credits: [
       ["DIRECTOR", "Ben Mouland"],
       ["Cinematographer", "Ben Mouland"],
@@ -119,7 +128,10 @@ const PROJECTS = [
     status: "RELEASED",
     logline:
       "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
-    credits: [
+    poster: "assets/projects/ultra-violent-light/poster.jpg",
+    stills: [
+    ]
+      credits: [
       ["Director", "Ben Mouland"],
       ["Cinematographer", "Arsh Buttan"],
       ["PRODUCER", "Ngaire Le"],
