@@ -817,15 +817,21 @@ body::before{
 }
 
 .branchPath{
-  fill:none;
+  fill: none;
   stroke: rgba(233,251,255,.92);
   stroke-width: var(--branchW);
-  stroke-linecap: butt;
-  stroke-linejoin: miter;
-  shape-rendering: crispEdges;
+  stroke-linecap: butt;          /* No extension - clean edge-to-edge */
+  stroke-linejoin: miter;         /* Sharp 90° corners */
+  stroke-miterlimit: 10;          /* Prevent excessive miter spikes */
+  shape-rendering: crispEdges;    /* Pixel-perfect rendering */
   vector-effect: non-scaling-stroke;
-  opacity:.95;
+  visibility: hidden;             /* Hidden by default until animation starts */
+  opacity: 1;
   filter: drop-shadow(0 0 10px rgba(233,251,255,.18));
+}
+
+.branchPath.animating{
+  visibility: visible;            /* Visible during animation */
 }
 
 
@@ -869,8 +875,6 @@ body::before{
   transform-origin: left;
   transform: scaleX(0);
 }
-
-.branchArea.is-open .bLine{ opacity: 1; }
 
 @keyframes drawY { from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
 @keyframes drawX { from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
@@ -926,30 +930,6 @@ body::before{
 }
 
 
-.branchArea.is-drawing .bLine.h.bar{
-  animation:
-    drawX var(--barT) steps(var(--stepX), end) forwards,
-    beamPass var(--beamT) steps(2,end) calc(var(--barT) - 40ms) 1;
-  animation-delay: calc(var(--trunkT) + var(--segGap));
-}
-
-.branchArea.is-drawing .bLine.v.drop{
-  animation:
-    drawY var(--dropT) steps(var(--stepY), end) forwards,
-    beamPass var(--beamT) steps(2,end) calc(var(--dropT) - 40ms) 1;
-  animation-delay: calc(var(--trunkT) + var(--segGap) + var(--barT) + var(--segGap));
-}
-
-.branchArea.is-drawing .bLine.v.stem{
-  animation:
-    drawY var(--stemT) steps(var(--stepY), end) forwards,
-    beamPass var(--beamT) steps(2,end) calc(var(--stemT) - 40ms) 1;
-  animation-delay: calc(
-    var(--trunkT) + var(--segGap) +
-    var(--barT)   + var(--segGap) +
-    var(--dropT)  + var(--segGap)
-  );
-}
 
 .subRow{
   display: flex;
@@ -1359,26 +1339,7 @@ body{
 }
 
 /* === LAYERING FIX: keep branch lines behind the icon grid === */
-.grid{
-  position: relative;
-  z-index: 20;
-}
-
-.tile{
-  position: relative;
-  z-index: 21;
-}
-
-/* Branch area stays below grid in stacking order */
-.branchArea,
-.branchLines{
-  position: relative;
-  z-index: 5;
-}
-
-.bLine{
-  z-index: 6;
-}
+/* Note: Primary z-index rules are defined below at line 1390+ */
 
 /* === RESPONSIVE BRANCH GEOMETRY === */
 :root{
@@ -1446,11 +1407,7 @@ body{
    BRANCH VISIBILITY: show lines only when drawing starts
    ========================================================= */
 
-/* Default hidden */
-.bLine{ opacity: 0; }
-
-/* When branch opens, don't force opacity */
-.branchArea.is-open .bLine{ opacity: 0; }
-
-/* Only reveal during draw */
-.branchArea.is-drawing .bLine{ opacity: 1; }
+/* Hide DIV-based lines (using SVG rendering instead) */
+.bLine{
+  display: none !important;
+}

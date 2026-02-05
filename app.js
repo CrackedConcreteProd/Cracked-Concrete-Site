@@ -105,7 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.scrollLeft = 0;
   }
 
-  const REVEAL_AFTER_MS = 2300;
+  // Reveal UI after branch animation completes
+  const REVEAL_AFTER_MS = 1500; // Updated to match actual animation duration
   const state = { activeBranch: null };
 
   // =========================================================
@@ -501,8 +502,16 @@ document.addEventListener("DOMContentLoaded", () => {
         this.svg.setAttribute("aria-hidden", "true");
 
         this.pTrunk = svgEl("path"); this.pTrunk.setAttribute("class", "branchPath");
+        this.pTrunk.setAttribute("stroke-dasharray", "1");
+        this.pTrunk.setAttribute("stroke-dashoffset", "1");
+
         this.pStem = svgEl("path"); this.pStem.setAttribute("class", "branchPath");
+        this.pStem.setAttribute("stroke-dasharray", "1");
+        this.pStem.setAttribute("stroke-dashoffset", "1");
+
         this.pBar = svgEl("path"); this.pBar.setAttribute("class", "branchPath");
+        this.pBar.setAttribute("stroke-dasharray", "1");
+        this.pBar.setAttribute("stroke-dashoffset", "1");
 
         this.svg.appendChild(this.pTrunk);
         this.svg.appendChild(this.pStem);
@@ -512,6 +521,8 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < this.subBtns.length; i++) {
           const p = svgEl("path");
           p.setAttribute("class", "branchPath");
+          p.setAttribute("stroke-dasharray", "1");
+          p.setAttribute("stroke-dashoffset", "1");
           this.svg.appendChild(p);
           this.pDrops.push(p);
         }
@@ -525,6 +536,8 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < this.subBtns.length; i++) {
           const p = svgEl("path");
           p.setAttribute("class", "branchPath");
+          p.setAttribute("stroke-dasharray", "1");
+          p.setAttribute("stroke-dashoffset", "1");
           this.svg.appendChild(p);
           this.pDrops.push(p);
         }
@@ -658,7 +671,8 @@ document.addEventListener("DOMContentLoaded", () => {
         detail: { branchId: this.id, key }
       }));
 
-      if (this.isOpen) this.layoutLines();
+      // Don't restart animation when switching subsections
+      // (animation only plays when initially opening the branch)
       hardResetXScroll();
     }
 
@@ -757,134 +771,91 @@ document.addEventListener("DOMContentLoaded", () => {
       elbowY = findSafeElbowY(elbowY, startX, routeX, obstacles, elbowMinY, elbowMaxY, elbowStep);
 
 
-      // --- TRUNK ---
-      const trunkH = Math.max(6, (elbowY - startY) + overlap);
-      this.trunk.style.left = `${Math.round(startX - branchW / 2)}px`;
-      this.trunk.style.top = `${startY}px`;
-      this.trunk.style.setProperty("--len", `${trunkH}px`);
+      // Hide all DIV-based branch elements immediately (we only use SVG now)
+      if (this.trunk) this.trunk.style.display = "none";
+      if (this.stem) this.stem.style.display = "none";
+      if (this.knee) this.knee.style.display = "none";
+      if (this.bar) this.bar.style.display = "none";
+      this.drops.forEach(d => d.style.display = "none");
 
-      // --- KNEE ---
-      const kneeLeft = Math.min(startX, routeX) - overlap;
-      const kneeLen = Math.max(6, Math.abs(routeX - startX) + overlap * 2);
-      this.knee.style.top = `${elbowY}px`;
-      this.knee.style.left = `${kneeLeft}px`;
-      this.knee.style.setProperty("--len", `${kneeLen}px`);
-      this.knee.style.transformOrigin = (routeX < startX) ? "right" : "left";
-
-      // --- STEM ---
-      const stemH = Math.max(6, (barY - elbowY) + overlap);
-      this.stem.style.left = `${Math.round(routeX - branchW / 2)}px`;
-      this.stem.style.top = `${elbowY}px`;
-      this.stem.style.setProperty("--len", `${stemH}px`);
-
-      // --- BAR ---
-      let barLeft = Math.min(centersMinX, routeX) - overlap;
-      let barRight = Math.max(centersMaxX, routeX) + overlap;
-
-      if (this.id === "services" && this.barFrom !== "right") {
-        const stemLeftEdge = Math.round(routeX - branchW / 2);
-        barLeft = Math.max(barLeft, stemLeftEdge);
-      }
-      // Final safety pass now that we know exact bar span
-      barY = findSafeBarY(barY, barLeft, barRight, obstacles, barMinY, barMaxY, 10);
-
-
-      const barLen = Math.max(6, barRight - barLeft);
-      this.bar.style.top = `${barY}px`;
-      this.bar.style.left = `${barLeft}px`;
-      this.bar.style.right = "auto";
-      this.bar.style.setProperty("--len", `${barLen}px`);
-      this.bar.style.transformOrigin = (this.barFrom === "right") ? "right" : "left";
-
-      // --- DROPS ---
-      const dropTop = barY;
+      // Calculate drop depth for SVG rendering
       const dropDepth = Math.max(
-        70,
-        Math.min(140, Math.round((subRect.top - linesRect.top) - barY + 20))
+        60,
+        Math.min(120, Math.round((subRect.top - linesRect.top) - barY - 8))
       );
-
-      this.drops.forEach((d, i) => {
-        let dropLeft = Math.round(centers[i] - branchW / 2);
-
-        if (this.id === "services" && i === 0 && this.barFrom !== "right") {
-          dropLeft = Math.round(barLeft);
-        }
-
-        d.style.left = `${dropLeft}px`;
-        d.style.top = `${dropTop}px`;
-        d.style.setProperty("--len", `${Math.max(6, dropDepth)}px`);
-      });
 
       const TOUCH_TRIM = -6.5;
       this.branch.style.setProperty("--sub-top", `${barY + dropDepth - TOUCH_TRIM}px`);
 
-      // --- STEP 1: Draw same geometry into SVG and animate “single-pen” order ---
-      if (this.svg && this.pTrunk && this.pStem && this.pBar && this.pDrops) {
-        const trunkPts = [
-          { x: startX, y: startY },
-          { x: startX, y: elbowY }
-        ];
+      // --- SVG PATH RENDERING: Single continuous path per button ---
+      if (this.svg && this.pDrops) {
+        // Hide unused paths
+        if (this.pTrunk) this.pTrunk.style.display = "none";
+        if (this.pStem) this.pStem.style.display = "none";
+        if (this.pBar) this.pBar.style.display = "none";
 
-        const stemPts = [
-          { x: startX, y: elbowY },
-          { x: routeX, y: elbowY },
-          { x: routeX, y: barY }
-        ];
+        // Clear old data and hide everything
+        this.svg.style.visibility = "hidden";
+        this.pDrops.forEach(p => {
+          p.removeAttribute("d");
+          p.removeAttribute("stroke-dasharray");
+          p.removeAttribute("stroke-dashoffset");
+          p.classList.remove("animating");
+        });
 
-        const barPts = [
-          { x: routeX, y: barY },
-          { x: barRight, y: barY }
-        ];
+        // Build path data for each button
+        const pathData = centers.map((cx, i) => {
+          const pts = [
+            { x: startX, y: startY },
+            { x: startX, y: elbowY },
+            { x: routeX, y: elbowY },
+            { x: routeX, y: barY },
+            { x: cx, y: barY },
+            { x: cx, y: barY + dropDepth }
+          ];
+          return {
+            path: this.pDrops[i],
+            d: ptsToPath(pts),
+            length: pathLen(pts)
+          };
+        });
 
-        const dropPtsArr = centers.map(cx => ([
-          { x: cx, y: barY },
-          { x: cx, y: barY + dropDepth }
-        ]));
+        const DURATION = 1200;
+        const STAGGER = 60;
 
-        this.pTrunk.setAttribute("d", ptsToPath(trunkPts));
-        this.pStem.setAttribute("d", ptsToPath(stemPts));
-        this.pBar.setAttribute("d", ptsToPath(barPts));
-        this.pDrops.forEach((p, i) => p.setAttribute("d", ptsToPath(dropPtsArr[i])));
+        // Start animation on next frame
+        requestAnimationFrame(() => {
+          const startTime = performance.now();
 
-        const L1 = pathLen(trunkPts);
-        const L2 = pathLen(stemPts);
-        const L3 = pathLen(barPts);
-        const LD = dropPtsArr.map(pathLen);
-
-        dash(this.pTrunk, L1, 0);
-        dash(this.pStem, L2, 0);
-        dash(this.pBar, L3, 0);
-        this.pDrops.forEach((p, i) => dash(p, LD[i], 0));
-
-        const t0 = performance.now();
-        const DUR1 = 380, DUR2 = 320, DUR3 = 260, DURD = 240, STAG = 55;
-
-        const tick = (now) => {
-          const t = now - t0;
-
-          const p1 = quantize(Math.min(1, t / DUR1), 22);
-          dash(this.pTrunk, L1, p1);
-
-          const t2 = t - DUR1 + 40;
-          const p2 = quantize(Math.max(0, Math.min(1, t2 / DUR2)), 18);
-          dash(this.pStem, L2, p2);
-
-          const t3 = t - (DUR1 + DUR2) + 60;
-          const p3 = quantize(Math.max(0, Math.min(1, t3 / DUR3)), 16);
-          dash(this.pBar, L3, p3);
-
-          const base = t - (DUR1 + DUR2 + DUR3) + 80;
-          this.pDrops.forEach((p, i) => {
-            const td = base - i * STAG;
-            const pd = quantize(Math.max(0, Math.min(1, td / DURD)), 14);
-            dash(p, LD[i], pd);
+          // Set geometry and make visible immediately
+          pathData.forEach(data => {
+            data.path.setAttribute("d", data.d);
+            data.path.setAttribute("stroke-dasharray", data.length);
+            data.path.classList.add("animating");
           });
+          this.svg.style.visibility = "visible";
 
-          const done = t > (DUR1 + DUR2 + DUR3 + DURD + (this.pDrops.length - 1) * STAG + 120);
-          if (!done) requestAnimationFrame(tick);
-        };
+          const animate = (now) => {
+            const elapsed = now - startTime;
 
-        requestAnimationFrame(tick);
+            pathData.forEach((data, i) => {
+              const t = elapsed - (i * STAGGER);
+              const progress = quantize(Math.max(0, Math.min(1, t / DURATION)), 30);
+              const offset = data.length * (1 - progress);
+              data.path.setAttribute("stroke-dashoffset", offset);
+            });
+
+            const totalDuration = DURATION + ((pathData.length - 1) * STAGGER) + 100;
+            if (elapsed < totalDuration) {
+              requestAnimationFrame(animate);
+            } else {
+              // Animation complete - trigger section reveal
+              this.branch.classList.add("done");
+            }
+          };
+
+          animate(startTime);
+        });
       }
     }
   }
