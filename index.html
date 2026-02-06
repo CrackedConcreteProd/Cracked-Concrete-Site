@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Cracked Concrete — OSD</title>
 
   <link rel="stylesheet" href="styles.css" />
@@ -123,7 +123,8 @@
           </div>
 
           <div class="branchPanel" id="servicesPanel">
-            <div class="projectPanel">
+            <!-- DEFAULT SERVICES PANEL -->
+            <div class="projectPanel" id="servicesDefault">
               <div class="panelTop">
                 <div class="panelLabel">SERVICES</div>
                 <div class="panelMeta" id="srvMeta">SELECT A CATEGORY</div>
@@ -144,13 +145,85 @@
                 </div>
 
                 <div class="panelLogline" id="srvLogline">
-                  CLICK “SERVICES” AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
+                  CLICK "SERVICES" AGAIN TO CLOSE. SELECT A CATEGORY TO LOAD A PREVIEW PANEL HERE.
                 </div>
 
                 <div class="projectsFooter">
                   <div>ENTER: SELECT</div>
                   <div>MENU: HOME</div>
                 </div>
+              </div>
+            </div>
+
+            <!-- GEAR RENTAL SECTION -->
+            <div class="gearRental" id="gearRental" style="display: none;">
+              <div class="gearHeader">
+                <div class="gearTitle">GEAR RENTAL</div>
+                <div class="gearSubtitle">SELECT A CATEGORY TO VIEW AVAILABLE EQUIPMENT</div>
+              </div>
+
+              <!-- GEAR CATEGORIES (collapsible) -->
+              <div class="gearCategories" id="gearCategories"></div>
+
+              <!-- RENTAL CART -->
+              <div class="rentalCart" id="rentalCart">
+                <div class="cartHeader">
+                  <div class="cartTitle">RENTAL CART</div>
+                  <button class="cartClear" id="cartClear" type="button">CLEAR</button>
+                </div>
+
+                <div class="cartEmpty" id="cartEmpty">
+                  CART IS EMPTY - SELECT ITEMS TO GET A QUOTE
+                </div>
+
+                <div class="cartItems" id="cartItems"></div>
+
+                <div class="cartFooter" id="cartFooter" style="display: none;">
+                  <div class="cartTotal">
+                    <div class="cartTotalLabel">ESTIMATED TOTAL:</div>
+                    <div class="cartTotalAmount" id="cartTotalAmount">$0</div>
+                  </div>
+                  <button class="cartCheckout" id="cartCheckout" type="button">REQUEST QUOTE</button>
+                </div>
+              </div>
+
+              <!-- CHECKOUT FORM (hidden by default) -->
+              <div class="checkoutForm" id="checkoutForm" style="display: none;">
+                <div class="formHeader">
+                  <div class="formTitle">REQUEST QUOTE</div>
+                  <button class="formClose" id="formClose" type="button">✕</button>
+                </div>
+
+                <form id="quoteForm">
+                  <div class="formGroup">
+                    <label for="quoteName">NAME</label>
+                    <input type="text" id="quoteName" name="name" required>
+                  </div>
+
+                  <div class="formGroup">
+                    <label for="quoteEmail">EMAIL</label>
+                    <input type="email" id="quoteEmail" name="email" required>
+                  </div>
+
+                  <div class="formGroup">
+                    <label for="quotePhone">PHONE</label>
+                    <input type="tel" id="quotePhone" name="phone">
+                  </div>
+
+                  <div class="formGroup">
+                    <label for="quoteProject">PROJECT DETAILS</label>
+                    <textarea id="quoteProject" name="project" rows="4" placeholder="Tell us about your project..."></textarea>
+                  </div>
+
+                  <div class="formSummary">
+                    <div class="formSummaryTitle">RENTAL SUMMARY</div>
+                    <div class="formSummaryItems" id="formSummaryItems"></div>
+                  </div>
+
+                  <div class="formActions">
+                    <button type="submit" class="formSubmit">SEND QUOTE REQUEST</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -282,6 +355,7 @@
 
 
   <script src="projects.js" defer></script>
+  <script src="gear.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

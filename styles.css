@@ -149,6 +149,17 @@ body::before{
   99%     { filter: brightness(1.04) contrast(1.02); }
 }
 
+@keyframes retroBoot{
+  0%   { opacity: 0; transform: scale(0.7); }
+  25%  { opacity: 0; transform: scale(0.7); }
+  50%  { opacity: 0.6; transform: scale(0.85); }
+  75%  { opacity: 0.3; transform: scale(0.95); }
+  85%  { opacity: 1; transform: scale(1); }
+  90%  { opacity: 0.8; transform: scale(1); }
+  95%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
 /* =========================================================
    CONTENT
    ========================================================= */
@@ -186,6 +197,13 @@ body::before{
   flex-direction:column;
   align-items:center;
   text-align:center;
+  /* Initial state: hidden for boot animation */
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.tile.booted{
+  animation: retroBoot 800ms steps(8) forwards;
 }
 
 .tile[aria-selected="true"]{ filter: brightness(1.18); }
@@ -246,6 +264,7 @@ body::before{
   grid-template-columns: 1fr 1.1fr;
   gap: 14px;
   align-items: start;
+  min-width: 0;
 }
 
 .homeProjectsLayout{
@@ -259,11 +278,38 @@ body::before{
   padding-right: 2px;
   overflow: visible;
   max-height: none;
+  min-width: 0;
 }
 
+/* Medium screens - equal columns */
+@media (max-width: 1100px){
+  .projectsLayout{
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+/* Smaller screens - reduce gap further */
+@media (max-width: 900px){
+  .projectsLayout{
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 10px;
+  }
+  .panelMedia{
+    height: 280px;
+  }
+}
+
+/* Mobile - single column */
 @media (max-width: 780px){
-  .projectsLayout{ grid-template-columns: 1fr; }
-  .projectsGrid{ max-height: 240px; }
+  .projectsLayout{
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .projectsGrid{
+    max-height: 240px;
+    overflow-y: auto;
+  }
   .homeProjectsLayout{ max-height: none; }
 }
 
@@ -280,6 +326,9 @@ body::before{
   text-transform: uppercase;
   letter-spacing: .10em;
   position: relative;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .projectCard:hover{ background: rgba(0,0,0,.12); }
@@ -297,8 +346,13 @@ body::before{
   margin-bottom: 6px;
 }
 
-.cardTitle{ font-size: 12px; letter-spacing: .14em; }
-.cardYear{ font-size: 10px; opacity: .75; letter-spacing: .18em; }
+.cardTitle{
+  font-size: 12px;
+  letter-spacing: .14em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+.cardYear{ font-size: 10px; opacity: .75; letter-spacing: .18em; white-space: nowrap; }
 
 .cardMid{
   display:flex;
@@ -522,6 +576,7 @@ body::before{
   border-radius: 10px;
   overflow: hidden;
   position: relative;
+  min-width: 0;
 }
 
 .projectPanel::before{
@@ -560,6 +615,8 @@ body::before{
   padding: 12px;
   position: relative;
   z-index: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .panelCover{
@@ -602,6 +659,8 @@ body::before{
   grid-template-columns: 0.9fr 1.1fr;
   gap: 10px;
   flex: 0 0 auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .panelPoster,
@@ -654,14 +713,23 @@ body::before{
   background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.12));
 }
 
-@media (max-width: 720px){
+@media (max-width: 850px){
   .panelMedia{
     height: auto;
     grid-template-columns: 1fr;
+    gap: 8px;
   }
-  .panelPoster{ height: 240px; }
+  .panelPoster{ height: 200px; }
   .panelStills{ grid-template-columns: repeat(3, 1fr); }
-  .panelStill{ height: 90px; }
+  .panelStill{ height: 80px; }
+}
+
+@media (max-width: 600px){
+  .panelMedia{
+    gap: 6px;
+  }
+  .panelPoster{ height: 180px; }
+  .panelStill{ height: 70px; }
 }
 
 .coverLabel{
@@ -699,9 +767,18 @@ body::before{
   gap: 12px;
   align-items: baseline;
   margin-bottom: 8px;
+  min-width: 0;
 }
 
-.panelTitle{ font-size: 12px; font-weight: 900; letter-spacing: .18em; }
+.panelTitle{
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
+  flex: 1;
+}
 
 .panelBadges{
   display:flex;
@@ -726,6 +803,8 @@ body::before{
   line-height: 1.55;
   margin-bottom: 10px;
   letter-spacing: .12em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .panelSection{
@@ -786,6 +865,7 @@ body::before{
   position: relative;
   width: min(1100px, 100%);
   margin: 18px auto 0;
+  padding: 0 clamp(8px, 2vw, 16px);
 }
 
 .branchLines{
@@ -948,6 +1028,8 @@ body::before{
   opacity: 0;
   pointer-events:none;
   transition: opacity 180ms linear;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .branchArea.is-open.is-ready .subRow,
@@ -963,10 +1045,12 @@ body::before{
   font-family: inherit;
   letter-spacing: .12em;
   text-transform: uppercase;
-  padding: 8px 12px;
+  padding: 12px 20px;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px rgba(233,251,255,.06);
+  font-size: clamp(11px, 2vw, 14px);
+  font-weight: 600;
 }
 
 .subBtn:hover{ background: rgba(0,0,0,.14); }
@@ -1315,8 +1399,29 @@ body{
   .wrap{ padding: 16px; }
   .grid{ gap: 18px; }
 
-  /* Branch: stop drawing lines on small screens (prevents collisions) */
-  .branchLines{ display: none !important; }
+  /* Branch: show simplified single line to top button on mobile */
+  .branchLines{
+    display: block !important;
+  }
+
+  .branchLines svg{
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* SVG paths order: [0]=trunk, [1]=stem, [2]=bar, [3]=first drop, [4+]=other drops
+     The first 3 are already hidden by JS. On mobile, show only first drop (path 4) */
+
+  /* Hide all drop paths except the first one (4th path overall) */
+  .branchLines svg path:nth-child(n+5){
+    display: none !important;
+  }
+
+  /* Ensure first drop is visible and styled */
+  .branchLines svg path:nth-child(4){
+    display: block !important;
+    visibility: visible !important;
+  }
 
   /* Make sub buttons stack cleanly */
   .subRow{
@@ -1357,11 +1462,7 @@ body{
   padding-inline: 6px;
 }
 
-/* Slightly smaller buttons when tight */
-.subBtn{
-  font-size: clamp(9px, 1.6vw, 10px);
-  padding: 8px 12px;
-}
+/* Responsive button sizing handled in main .subBtn rule above */
 
 /* On tighter screens, reduce the spacing so the buttons don't get shoved down */
 @media (max-width: 860px){
@@ -1410,4 +1511,706 @@ body{
 /* Hide DIV-based lines (using SVG rendering instead) */
 .bLine{
   display: none !important;
+}
+
+/* =========================================================
+   GEAR RENTAL SECTION
+   ========================================================= */
+
+.gearRental{
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 15px;
+}
+
+.gearHeader{
+  text-align: center;
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(233,251,255,.2);
+  padding-bottom: 12px;
+}
+
+.gearTitle{
+  font-size: clamp(18px, 2.5vw, 22px);
+  font-weight: bold;
+  color: var(--osd);
+  margin-bottom: 6px;
+  letter-spacing: 1.5px;
+}
+
+.gearSubtitle{
+  font-size: clamp(10px, 1.2vw, 12px);
+  color: rgba(233,251,255,.7);
+  letter-spacing: 0.8px;
+}
+
+/* COLLAPSIBLE CATEGORIES */
+.gearCategories{
+  margin-bottom: 25px;
+}
+
+.gearCategory{
+  margin-bottom: 12px;
+  border: 1px solid rgba(233,251,255,.2);
+  background: rgba(0,0,0,.3);
+}
+
+.categoryHeader{
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(233,251,255,.05);
+  transition: background 150ms;
+}
+
+.categoryHeader:hover{
+  background: rgba(233,251,255,.1);
+}
+
+.categoryTitle{
+  font-size: clamp(13px, 1.8vw, 16px);
+  font-weight: bold;
+  color: var(--osd);
+  letter-spacing: 1.5px;
+}
+
+.categoryToggle{
+  font-size: 18px;
+  color: var(--osd);
+  transition: transform 200ms steps(4);
+}
+
+.gearCategory.open .categoryToggle{
+  transform: rotate(180deg);
+}
+
+.categoryContent{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 400ms ease-out;
+}
+
+.gearCategory.open .categoryContent{
+  max-height: 5000px;
+}
+
+/* GEAR GRID (3 columns) */
+.gearGrid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.gearItem{
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(233,251,255,.2);
+  padding: 10px;
+  cursor: pointer;
+  transition: all 150ms;
+  position: relative;
+}
+
+.gearItem:hover{
+  border-color: rgba(233,251,255,.5);
+  background: rgba(233,251,255,.05);
+  transform: translateY(-2px);
+}
+
+.gearItem.expanded{
+  grid-column: span 3;
+  cursor: default;
+  border-color: rgba(233,251,255,.6);
+  background: rgba(0,0,0,.6);
+}
+
+.gearThumb{
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  image-rendering: auto;
+  margin-bottom: 8px;
+  border: 1px solid rgba(233,251,255,.2);
+}
+
+.gearName{
+  font-size: clamp(11px, 1.3vw, 13px);
+  font-weight: bold;
+  color: var(--osd);
+  margin-bottom: 6px;
+  letter-spacing: 0.8px;
+}
+
+.gearStatus{
+  display: inline-block;
+  padding: 3px 6px;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  border-radius: 2px;
+  margin-top: 6px;
+}
+
+.gearStatus.available{
+  background: rgba(0,255,100,.2);
+  color: #00ff64;
+  border: 1px solid #00ff64;
+}
+
+.gearStatus.rented{
+  background: rgba(255,200,0,.2);
+  color: #ffc800;
+  border: 1px solid #ffc800;
+}
+
+.gearStatus.maintenance{
+  background: rgba(255,50,50,.2);
+  color: #ff3232;
+  border: 1px solid #ff3232;
+}
+
+/* EXPANDED ITEM DETAILS */
+.gearDetails{
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(233,251,255,.2);
+}
+
+.gearItem.expanded .gearDetails{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.gearPhotos{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gearPhotoMain{
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border: 1px solid rgba(233,251,255,.3);
+}
+
+.gearPhotoThumbs{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.gearPhotoThumb{
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid rgba(233,251,255,.2);
+  transition: all 150ms;
+  opacity: 0.6;
+}
+
+.gearPhotoThumb:hover,
+.gearPhotoThumb.active{
+  border-color: rgba(233,251,255,.6);
+  opacity: 1;
+}
+
+.gearInfo{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gearDescription{
+  font-size: clamp(11px, 1.3vw, 13px);
+  line-height: 1.5;
+  color: rgba(233,251,255,.85);
+}
+
+.gearPricing{
+  padding: 10px;
+  background: rgba(233,251,255,.05);
+  border: 1px solid rgba(233,251,255,.2);
+}
+
+.gearPricing div{
+  margin-bottom: 6px;
+  font-size: clamp(11px, 1.3vw, 13px);
+  color: var(--osd);
+}
+
+.gearPricing div:last-child{
+  margin-bottom: 0;
+}
+
+.gearRentalForm{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gearRentalForm label{
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: rgba(233,251,255,.8);
+  margin-bottom: 4px;
+}
+
+.gearRentalForm input{
+  width: 100%;
+  padding: 8px;
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(233,251,255,.3);
+  color: var(--osd);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.gearRentalForm input:focus{
+  outline: none;
+  border-color: rgba(233,251,255,.6);
+}
+
+.gearAddCart{
+  padding: 10px 18px;
+  background: rgba(233,251,255,.1);
+  border: 1px solid rgba(233,251,255,.4);
+  color: var(--osd);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.gearAddCart:hover{
+  background: rgba(233,251,255,.2);
+  border-color: rgba(233,251,255,.6);
+}
+
+.gearAddCart:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gearCloseDetail{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--osd);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 150ms;
+}
+
+.gearCloseDetail:hover{
+  opacity: 1;
+}
+
+/* RENTAL CART */
+.rentalCart{
+  margin-top: 25px;
+  padding: 20px;
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(233,251,255,.3);
+}
+
+.cartHeader{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(233,251,255,.2);
+}
+
+.cartTitle{
+  font-size: clamp(14px, 1.8vw, 16px);
+  font-weight: bold;
+  color: var(--osd);
+  letter-spacing: 1.5px;
+}
+
+.cartClear{
+  padding: 6px 12px;
+  background: rgba(255,50,50,.2);
+  border: 1px solid #ff3232;
+  color: #ff3232;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.cartClear:hover{
+  background: rgba(255,50,50,.3);
+}
+
+.cartEmpty{
+  text-align: center;
+  padding: 25px;
+  color: rgba(233,251,255,.5);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+}
+
+.cartItem{
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  background: rgba(233,251,255,.03);
+  border: 1px solid rgba(233,251,255,.15);
+  margin-bottom: 8px;
+}
+
+.cartItemName{
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--osd);
+  letter-spacing: 0.8px;
+}
+
+.cartItemDays{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: rgba(233,251,255,.8);
+}
+
+.cartItemPrice{
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--osd);
+  letter-spacing: 1px;
+}
+
+.cartItemRemove{
+  padding: 5px 10px;
+  background: rgba(255,50,50,.1);
+  border: 1px solid rgba(255,50,50,.5);
+  color: #ff6464;
+  font-family: inherit;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.cartItemRemove:hover{
+  background: rgba(255,50,50,.2);
+  border-color: #ff3232;
+}
+
+.cartFooter{
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(233,251,255,.2);
+}
+
+.cartTotal{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: clamp(13px, 1.8vw, 16px);
+  font-weight: bold;
+  color: var(--osd);
+  letter-spacing: 1.5px;
+}
+
+.cartCheckout{
+  width: 100%;
+  padding: 10px;
+  background: rgba(233,251,255,.15);
+  border: 1px solid rgba(233,251,255,.5);
+  color: var(--osd);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.cartCheckout:hover{
+  background: rgba(233,251,255,.25);
+  border-color: rgba(233,251,255,.7);
+}
+
+/* CHECKOUT FORM */
+.checkoutForm{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgba(0,0,0,.95);
+  border: 2px solid rgba(233,251,255,.5);
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 0 40px rgba(233,251,255,.3);
+}
+
+.checkoutForm::before{
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.8);
+  z-index: -1;
+}
+
+.formHeader{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(233,251,255,.3);
+}
+
+.formTitle{
+  font-size: clamp(16px, 2.5vw, 18px);
+  font-weight: bold;
+  color: var(--osd);
+  letter-spacing: 1.5px;
+}
+
+.formClose{
+  background: none;
+  border: none;
+  color: var(--osd);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 150ms;
+}
+
+.formClose:hover{
+  opacity: 1;
+}
+
+.formGroup{
+  margin-bottom: 12px;
+}
+
+.formGroup label{
+  display: block;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  color: var(--osd);
+  margin-bottom: 6px;
+}
+
+.formGroup input,
+.formGroup textarea{
+  width: 100%;
+  padding: 8px;
+  background: rgba(0,0,0,.6);
+  border: 1px solid rgba(233,251,255,.3);
+  color: var(--osd);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus{
+  outline: none;
+  border-color: rgba(233,251,255,.6);
+}
+
+.formGroup textarea{
+  resize: vertical;
+  min-height: 60px;
+}
+
+.formSummary{
+  margin: 15px 0;
+  padding: 12px;
+  background: rgba(233,251,255,.05);
+  border: 1px solid rgba(233,251,255,.2);
+}
+
+.formSummaryTitle{
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.8px;
+  color: var(--osd);
+  margin-bottom: 10px;
+}
+
+.formSummaryItems{
+  font-size: 10px;
+  line-height: 1.6;
+  color: rgba(233,251,255,.85);
+}
+
+.formSubmit{
+  width: 100%;
+  padding: 10px;
+  background: rgba(233,251,255,.15);
+  border: 1px solid rgba(233,251,255,.5);
+  color: var(--osd);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.formSubmit:hover{
+  background: rgba(233,251,255,.25);
+  border-color: rgba(233,251,255,.7);
+}
+
+/* RESPONSIVE */
+@media (max-width: 980px){
+  .gearGrid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .gearItem.expanded{
+    grid-column: span 2;
+  }
+  
+  .gearItem.expanded .gearDetails{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px){
+  .gearGrid{
+    grid-template-columns: 1fr;
+  }
+  
+  .gearItem.expanded{
+    grid-column: span 1;
+  }
+  
+  .cartItem{
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .checkoutForm{
+    width: 95%;
+    padding: 20px;
+  }
+}
+
+/* =========================================================
+   MOBILE-FRIENDLY ENHANCEMENTS (Desktop-safe)
+   ========================================================= */
+
+/* Prevent iOS zoom on form inputs (16px minimum) */
+@media (max-width: 720px){
+  input,
+  textarea,
+  select{
+    font-size: 16px !important;
+  }
+  
+  /* Better touch feedback for buttons */
+  button:active,
+  .tile:active,
+  .subBtn:active,
+  .projectCard:active{
+    transform: scale(0.98);
+    transition: transform 50ms;
+  }
+  
+  /* Improve tap target sizes for small interactive elements */
+  .cartItemRemove,
+  .formClose{
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Prevent text selection on UI elements (all devices) */
+.tile,
+.subBtn,
+button,
+.projectCard,
+.badge{
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(233,251,255,0.1);
+}
+
+/* Smooth scrolling for iOS */
+.projectsGrid,
+.gearGrid,
+.panelBody{
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safe area insets for notched devices (iPhone X+) */
+@supports (padding: max(0px)){
+  body{
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  
+  .wrap{
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+}
+
+/* Better focus states for keyboard navigation (accessibility) */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+  outline: 2px solid rgba(233,251,255,0.6);
+  outline-offset: 2px;
+}
+
+/* Improve touch scrolling performance */
+*{
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent pull-to-refresh on mobile browsers */
+body{
+  overscroll-behavior-y: contain;
+}
+
+/* Better tap timing for touch devices */
+a,
+button,
+.tile,
+.subBtn,
+.projectCard{
+  touch-action: manipulation; /* Prevents double-tap zoom delay */
 }

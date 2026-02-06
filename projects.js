@@ -146,60 +146,6 @@ const PROJECTS = [
     ],
   },
   {
-    slug: "project-04",
-    category: "films",
-    title: "Ultra Violent Light",
-    year: "2023",
-    type: "Short Film",
-    involvement: ["Cracked Concrete Original"],
-    status: "RELEASED",
-    logline:
-      "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
-    poster: "assets/projects/ultra-violent-light/poster.jpg",
-    stills: [
-    ],
-      credits: [
-        ["Director", "Ben Mouland"],
-       ["Cinematographer", "Arsh Buttan"],
-       ["PRODUCER", "Ngaire Le"],
-       ["Editor", "Chris Berry"],
-       ["Composer", "Trevor-J"],
-    ],
-    links: [
-      ["WATCH", "TBD"],
-      ["TRAILER", "TBD"],
-      ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
-      ["LETTERBOXD", "https://boxd.it/JeVk"],
-    ],
-  },
-  {
-    slug: "project-04",
-    category: "films",
-    title: "Ultra Violent Light",
-    year: "2023",
-    type: "Short Film",
-    involvement: ["Cracked Concrete Original"],
-    status: "RELEASED",
-    logline:
-      "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
-    poster: "assets/projects/ultra-violent-light/poster.jpg",
-    stills: [
-    ],
-      credits: [
-        ["Director", "Ben Mouland"],
-       ["Cinematographer", "Arsh Buttan"],
-       ["PRODUCER", "Ngaire Le"],
-       ["Editor", "Chris Berry"],
-       ["Composer", "Trevor-J"],
-    ],
-    links: [
-      ["WATCH", "TBD"],
-      ["TRAILER", "TBD"],
-      ["IMDB", "https://www.imdb.com/title/tt35682746/?ref_=ext_shr_lnk"],
-      ["LETTERBOXD", "https://boxd.it/JeVk"],
-    ],
-  },
-  {
     slug: "project-05",
     category: "films",
     title: "Sunny Chibas: The Shit Hot Eatery",

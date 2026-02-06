@@ -23,10 +23,10 @@ const ICONS = {
     "0100111111110010", "0111111111111110", "0000000000000000", "0000000000000000",
   ],
   people: [
-    "0000000000000000", "0000000000000000", "0000000000000000", "0000011111000000",
-    "0000110001100000", "0000110001100000", "0000011111000000", "0000000110000000",
-    "0000111111110000", "0001100000011000", "0001100000011000", "0001100000011000",
-    "0000111111110000", "0000000000000000", "0000000000000000", "0000000000000000",
+    "0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000",
+    "0000011111000000", "0000110001100000","0000110001100000", "0000011111000000", 
+    "0000000110000000", "0000111111110000", "0001100000011000", "0001100000011000", 
+    "0001100000011000", "0000111111110000", "0000000000000000", "0000000000000000",
   ],
   connect: [
     "0000000000000000", "0000000000000000", "0000000000000111", "0000000000011100",
@@ -66,6 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const items = Array.from(document.querySelectorAll(".item"));
   const grid = document.getElementById("grid");
   if (!items.length || !grid) return;
+
+  // Retro boot animation for tiles
+  items.forEach((tile, index) => {
+    setTimeout(() => {
+      tile.classList.add("booted");
+    }, index * 120);
+  });
 
   // Safety: if a tile has a branch attached, never navigate away on click.
   items.forEach((a) => {
@@ -694,6 +701,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const CONNECT_Y = 2;
       const startY = Math.round(tRect.bottom - linesRect.top + CONNECT_Y);
 
+      // Detect mobile for layout adjustments
+      const isMobile = window.innerWidth <= 720;
+
       // Sub button centers (bar + drops)
       const centers = this.subBtns.map(btn => {
         const r = btn.getBoundingClientRect();
@@ -709,10 +719,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const pplRect = tilePeople ? tilePeople.getBoundingClientRect() : null;
       const conRect = tileConnect ? tileConnect.getBoundingClientRect() : null;
 
+      // On mobile, need more clearance to avoid clipping icons
+      const clearance = isMobile ? 100 : 22;
+
       let elbowY = startY + 56; // fallback
       if (pplRect && conRect) {
         const lowerRowTop = Math.min(pplRect.top, conRect.top);
-        elbowY = Math.round(lowerRowTop - linesRect.top - 22); // clearance above labels
+        elbowY = Math.round(lowerRowTop - linesRect.top - clearance); // clearance above labels
         elbowY = Math.max(elbowY, startY + 44);
       }
 
@@ -738,7 +751,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const gridR = gridEl.getBoundingClientRect();
 
       // preferredX in branchLines-local coords
-      const preferredX = (gridR.left + gridR.width / 2) - linesRect.left;
+      let preferredX = (gridR.left + gridR.width / 2) - linesRect.left;
+
+      // On mobile/narrow screens, align routing column with button centers instead of grid center
+      if (isMobile && centers.length > 0) {
+        // Use the average of button centers for better alignment on mobile
+        preferredX = Math.round(centers.reduce((sum, x) => sum + x, 0) / centers.length);
+      }
 
       // Get obstacles (other tiles) BEFORE any safe-bar or safe-spine calls
       const obstacles = getTileObstacles(this.linesEl, this.tile, 12);
@@ -760,7 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Nudge spine in chunky steps to keep OSD feel
       const routeStep = 10;
 
-      const routeX = findSafeSpineX(preferredX, yTop, yBot, obstacles, spineMinX, spineMaxX, routeStep);
+      const routeX = isMobile ? preferredX : findSafeSpineX(preferredX, yTop, yBot, obstacles, spineMinX, spineMaxX, routeStep);
       // --- STEP 4: Nudge elbowY so the knee doesn't cross tiles/labels ---
       const elbowStep = 10;
 
@@ -840,7 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             pathData.forEach((data, i) => {
               const t = elapsed - (i * STAGGER);
-              const progress = quantize(Math.max(0, Math.min(1, t / DURATION)), 30);
+              const progress = quantize(Math.max(0, Math.min(1, t / DURATION)), 12);
               const offset = data.length * (1 - progress);
               data.path.setAttribute("stroke-dashoffset", offset);
             });
@@ -986,6 +1005,415 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  // =========================================================
+  // GEAR RENTAL SYSTEM
+  // =========================================================
+
+  const gearRentalEl = document.getElementById("gearRental");
+  const servicesDefaultEl = document.getElementById("servicesDefault");
+  const gearCategoriesEl = document.getElementById("gearCategories");
+  const cartItemsEl = document.getElementById("cartItems");
+  const cartEmptyEl = document.getElementById("cartEmpty");
+  const cartFooterEl = document.getElementById("cartFooter");
+  const cartTotalEl = document.getElementById("cartTotalAmount");
+  const cartClearBtn = document.getElementById("cartClear");
+  const cartCheckoutBtn = document.getElementById("cartCheckout");
+  const checkoutFormEl = document.getElementById("checkoutForm");
+  const formCloseBtn = document.getElementById("formClose");
+  const quoteFormEl = document.getElementById("quoteForm");
+  const formSummaryItemsEl = document.getElementById("formSummaryItems");
+
+  // Cart state
+  let cart = [];
+  let expandedItemId = null;
+
+  // Load cart from localStorage
+  function loadCart() {
+    try {
+      const saved = localStorage.getItem("gearCart");
+      if (saved) cart = JSON.parse(saved);
+    } catch (e) {
+      cart = [];
+    }
+  }
+
+  // Save cart to localStorage
+  function saveCart() {
+    try {
+      localStorage.setItem("gearCart", JSON.stringify(cart));
+    } catch (e) {
+      console.error("Failed to save cart");
+    }
+  }
+
+  // Initialize gear rental system
+  function initGearRental() {
+    if (!gearRentalEl || !GEAR_DATA) return;
+
+    loadCart();
+    renderCategories();
+    renderCart();
+
+    // Listen for services subsection changes
+    const servicesBranch = branches.find(b => b.id === "services");
+    if (servicesBranch && servicesBranch.subRow) {
+      servicesBranch.subRow.addEventListener("click", (e) => {
+        const btn = e.target.closest(".subBtn");
+        if (!btn) return;
+        const sub = btn.dataset.sub;
+
+        if (sub === "gear") {
+          servicesDefaultEl.style.display = "none";
+          gearRentalEl.style.display = "block";
+        } else {
+          servicesDefaultEl.style.display = "block";
+          gearRentalEl.style.display = "none";
+        }
+      });
+    }
+
+    // Cart event listeners
+    if (cartClearBtn) {
+      cartClearBtn.addEventListener("click", () => {
+        if (confirm("Clear all items from cart?")) {
+          cart = [];
+          saveCart();
+          renderCart();
+        }
+      });
+    }
+
+    if (cartCheckoutBtn) {
+      cartCheckoutBtn.addEventListener("click", () => {
+        showCheckoutForm();
+      });
+    }
+
+    if (formCloseBtn) {
+      formCloseBtn.addEventListener("click", () => {
+        checkoutFormEl.style.display = "none";
+      });
+    }
+
+    if (quoteFormEl) {
+      quoteFormEl.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleQuoteSubmit();
+      });
+    }
+  }
+
+  // Render all categories
+  function renderCategories() {
+    if (!gearCategoriesEl) return;
+
+    gearCategoriesEl.innerHTML = "";
+
+    Object.keys(GEAR_DATA).forEach(catKey => {
+      const category = GEAR_DATA[catKey];
+
+      const catDiv = document.createElement("div");
+      catDiv.className = "gearCategory";
+      catDiv.dataset.category = catKey;
+
+      const headerDiv = document.createElement("div");
+      headerDiv.className = "categoryHeader";
+      headerDiv.innerHTML = `
+        <div class="categoryTitle">${category.title}</div>
+        <div class="categoryToggle">▼</div>
+      `;
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "categoryContent";
+
+      const gridDiv = document.createElement("div");
+      gridDiv.className = "gearGrid";
+
+      category.items.forEach(item => {
+        const itemDiv = renderGearItem(item);
+        gridDiv.appendChild(itemDiv);
+      });
+
+      contentDiv.appendChild(gridDiv);
+      catDiv.appendChild(headerDiv);
+      catDiv.appendChild(contentDiv);
+      gearCategoriesEl.appendChild(catDiv);
+
+      // Toggle category
+      headerDiv.addEventListener("click", () => {
+        const wasOpen = catDiv.classList.contains("open");
+
+        // Close all categories
+        document.querySelectorAll(".gearCategory").forEach(c => c.classList.remove("open"));
+
+        // Open this one if it wasn't already open
+        if (!wasOpen) {
+          catDiv.classList.add("open");
+        }
+      });
+    });
+  }
+
+  // Render individual gear item
+  function renderGearItem(item) {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "gearItem";
+    itemDiv.dataset.id = item.id;
+
+    // Compact view
+    itemDiv.innerHTML = `
+      <img src="${item.thumbnail}" alt="${item.name}" class="gearThumb" />
+      <div class="gearName">${item.name}</div>
+      <div class="gearStatus ${item.status}">${item.status.toUpperCase()}</div>
+
+      <div class="gearDetails">
+        <div class="gearPhotos">
+          <img src="${item.photos[0]}" alt="${item.name}" class="gearPhotoMain" id="photo-main-${item.id}" />
+          <div class="gearPhotoThumbs">
+            ${item.photos.map((photo, idx) => `
+              <img src="${photo}" alt="${item.name} ${idx + 1}" class="gearPhotoThumb ${idx === 0 ? 'active' : ''}" data-photo-idx="${idx}" />
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="gearInfo">
+          <div class="gearDescription">${item.description}</div>
+
+          <div class="gearPricing">
+            <div><strong>DAY RATE:</strong> $${item.dayRate}</div>
+            <div><strong>WEEK RATE:</strong> $${item.weekRate}</div>
+          </div>
+
+          <div class="gearRentalForm">
+            <label for="days-${item.id}">RENTAL DURATION (DAYS)</label>
+            <input type="number" id="days-${item.id}" min="1" value="1" />
+            <button class="gearAddCart" data-id="${item.id}" ${item.status !== 'available' ? 'disabled' : ''}>
+              ${item.status === 'available' ? 'ADD TO CART' : item.status.toUpperCase()}
+            </button>
+          </div>
+        </div>
+
+        <button class="gearCloseDetail" data-id="${item.id}">✕</button>
+      </div>
+    `;
+
+    // Click to expand (only on compact part)
+    itemDiv.addEventListener("click", (e) => {
+      if (itemDiv.classList.contains("expanded")) return;
+      if (e.target.closest(".gearDetails")) return;
+      expandItem(item.id);
+    });
+
+    // Photo carousel
+    itemDiv.querySelectorAll(".gearPhotoThumb").forEach(thumb => {
+      thumb.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const idx = parseInt(thumb.dataset.photoIdx);
+        const mainImg = itemDiv.querySelector(".gearPhotoMain");
+        mainImg.src = item.photos[idx];
+
+        itemDiv.querySelectorAll(".gearPhotoThumb").forEach(t => t.classList.remove("active"));
+        thumb.classList.add("active");
+      });
+    });
+
+    // Close button
+    const closeBtn = itemDiv.querySelector(".gearCloseDetail");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        collapseItem();
+      });
+    }
+
+    // Add to cart button
+    const addBtn = itemDiv.querySelector(".gearAddCart");
+    if (addBtn) {
+      addBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const daysInput = itemDiv.querySelector(`#days-${item.id}`);
+        const days = parseInt(daysInput.value) || 1;
+        addToCart(item, days);
+      });
+    }
+
+    return itemDiv;
+  }
+
+  // Expand item details
+  function expandItem(itemId) {
+    // Collapse any currently expanded item
+    collapseItem();
+
+    const itemDiv = document.querySelector(`[data-id="${itemId}"]`);
+    if (itemDiv && itemDiv.classList.contains("gearItem")) {
+      itemDiv.classList.add("expanded");
+      expandedItemId = itemId;
+
+      // Scroll into view
+      setTimeout(() => {
+        itemDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 100);
+    }
+  }
+
+  // Collapse expanded item
+  function collapseItem() {
+    if (expandedItemId) {
+      const itemDiv = document.querySelector(`[data-id="${expandedItemId}"]`);
+      if (itemDiv) itemDiv.classList.remove("expanded");
+      expandedItemId = null;
+    }
+  }
+
+  // Add item to cart
+  function addToCart(item, days) {
+    // Check if item already in cart
+    const existing = cart.find(c => c.id === item.id);
+
+    if (existing) {
+      existing.days = days;
+      existing.price = calculatePrice(item, days);
+    } else {
+      cart.push({
+        id: item.id,
+        name: item.name,
+        days: days,
+        dayRate: item.dayRate,
+        weekRate: item.weekRate,
+        price: calculatePrice(item, days)
+      });
+    }
+
+    saveCart();
+    renderCart();
+
+    // Show feedback
+    alert(`${item.name} added to cart for ${days} day(s)`);
+  }
+
+  // Calculate price based on days
+  function calculatePrice(item, days) {
+    if (days >= 7) {
+      const weeks = Math.floor(days / 7);
+      const remainingDays = days % 7;
+      return (weeks * item.weekRate) + (remainingDays * item.dayRate);
+    } else {
+      return days * item.dayRate;
+    }
+  }
+
+  // Remove item from cart
+  function removeFromCart(itemId) {
+    cart = cart.filter(c => c.id !== itemId);
+    saveCart();
+    renderCart();
+  }
+
+  // Render cart
+  function renderCart() {
+    if (!cartItemsEl) return;
+
+    if (cart.length === 0) {
+      cartEmptyEl.style.display = "block";
+      cartItemsEl.innerHTML = "";
+      cartFooterEl.style.display = "none";
+      return;
+    }
+
+    cartEmptyEl.style.display = "none";
+    cartFooterEl.style.display = "block";
+
+    cartItemsEl.innerHTML = cart.map(item => `
+      <div class="cartItem">
+        <div class="cartItemName">${item.name}</div>
+        <div class="cartItemDays">${item.days} DAY${item.days > 1 ? 'S' : ''}</div>
+        <div class="cartItemPrice">$${item.price}</div>
+        <button class="cartItemRemove" data-id="${item.id}">REMOVE</button>
+      </div>
+    `).join('');
+
+    // Calculate total
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    cartTotalEl.textContent = `$${total}`;
+
+    // Add remove listeners
+    cartItemsEl.querySelectorAll(".cartItemRemove").forEach(btn => {
+      btn.addEventListener("click", () => {
+        removeFromCart(btn.dataset.id);
+      });
+    });
+  }
+
+  // Show checkout form
+  function showCheckoutForm() {
+    if (!checkoutFormEl || cart.length === 0) return;
+
+    // Populate summary
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    formSummaryItemsEl.innerHTML = cart.map(item => `
+      <div><strong>${item.name}</strong> - ${item.days} day(s) - $${item.price}</div>
+    `).join('') + `<div style="margin-top: 15px; font-weight: bold; font-size: 16px;">TOTAL: $${total}</div>`;
+
+    checkoutFormEl.style.display = "block";
+  }
+
+  // Handle quote form submission
+  function handleQuoteSubmit() {
+    const formData = new FormData(quoteFormEl);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const phone = formData.get("phone");
+    const project = formData.get("project");
+
+    // Build quote summary
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const cartSummary = cart.map(item =>
+      `${item.name} - ${item.days} day(s) - $${item.price}`
+    ).join('\n');
+
+    const message = `
+GEAR RENTAL QUOTE REQUEST
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone || 'N/A'}
+
+Project Details:
+${project || 'N/A'}
+
+Rental Items:
+${cartSummary}
+
+ESTIMATED TOTAL: $${total}
+    `.trim();
+
+    // In a real implementation, you'd send this to a server
+    // For now, we'll create a mailto link
+    const subject = encodeURIComponent("Gear Rental Quote Request");
+    const body = encodeURIComponent(message);
+    const mailtoLink = `mailto:info@crackedconcrete.com?subject=${subject}&body=${body}`;
+
+    window.location.href = mailtoLink;
+
+    // Close form and clear cart
+    checkoutFormEl.style.display = "none";
+    cart = [];
+    saveCart();
+    renderCart();
+
+    alert("Quote request prepared! Your email client should open. If not, please copy the cart details and email us directly.");
+  }
+
+  // Initialize gear rental if available
+  if (typeof GEAR_DATA !== "undefined") {
+    initGearRental();
+  }
+
+  // =========================================================
+  // END GEAR RENTAL SYSTEM
+  // =========================================================
 
   setSelected(0);
   hardResetXScroll();
