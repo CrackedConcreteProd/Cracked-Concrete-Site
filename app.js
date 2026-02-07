@@ -133,6 +133,57 @@ document.addEventListener("DOMContentLoaded", () => {
     return { name: "ITEM", img: "", links: [] };
   }
 
+  // =========================================================
+  // TEAM MEMBER CARDS
+  // =========================================================
+  let activeTeam = null;
+
+  function mountTeam(loglineEl, members) {
+    if (!loglineEl) return null;
+
+    const data = Array.isArray(members) ? members : [];
+    if (!data.length) {
+      loglineEl.textContent = "";
+      return null;
+    }
+
+    const cards = data.map(m => {
+      const linksHtml = (m.links || [])
+        .filter(l => l && l.url)
+        .map(l => `<a class="mLink" href="${l.url}" target="_blank" rel="noopener">${l.label || "LINK"}</a>`)
+        .join("");
+
+      return `
+        <div class="teamCard">
+          <div class="teamHeader">
+            <div class="teamPhoto">
+              ${m.img ? `<img src="${m.img}" alt="${m.name}" loading="lazy" />` : `<span class="teamPhotoPlaceholder">IMG</span>`}
+            </div>
+            <div class="teamMeta">
+              <div class="teamName">${m.name || "MEMBER"}</div>
+              <div class="teamRole">${m.role || ""}</div>
+              ${linksHtml ? `<div class="teamLinks">${linksHtml}</div>` : ""}
+            </div>
+          </div>
+          ${m.bio ? `<div class="teamBio">${m.bio}</div>` : ""}
+        </div>
+      `;
+    }).join("");
+
+    loglineEl.innerHTML = `<div class="teamGrid">${cards}</div>`;
+
+    // Add class to panel to hide clutter
+    const panel = loglineEl.closest(".projectPanel");
+    if (panel) panel.classList.add("is-team");
+
+    return {
+      destroy() {
+        loglineEl.innerHTML = "";
+        if (panel) panel.classList.remove("is-team");
+      }
+    };
+  }
+
   function mountMarquee(loglineEl, items, opts = {}) {
     if (!loglineEl) return null;
 
@@ -145,7 +196,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
 
+    const desc = opts.description || "";
+
     loglineEl.innerHTML = `
+      ${desc ? `<div class="marqueeDesc">${desc}</div>` : ""}
       <div class="marquee" tabindex="0" aria-label="${title}">
         <div class="marqueeViewport">
           <div class="marqueeTrack"></div>
@@ -681,9 +735,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (this.ui.logline) {
           if (activeMarquee) { activeMarquee.destroy(); activeMarquee = null; }
+          if (activeTeam) { activeTeam.destroy(); activeTeam = null; }
 
-          if (Array.isArray(c.marquee) && c.marquee.length) {
-            activeMarquee = mountMarquee(this.ui.logline, c.marquee, { title: c.title || "MARQUEE" });
+          if (Array.isArray(c.teamMembers) && c.teamMembers.length) {
+            activeTeam = mountTeam(this.ui.logline, c.teamMembers);
+          } else if (Array.isArray(c.marquee) && c.marquee.length) {
+            activeMarquee = mountMarquee(this.ui.logline, c.marquee, { title: c.title || "MARQUEE", description: c.marqueeDesc || "" });
           } else {
             this.ui.logline.textContent = c.logline || "";
           }
@@ -944,20 +1001,32 @@ document.addEventListener("DOMContentLoaded", () => {
           title: "TEAM",
           cover: "CORE CREW",
           badges: ["DIRECTOR", "DP", "PRODUCER"],
-          logline: "PLACEHOLDER: YOUR CORE TEAM LIST + ROLES WILL LIVE HERE."
+          teamMembers: [
+            {
+              name: "BEN MOULAND",
+              role: "CEO / DIRECTOR / DP / EDITOR",
+              img: "assets/people/ben.jpg",
+              bio: "Ben Mouland is a Vancouver-based filmmaker and visual artist, born in New York City and raised in Montreal, whose practice spans tender, emotionally driven directing and more outlandish experiments with analog filmmaking.",
+              links: [
+                { label: "IG", url: "https://www.instagram.com/benmouland/" },
+                { label: "LINKEDIN", url: "www.linkedin.com/in/ben-mouland-720082234" },
+              ]
+            },
+          ]
         },
         collabs: {
           meta: "COLLABS",
           title: "COLLABORATORS",
           cover: "NETWORK",
           badges: ["MUSIC", "SPORT", "ARTS"],
+          marqueeDesc: "TRUSTED ONGOING WORKING RELATIONSHIPS",
           marquee: [
-            { name: "MAFUBA", img: "assets/people/mafuba.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
-            { name: "VANCOUVER BANDITS", img: "assets/people/bandits.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
-            { name: "FIRST FLOOR COLLECTIVE", img: "assets/people/firstfloor.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
-            { name: "JAMIE MITRI", img: "assets/people/jamie.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
-            { name: "SATCHEL RAMRAJ", img: "assets/people/satchel.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
-            { name: "JOSHUA GARRIDO", img: "assets/people/joshua.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
+            { name: "MAFUBA", img: "assets/people/mafuba.jpg", links: [{ label: "IG", url: "https://www.instagram.com/mafuba.music?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Mafubamusic" }] },
+            { name: "TREVOR-J", img: "assets/people/trevorj.jpg", links: [{ label: "IG", url: "https://www.instagram.com/i.mtrevorj?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }] },
+            { name: "FIRST FLOOR COLLECTIVE", img: "assets/people/firstfloor.jpg", links: [{ label: "IG", url: "https://www.instagram.com/firstfloorcollective?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@firstfloorcollective" }] },
+            { name: "GREEN THUMBS", img: "assets/people/greenthumbs.jpg", links: [{ label: "IG", url: "https://www.instagram.com/greenthumbscanada?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@QuarterBrainProductions" }] },
+            { name: "FORM", img: "assets/people/form.jpg", links: [{ label: "IG", url: "https://www.instagram.com/formvancouver?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.f-o-r-m.ca/" }] },
+            { name: "604 RECORDS", img: "assets/people/604.jpg", links: [{ label: "IG", url: "https://www.instagram.com/604recordsinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.604records.com/" }] },
           ]
         },
         clients: {
@@ -965,6 +1034,7 @@ document.addEventListener("DOMContentLoaded", () => {
           title: "CLIENTS",
           cover: "BRANDS / ARTISTS",
           badges: ["RETAINERS", "PROJECT", "LOCAL"],
+          marqueeDesc: "CLIENTS SPANNING DIFFERENT MEDIUMS AND PRACTICES",
           marquee: [
             { name: "PLACEHOLDER CLIENT 01", img: "assets/clients/client-01.jpg", links: [{ label: "IG", url: "https://instagram.com/" }, { label: "YT", url: "https://youtube.com/" }] },
             { name: "PLACEHOLDER CLIENT 02", img: "assets/clients/client-02.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
@@ -981,11 +1051,10 @@ document.addEventListener("DOMContentLoaded", () => {
       subRowId: "connectSubRow",
       defaultKey: "email",
       barFrom: "right",
-      ui: { meta: "conMeta", title: "conTitle", cover: "conCoverLabel", logline: "conLogline", badges: "conBadges" },
       content: {
-        email: { meta: "EMAIL", title: "EMAIL", cover: "DIRECT", badges: ["FASTEST", "INQUIRIES"], logline: "PLACEHOLDER: YOUR EMAIL + A SIMPLE CONTACT CTA." },
-        ig: { meta: "INSTAGRAM", title: "INSTAGRAM", cover: "DM", badges: ["SOCIAL", "UPDATES"], logline: "PLACEHOLDER: YOUR IG HANDLE + LINK/CTA." },
-        book: { meta: "BOOKING", title: "BOOKING", cover: "AVAILABILITY", badges: ["CALENDAR", "FORM"], logline: "PLACEHOLDER: BOOKING FLOW (FORM / CALENDLY / EMAIL TEMPLATE)." }
+        email: {},
+        ig: {},
+        book: {}
       }
     }),
   ].filter(b => b && b.valid);
@@ -1087,30 +1156,53 @@ document.addEventListener("DOMContentLoaded", () => {
     const productionServicesEl = document.getElementById("productionServices");
     const tapeTransferEl = document.getElementById("tapeTransfer");
 
-    if (servicesBranch && servicesBranch.subRow) {
-      servicesBranch.subRow.addEventListener("click", (e) => {
-        const btn = e.target.closest(".subBtn");
-        if (!btn) return;
-        const sub = btn.dataset.sub;
+    function showServiceSection(sub) {
+      // Hide all service sections first
+      if (servicesDefaultEl) servicesDefaultEl.style.display = "none";
+      if (gearRentalEl) gearRentalEl.style.display = "none";
+      if (productionServicesEl) productionServicesEl.style.display = "none";
+      if (tapeTransferEl) tapeTransferEl.style.display = "none";
 
-        // Hide all service sections first
-        if (servicesDefaultEl) servicesDefaultEl.style.display = "none";
-        if (gearRentalEl) gearRentalEl.style.display = "none";
-        if (productionServicesEl) productionServicesEl.style.display = "none";
-        if (tapeTransferEl) tapeTransferEl.style.display = "none";
-
-        // Show the selected section
-        if (sub === "video" && productionServicesEl) {
-          productionServicesEl.style.display = "block";
-        } else if (sub === "gear" && gearRentalEl) {
-          gearRentalEl.style.display = "block";
-        } else if (sub === "tape" && tapeTransferEl) {
-          tapeTransferEl.style.display = "block";
-        } else if (servicesDefaultEl) {
-          servicesDefaultEl.style.display = "block";
-        }
-      });
+      // Show the selected section
+      if (sub === "video" && productionServicesEl) {
+        productionServicesEl.style.display = "block";
+      } else if (sub === "gear" && gearRentalEl) {
+        gearRentalEl.style.display = "block";
+      } else if (sub === "tape" && tapeTransferEl) {
+        tapeTransferEl.style.display = "block";
+      } else if (servicesDefaultEl) {
+        servicesDefaultEl.style.display = "block";
+      }
     }
+
+    // Listen for branch:subchange (fires on initial open AND on click)
+    document.addEventListener("branch:subchange", (e) => {
+      if (!e.detail) return;
+
+      // Services section toggle
+      if (e.detail.branchId === "services") {
+        showServiceSection(e.detail.key);
+      }
+
+      // Connect section toggle
+      if (e.detail.branchId === "connect") {
+        const connectEmail = document.getElementById("connectEmail");
+        const connectSocials = document.getElementById("connectSocials");
+        const connectBooking = document.getElementById("connectBooking");
+
+        if (connectEmail) connectEmail.style.display = "none";
+        if (connectSocials) connectSocials.style.display = "none";
+        if (connectBooking) connectBooking.style.display = "none";
+
+        if (e.detail.key === "email" && connectEmail) {
+          connectEmail.style.display = "flex";
+        } else if (e.detail.key === "ig" && connectSocials) {
+          connectSocials.style.display = "flex";
+        } else if (e.detail.key === "book" && connectBooking) {
+          connectBooking.style.display = "flex";
+        }
+      }
+    });
 
     // Cart event listeners
     if (cartClearBtn) {

@@ -388,20 +388,20 @@ body::before{
 .panelLinks{
   display:flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin-top: 8px;
 }
 
 .panelLink{
   display:inline-flex;
   align-items:center;
-  padding: 7px 10px;
+  padding: 10px 18px;
   border-radius: 999px;
   border: 1px solid rgba(233,251,255,.18);
   background: rgba(0,0,0,.08);
   color: var(--osd);
   text-decoration: none;
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: .18em;
 }
 
@@ -413,6 +413,133 @@ body::before{
 /* =========================================================
    MARQUEE (horizontal always-moving, controllable)
    ========================================================= */
+
+/* =========================================================
+   TEAM MEMBER CARDS
+   ========================================================= */
+
+.teamGrid{
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.teamCard{
+  background: rgba(0,0,0,.25);
+  border: 1px solid rgba(233,251,255,.2);
+  border-radius: 10px;
+  padding: 22px 24px;
+  transition: all 200ms;
+}
+
+.teamCard:hover{
+  border-color: rgba(233,251,255,.35);
+  box-shadow: 0 0 0 1px rgba(233,251,255,.1), 0 0 20px rgba(26,85,255,.15);
+}
+
+.teamHeader{
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.teamPhoto{
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(233,251,255,.2);
+  background: rgba(0,0,0,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teamPhoto img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.teamPhotoPlaceholder{
+  font-size: 11px;
+  color: rgba(233,251,255,.4);
+  letter-spacing: .2em;
+}
+
+.teamMeta{
+  flex: 1;
+  min-width: 0;
+}
+
+.teamName{
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 700;
+  color: var(--osd);
+  letter-spacing: .12em;
+}
+
+.teamRole{
+  font-size: clamp(11px, 1.3vw, 13px);
+  color: rgba(233,251,255,.5);
+  letter-spacing: .14em;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.teamLinks{
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.teamLinks .mLink{
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+.teamBio{
+  font-size: clamp(12px, 1.4vw, 14px);
+  color: rgba(233,251,255,.75);
+  line-height: 1.7;
+  border-top: 1px solid rgba(233,251,255,.1);
+  padding-top: 14px;
+}
+
+/* Team view: hide redundant panel elements */
+.projectPanel.is-team .panelCover,
+.projectPanel.is-team .panelTitleRow,
+.projectPanel.is-team .projectsFooter{
+  display: none;
+}
+
+@media (max-width: 500px){
+  .teamHeader{
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .teamLinks{
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   MARQUEE DESCRIPTION
+   ========================================================= */
+
+.marqueeDesc{
+  text-align: center;
+  font-size: clamp(12px, 1.5vw, 14px);
+  color: rgba(233,251,255,.6);
+  letter-spacing: .12em;
+  margin-bottom: 12px;
+}
 
 .marquee{
   position: relative;
@@ -1976,6 +2103,114 @@ body{
   .tapeDescription,
   .tapeDisclaimer{
     padding: 14px 16px;
+  }
+}
+
+/* =========================================================
+   CONNECT SECTION
+   ========================================================= */
+
+.connectSection{
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.connectCard{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.connectLabel{
+  font-size: clamp(12px, 1.4vw, 14px);
+  color: rgba(233,251,255,.5);
+  letter-spacing: .18em;
+  font-weight: 600;
+}
+
+.connectValue{
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-weight: 700;
+  color: var(--osd);
+  letter-spacing: .1em;
+  text-decoration: none;
+  transition: opacity 150ms;
+}
+
+a.connectValue:hover{
+  opacity: .75;
+}
+
+.connectCTA{
+  display: inline-block;
+  margin-top: 8px;
+  padding: 14px 32px;
+  border: 1px solid rgba(233,251,255,.3);
+  background: rgba(26,85,255,.15);
+  color: var(--osd);
+  font-family: inherit;
+  font-size: clamp(12px, 1.4vw, 14px);
+  font-weight: 700;
+  letter-spacing: .14em;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.connectCTA:hover{
+  background: rgba(26,85,255,.3);
+  border-color: rgba(233,251,255,.5);
+  box-shadow: 0 0 12px rgba(26,85,255,.3);
+}
+
+.connectCTA:active{
+  transform: translateY(1px);
+}
+
+.connectSocialsGrid{
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.connectSocialsGrid .connectCard{
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.connectSocialsGrid .connectValue{
+  font-size: clamp(14px, 1.8vw, 18px);
+  letter-spacing: .06em;
+  word-break: break-word;
+}
+
+.connectSocialsGrid .connectCTA{
+  padding: 12px 20px;
+  font-size: clamp(11px, 1.2vw, 13px);
+}
+
+@media (max-width: 720px){
+  .connectSection{
+    padding: 24px 12px;
+  }
+
+  .connectSocialsGrid{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .connectSocialsGrid .connectCard{
+    max-width: 100%;
+    width: 100%;
   }
 }
 
