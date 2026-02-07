@@ -210,8 +210,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!paused) {
         mx -= speed * (dt / 16.67);
 
+        // Seamless infinite loop: reset when first set of items scrolls fully off-screen
         const halfWidth = track.scrollWidth / 2;
-        if (halfWidth > 0 && Math.abs(mx) >= halfWidth) mx = 0;
+        if (halfWidth > 0) {
+          // Keep mx within the repeating bounds for smooth endless scrolling
+          while (mx <= -halfWidth) mx += halfWidth;
+          while (mx > 0) mx -= halfWidth;
+        }
 
         apply();
       }
@@ -237,6 +242,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       mx -= d * 0.85;
+
+      // Keep within loop bounds
+      const halfWidth = track.scrollWidth / 2;
+      if (halfWidth > 0) {
+        while (mx <= -halfWidth) mx += halfWidth;
+        while (mx > 0) mx -= halfWidth;
+      }
+
       apply();
     }
 
@@ -249,11 +262,27 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         paused = true;
         mx += 55;
+
+        // Keep within loop bounds
+        const halfWidth = track.scrollWidth / 2;
+        if (halfWidth > 0) {
+          while (mx <= -halfWidth) mx += halfWidth;
+          while (mx > 0) mx -= halfWidth;
+        }
+
         apply();
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
         paused = true;
         mx -= 55;
+
+        // Keep within loop bounds
+        const halfWidth = track.scrollWidth / 2;
+        if (halfWidth > 0) {
+          while (mx <= -halfWidth) mx += halfWidth;
+          while (mx > 0) mx -= halfWidth;
+        }
+
         apply();
       } else if (e.key === " ") {
         e.preventDefault();
@@ -613,21 +642,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       hardResetXScroll();
 
+      // Optimized: Single RAF instead of triple-nested
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.layoutLines();
-          requestAnimationFrame(() => this.layoutLines());
-          if (this.defaultKey) this.setActive(this.defaultKey);
+        this.layoutLines();
+        if (this.defaultKey) this.setActive(this.defaultKey);
 
-          this.branch.classList.remove("is-drawing");
-          void this.branch.offsetHeight;
-          this.branch.classList.add("is-drawing");
+        this.branch.classList.remove("is-drawing");
+        void this.branch.offsetHeight;
+        this.branch.classList.add("is-drawing");
 
-          window.setTimeout(() => {
-            if (this.isOpen) this.branch.classList.add("is-ready");
-            hardResetXScroll();
-          }, REVEAL_AFTER_MS);
-        });
+        window.setTimeout(() => {
+          if (this.isOpen) this.branch.classList.add("is-ready");
+          hardResetXScroll();
+        }, REVEAL_AFTER_MS);
       });
     }
 
@@ -1057,18 +1084,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Listen for services subsection changes
     const servicesBranch = branches.find(b => b.id === "services");
+    const productionServicesEl = document.getElementById("productionServices");
+    const tapeTransferEl = document.getElementById("tapeTransfer");
+
     if (servicesBranch && servicesBranch.subRow) {
       servicesBranch.subRow.addEventListener("click", (e) => {
         const btn = e.target.closest(".subBtn");
         if (!btn) return;
         const sub = btn.dataset.sub;
 
-        if (sub === "gear") {
-          servicesDefaultEl.style.display = "none";
+        // Hide all service sections first
+        if (servicesDefaultEl) servicesDefaultEl.style.display = "none";
+        if (gearRentalEl) gearRentalEl.style.display = "none";
+        if (productionServicesEl) productionServicesEl.style.display = "none";
+        if (tapeTransferEl) tapeTransferEl.style.display = "none";
+
+        // Show the selected section
+        if (sub === "video" && productionServicesEl) {
+          productionServicesEl.style.display = "block";
+        } else if (sub === "gear" && gearRentalEl) {
           gearRentalEl.style.display = "block";
-        } else {
+        } else if (sub === "tape" && tapeTransferEl) {
+          tapeTransferEl.style.display = "block";
+        } else if (servicesDefaultEl) {
           servicesDefaultEl.style.display = "block";
-          gearRentalEl.style.display = "none";
         }
       });
     }
@@ -1413,6 +1452,122 @@ ESTIMATED TOTAL: $${total}
 
   // =========================================================
   // END GEAR RENTAL SYSTEM
+  // =========================================================
+
+  // =========================================================
+  // PRODUCTION SERVICES CTA BUTTONS
+  // =========================================================
+  const productionServicesEl = document.getElementById("productionServices");
+
+  if (productionServicesEl) {
+    const ctaButtons = productionServicesEl.querySelectorAll(".serviceCTA");
+
+    ctaButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const service = btn.dataset.service;
+        let serviceName = "";
+
+        switch(service) {
+          case "development":
+            serviceName = "Project Development";
+            break;
+          case "cinematography":
+            serviceName = "Cinematography";
+            break;
+          case "post":
+            serviceName = "Post-Production";
+            break;
+          default:
+            serviceName = "Production Services";
+        }
+
+        const subject = encodeURIComponent(`${serviceName} Quote Request`);
+        const body = encodeURIComponent(`Hi Cracked Concrete,
+
+I'm interested in learning more about your ${serviceName} services.
+
+Project Details:
+[Please describe your project here]
+
+Timeline:
+[When do you need this completed?]
+
+Budget:
+[What is your approximate budget?]
+
+Additional Notes:
+[Any other relevant information]
+
+Thanks!`);
+
+        const mailtoLink = `mailto:info@crackedconcrete.com?subject=${subject}&body=${body}`;
+        window.location.href = mailtoLink;
+      });
+    });
+  }
+
+  // =========================================================
+  // END PRODUCTION SERVICES
+  // =========================================================
+
+  // =========================================================
+  // TAPE TRANSFER CTA BUTTONS
+  // =========================================================
+  const tapeTransferEl = document.getElementById("tapeTransfer");
+
+  if (tapeTransferEl) {
+    const tapeCTAButtons = tapeTransferEl.querySelectorAll(".tapeCTA");
+
+    tapeCTAButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const format = btn.dataset.format;
+        let formatName = "";
+
+        switch(format) {
+          case "8mm":
+            formatName = "8mm";
+            break;
+          case "hi8":
+            formatName = "Hi8";
+            break;
+          case "minidv":
+            formatName = "MiniDV";
+            break;
+          default:
+            formatName = "Tape Transfer";
+        }
+
+        const subject = encodeURIComponent(`${formatName} Tape Transfer Quote Request`);
+        const body = encodeURIComponent(`Hi Cracked Concrete,
+
+I'm interested in your tape transfer services for ${formatName} tapes.
+
+Number of Tapes:
+[How many tapes do you need transferred?]
+
+Tape Condition:
+[Please describe the condition of your tapes]
+
+Preferred Delivery:
+[ ] Cloud Link (Free)
+[ ] USB Drive (+$10)
+
+Timeline:
+[When do you need these completed?]
+
+Additional Notes:
+[Any other relevant information]
+
+Thanks!`);
+
+        const mailtoLink = `mailto:info@crackedconcrete.com?subject=${subject}&body=${body}`;
+        window.location.href = mailtoLink;
+      });
+    });
+  }
+
+  // =========================================================
+  // END TAPE TRANSFER
   // =========================================================
 
   setSelected(0);

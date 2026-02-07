@@ -170,7 +170,214 @@ const PROJECTS = [
       ["LETTERBOXD", "https://boxd.it/JeVk"],
     ],
   },
+  // ===== MUSIC VIDEOS =====
+  {
+    slug: "mv-01",
+    category: "musicvideos",
+    title: "Music Video Title 1",
+    year: "2024",
+    type: "Music Video",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR", "TBD"],
+      ["Cinematographer", "TBD"],
+      ["PRODUCER", "TBD"],
+      ["Editor", "TBD"],
+    ],
+    links: [
+      ["WATCH", "#"],
+    ],
+  },
+  {
+    slug: "mv-02",
+    category: "musicvideos",
+    title: "Music Video Title 2",
+    year: "2023",
+    type: "Music Video",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR", "TBD"],
+      ["Cinematographer", "TBD"],
+      ["PRODUCER", "TBD"],
+      ["Editor", "TBD"],
+    ],
+    links: [
+      ["WATCH", "#"],
+    ],
+  },
+  {
+    slug: "mv-03",
+    category: "musicvideos",
+    title: "Music Video Title 3",
+    year: "2022",
+    type: "Music Video",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR", "TBD"],
+      ["Cinematographer", "TBD"],
+      ["PRODUCER", "TBD"],
+      ["Editor", "TBD"],
+    ],
+    links: [
+      ["WATCH", "#"],
+    ],
+  },
+  // ===== LIVE SESSIONS =====
+  {
+    slug: "live-01",
+    category: "docs",
+    title: "PISS live under oak street bridge",
+    year: "2025",
+    type: "Live Session",
+    involvement: ["Cinematography"],
+    status: "RELEASED",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR(s)", "taylor zantingh, tyler paterson"],
+      ["Cinematographer", "Ben Mouland"],
+      ["Camera Assistant", "Chris Berry"],
+      ["Editor", "Ben Mouland"],
+      ["Sound Engineer", "Andy Morrish"],
+      ["Sound Mix", "Tyler Paterson"]
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/bVGcPImNGj8?si=ALK4J76x75yJOGvq"],
+    ],
+  },
+  // ===== MISC =====
+  {
+    slug: "misc-01",
+    category: "misc",
+    title: "Five More",
+    year: "2025",
+    type: "Dance Video",
+    involvement: ["Cinematography"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR", "Lewen Han"],
+      ["Cinematographer", "Ben Mouland"],
+      ["Editor", "Lewen Han"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/tlItXQij22M?si=ynn7Wq_v6wR8x2sj"],
+    ],
+  },
+  {
+    slug: "misc-02",
+    category: "misc",
+    title: "telepatia",
+    year: "2025",
+    type: "Dance Video",
+    involvement: ["Cinematography"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR", "Lewen Han"],
+      ["Cinematographer", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/tF8QZ0RnTxg?si=Qexw64NKWUYubfjL"],
+    ],
+  },
+  {
+    slug: "misc-03",
+    category: "misc",
+    title: "Misc Project Title 3",
+    year: "2022",
+    type: "Misc",
+    involvement: ["Cracked Concrete Original"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["DIRECTOR", "TBD"],
+      ["Cinematographer", "TBD"],
+      ["PRODUCER", "TBD"],
+      ["Editor", "TBD"],
+    ],
+    links: [
+      ["WATCH", "#"],
+    ],
+  },
 ];
+
+// =========================================================
+// YOUTUBE THUMBNAIL HELPERS
+// =========================================================
+
+/**
+ * Extracts YouTube video ID from various URL formats
+ * Supports: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
+ */
+function extractYouTubeID(url) {
+  if (!url || typeof url !== "string") return null;
+
+  // Remove query parameters like ?si=... for cleaner parsing
+  const cleanUrl = url.split("&")[0];
+
+  // Match youtube.com/watch?v=VIDEO_ID
+  const watchMatch = cleanUrl.match(/[?&]v=([^&]+)/);
+  if (watchMatch) return watchMatch[1];
+
+  // Match youtu.be/VIDEO_ID
+  const shortMatch = cleanUrl.match(/youtu\.be\/([^?]+)/);
+  if (shortMatch) return shortMatch[1];
+
+  // Match youtube.com/embed/VIDEO_ID
+  const embedMatch = cleanUrl.match(/youtube\.com\/embed\/([^?]+)/);
+  if (embedMatch) return embedMatch[1];
+
+  return null;
+}
+
+/**
+ * Generates YouTube thumbnail URL from video ID
+ * Uses hqdefault (480x360) for reliability
+ */
+function getYouTubeThumbnail(videoID) {
+  if (!videoID) return null;
+  return `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
+}
+
+/**
+ * Gets the best available poster image for a project
+ * Priority: custom poster > YouTube thumbnail > null
+ */
+function getProjectPoster(project) {
+  // Use custom poster if provided
+  if (project.poster) return project.poster;
+
+  // Look for YouTube WATCH link
+  const watchLink = (project.links || []).find(
+    (link) => link[0] === "WATCH" || link[0] === "TRAILER"
+  );
+
+  if (watchLink && watchLink[1]) {
+    const videoID = extractYouTubeID(watchLink[1]);
+    if (videoID) return getYouTubeThumbnail(videoID);
+  }
+
+  return null;
+}
 
 // ---- Elements (safe-guard) ----
 const els = {
@@ -378,22 +585,28 @@ if (!els.grid || !els.panel) {
     els.meta.textContent = `${p.year} • ${p.type} • ${p.status}`;
 
     // Media (poster + stills)
-    const hasPoster = Boolean(p.poster);
-    const hasStills = Array.isArray(p.stills) && p.stills.length > 0;
+    // Use YouTube thumbnail if no custom poster provided
+    const posterSrc = getProjectPoster(p);
+    const hasPoster = Boolean(posterSrc);
+    const isFilm = (p.category || "films") === "films";
+    const hasStills = isFilm && Array.isArray(p.stills) && p.stills.length > 0;
 
-    // Build gallery: poster first, then all stills
+    // Build gallery: poster first, then stills (only for films)
     const gallery = [];
-    if (hasPoster) gallery.push({ src: p.poster, label: `${p.title} poster` });
-    (p.stills || []).forEach((src, i) =>
-      gallery.push({ src, label: `${p.title} still ${i + 1}` })
-    );
+    if (hasPoster) gallery.push({ src: posterSrc, label: `${p.title} poster` });
+    if (isFilm) {
+      (p.stills || []).forEach((src, i) =>
+        gallery.push({ src, label: `${p.title} still ${i + 1}` })
+      );
+    }
 
     if (!hasPoster && !hasStills) {
       els.cover.innerHTML = `
         <div class="coverLabel">STILL / POSTER PLACEHOLDER</div>
         <div class="coverNoise"></div>
       `;
-    } else {
+    } else if (isFilm) {
+      // Films: Show poster + stills
       const stillsShown = (p.stills || []).slice(0, 3);
 
       els.cover.innerHTML = `
@@ -401,7 +614,7 @@ if (!els.grid || !els.panel) {
           <div class="panelPoster ${hasPoster ? "" : "is-missing"}">
             ${
               hasPoster
-                ? `<img src="${p.poster}" data-gindex="0" alt="${p.title} poster" loading="lazy" />`
+                ? `<img src="${posterSrc}" data-gindex="0" alt="${p.title} poster" loading="lazy" />`
                 : `<div class="mediaLabel">POSTER</div><div class="coverNoise"></div>`
             }
           </div>
@@ -432,6 +645,19 @@ if (!els.grid || !els.panel) {
                     )
                     .join("")
                 : ""
+            }
+          </div>
+        </div>
+      `;
+    } else {
+      // Non-films: Show only poster (no stills)
+      els.cover.innerHTML = `
+        <div class="panelMedia">
+          <div class="panelPoster ${hasPoster ? "" : "is-missing"}" style="grid-column: span 2;">
+            ${
+              hasPoster
+                ? `<img src="${posterSrc}" data-gindex="0" alt="${p.title} poster" loading="lazy" />`
+                : `<div class="mediaLabel">POSTER</div><div class="coverNoise"></div>`
             }
           </div>
         </div>
