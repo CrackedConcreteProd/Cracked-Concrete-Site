@@ -289,6 +289,21 @@ body::before{
   min-width: 0;
 }
 
+.projectsSubHeader{
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  color: rgba(233,251,255,.55);
+  padding: 8px 4px 4px;
+  border-bottom: 1px solid rgba(233,251,255,.12);
+  margin-top: 6px;
+  pointer-events: none;
+  user-select: none;
+}
+.projectsSubHeader:first-child{
+  margin-top: 0;
+}
+
 /* Medium screens - equal columns */
 @media (max-width: 1100px){
   .projectsLayout{
@@ -817,7 +832,7 @@ body::before{
 }
 
 .panelPoster img{
-  object-fit: cover;
+  object-fit: contain;
   background: transparent;
 }
 

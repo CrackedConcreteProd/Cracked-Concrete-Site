@@ -972,7 +972,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tileId: "tile-projects",
       branchId: "projectsBranch",
       subRowId: "projectsSubRow",
-      defaultKey: "films",
+      defaultKey: "originals",
     }),
     new BranchController({
       id: "services",

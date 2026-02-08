@@ -33,6 +33,7 @@ const PROJECTS = [
   {
     slug: "project-01",
     category: "films",
+    section: "originals",
     title: "LIVE at the Court",
     year: "2026",
     type: "SHORT DOCUMENTARY",
@@ -65,6 +66,7 @@ const PROJECTS = [
   {
     slug: "project-02",
     category: "films",
+    section: "originals",
     title: "Pulse",
     year: "2025",
     type: "Short Film",
@@ -73,6 +75,9 @@ const PROJECTS = [
     logline: "Two young boys make the most of their time together in a hospital room.",
     poster: "assets/projects/pulse/poster.jpg",
   stills: [
+    "assets/projects/pulse/still-01.png",
+    "assets/projects/pulse/still-02.png",
+    "assets/projects/pulse/still-03.png",
   ],
     credits: [
       ["DIRECTOR", "Ben Mouland"],
@@ -92,6 +97,7 @@ const PROJECTS = [
   {
     slug: "project-03",
     category: "films",
+    section: "originals",
     title: "Goldfish",
     year: "2024",
     type: "Feature Film",
@@ -121,6 +127,7 @@ const PROJECTS = [
   {
     slug: "project-04",
     category: "films",
+    section: "originals",
     title: "Ultra Violent Light",
     year: "2023",
     type: "Short Film",
@@ -130,6 +137,9 @@ const PROJECTS = [
       "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
     poster: "assets/projects/ultra-violent-light/poster.jpg",
     stills: [
+      "assets/projects/ultra-violent-light/still-01.png",
+      "assets/projects/ultra-violent-light/still-02.png",
+      "assets/projects/ultra-violent-light/still-03.png",
     ],
       credits: [
         ["Director", "Ben Mouland"],
@@ -148,6 +158,7 @@ const PROJECTS = [
   {
     slug: "project-05",
     category: "films",
+    section: "originals",
     title: "Sunny Chibas: The Shit Hot Eatery",
     year: "2022",
     type: "Short Documentary",
@@ -155,8 +166,11 @@ const PROJECTS = [
     status: "RELEASED",
     logline:
       "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
-    poster: "assets/projects/sunny-chiba/poster.jpg",
+    poster: "",
     stills: [
+      "assets/projects/sunny-chibba/still-01.png",
+      "assets/projects/sunny-chibba/still-02.png",
+      "assets/projects/sunny-chibba/still-03.png",
     ],
       credits: [
        ["Director", "Ben Mouland"],
@@ -173,6 +187,7 @@ const PROJECTS = [
   {
     slug: "project-06",
     category: "films",
+    section: "cinematography",
     title: "Beneath Our Skin",
     year: "2024",
     type: "Short Film",
@@ -194,14 +209,14 @@ const PROJECTS = [
   {
     slug: "project-08",
     category: "films",
+    section: "editing",
     title: "The Shape",
     year: "2023",
     type: "Short Film",
     involvement: ["Editor, Sound Design"],
     status: "UNRELEASED",
     logline: "Placeholder logline for this film.",
-    poster: "",
-    stills: [],
+    poster: "assets/projects/shape/poster.jpg",
     credits: [
       ["DIRECTOR", "TYLER WU"],
       ["Cinematographer", "CHRIS BERRY"],
@@ -217,13 +232,14 @@ const PROJECTS = [
   {
     slug: "project-07",
     category: "films",
+    section: "cinematography",
     title: "Grunt Work",
     year: "2025",
     type: "Short Film",
     involvement: ["Cinematography"],
     status: "TBD",
     logline: "A struggling director tries to wrangle his team together to complete his ultimate vision.",
-    poster: "",
+    poster: "assets/projects/grunt-work/poster.jpg",
     stills: [],
     credits: [
       ["DIRECTOR", "Lewen Han"],
@@ -240,6 +256,7 @@ const PROJECTS = [
   {
     slug: "mv-01",
     category: "musicvideos",
+    section: "cinematography",
     title: "GOD-D@MNIT",
     year: "2025",
     type: "Music Video",
@@ -263,6 +280,7 @@ const PROJECTS = [
   {
     slug: "mv-02",
     category: "musicvideos",
+    section: "directing",
     title: "Scaredy Cat",
     year: "2025",
     type: "Music Video",
@@ -286,6 +304,7 @@ const PROJECTS = [
   {
     slug: "mv-03",
     category: "musicvideos",
+    section: "cinematography",
     title: "Choke",
     year: "2025",
     type: "Music Video",
@@ -308,6 +327,7 @@ const PROJECTS = [
   {
     slug: "mv-04",
     category: "musicvideos",
+    section: "cinematography",
     title: "Heal Me (Hyperventilation Meditation)",
     year: "2025",
     type: "Music Video",
@@ -329,6 +349,7 @@ const PROJECTS = [
   {
     slug: "mv-05",
     category: "musicvideos",
+    section: "directing",
     title: "Cheef Keef",
     year: "2023",
     type: "Music Video",
@@ -350,10 +371,11 @@ const PROJECTS = [
   {
     slug: "mv-06",
     category: "musicvideos",
+    section: "directing",
     title: "Kookoo Family / Shakin'",
     year: "2022",
     type: "Music Video",
-    involvement: ["CDirection, Cinematography, Editing"],
+    involvement: ["Direction, Cinematography, Editing"],
     status: "RELEASED",
     logline: "",
     poster: "",
@@ -372,10 +394,11 @@ const PROJECTS = [
   {
     slug: "live-01",
     category: "docs",
+    section: "cinematography",
     title: "PISS live under oak street bridge",
     year: "2025",
     type: "Live Session",
-    involvement: ["Cinematography"],
+    involvement: ["Cinematography, Editing"],
     status: "RELEASED",
     poster: "",
     stills: [],
@@ -395,6 +418,7 @@ const PROJECTS = [
   {
     slug: "live-02",
     category: "docs",
+    section: "cinematography",
     title: "Daughter",
     year: "2025",
     type: "Live Session",
@@ -416,6 +440,7 @@ const PROJECTS = [
   {
     slug: "misc-01",
     category: "misc",
+    section: "cinematography",
     title: "Five More",
     year: "2025",
     type: "Dance Video",
@@ -436,6 +461,7 @@ const PROJECTS = [
   {
     slug: "misc-02",
     category: "misc",
+    section: "cinematography",
     title: "telepatia",
     year: "2025",
     type: "Dance Video",
@@ -453,6 +479,17 @@ const PROJECTS = [
     ],
   },
 ];
+
+// =========================================================
+// SECTION & CATEGORY HELPERS
+// =========================================================
+const CATEGORY_LABELS = {
+  films: "FILMS",
+  musicvideos: "MUSIC VIDEOS",
+  docs: "LIVE SESSIONS",
+  misc: "MISC",
+};
+const CATEGORY_ORDER = ["films", "musicvideos", "docs", "misc"];
 
 // =========================================================
 // YOUTUBE THUMBNAIL HELPERS
@@ -532,10 +569,13 @@ if (!els.grid || !els.panel) {
   console.warn("[project.js] Required DOM nodes not found; script skipped.");
 } else {
   let selectedIndex = 0;
-  let activeCategory = "films";
+  let activeCategory = "originals";
 
   function getVisible() {
-    return PROJECTS.filter((p) => (p.category || "films") === activeCategory);
+    const filtered = PROJECTS.filter((p) => (p.section || "originals") === activeCategory);
+    return filtered.sort((a, b) =>
+      CATEGORY_ORDER.indexOf(a.category || "misc") - CATEGORY_ORDER.indexOf(b.category || "misc")
+    );
   }
 
   function badge(text) {
@@ -558,7 +598,18 @@ if (!els.grid || !els.panel) {
       return;
     }
 
+    let lastCat = null;
     visible.forEach((p, i) => {
+      const cat = p.category || "misc";
+      if (cat !== lastCat) {
+        const header = document.createElement("div");
+        header.className = "projectsSubHeader";
+        header.textContent = CATEGORY_LABELS[cat] || cat.toUpperCase();
+        header.setAttribute("aria-hidden", "true");
+        els.grid.appendChild(header);
+        lastCat = cat;
+      }
+
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "projectCard";
@@ -719,30 +770,27 @@ if (!els.grid || !els.panel) {
     els.meta.textContent = `${p.year} • ${p.type} • ${p.status}`;
 
     // Media (poster + stills)
-    // Use YouTube thumbnail if no custom poster provided
     const posterSrc = getProjectPoster(p);
     const hasPoster = Boolean(posterSrc);
-    const isFilm = (p.category || "films") === "films";
-    const hasStills = isFilm && Array.isArray(p.stills) && p.stills.length > 0;
+    const hasStills = Array.isArray(p.stills) && p.stills.length > 0;
 
-    // Build gallery: poster first, then stills (only for films)
+    // Build gallery: poster first, then stills
     const gallery = [];
     if (hasPoster) gallery.push({ src: posterSrc, label: `${p.title} poster` });
-    if (isFilm) {
-      (p.stills || []).forEach((src, i) =>
+    if (hasStills) {
+      p.stills.forEach((src, i) =>
         gallery.push({ src, label: `${p.title} still ${i + 1}` })
       );
     }
 
     if (!hasPoster && !hasStills) {
       els.cover.innerHTML = `
-        <div class="coverLabel">STILL / POSTER PLACEHOLDER</div>
+        <div class="coverLabel">POSTER PLACEHOLDER</div>
         <div class="coverNoise"></div>
       `;
-    } else if (isFilm) {
-      // Films: Show poster + stills
-      const stillsShown = (p.stills || []).slice(0, 3);
-
+    } else if (hasStills) {
+      // Show poster + stills
+      const stillsShown = p.stills.slice(0, 3);
       els.cover.innerHTML = `
         <div class="panelMedia">
           <div class="panelPoster ${hasPoster ? "" : "is-missing"}">
@@ -752,7 +800,6 @@ if (!els.grid || !els.panel) {
                 : `<div class="mediaLabel">POSTER</div><div class="coverNoise"></div>`
             }
           </div>
-
           <div class="panelStills">
             ${stillsShown
               .map(
@@ -765,34 +812,15 @@ if (!els.grid || !els.panel) {
                 `
               )
               .join("")}
-
-            ${
-              stillsShown.length < 3
-                ? Array.from({ length: 3 - stillsShown.length })
-                    .map(
-                      () => `
-                        <div class="panelStill is-missing">
-                          <div class="mediaLabel">STILL</div>
-                          <div class="coverNoise"></div>
-                        </div>
-                      `
-                    )
-                    .join("")
-                : ""
-            }
           </div>
         </div>
       `;
     } else {
-      // Non-films: Show only poster (no stills)
+      // Poster only (no stills)
       els.cover.innerHTML = `
         <div class="panelMedia">
-          <div class="panelPoster ${hasPoster ? "" : "is-missing"}" style="grid-column: span 2;">
-            ${
-              hasPoster
-                ? `<img src="${posterSrc}" data-gindex="0" alt="${p.title} poster" loading="lazy" />`
-                : `<div class="mediaLabel">POSTER</div><div class="coverNoise"></div>`
-            }
+          <div class="panelPoster" style="grid-column: span 2;">
+            <img src="${posterSrc}" data-gindex="0" alt="${p.title} poster" loading="lazy" />
           </div>
         </div>
       `;
@@ -850,7 +878,7 @@ if (!els.grid || !els.panel) {
   document.addEventListener("branch:subchange", (e) => {
     if (!e.detail || e.detail.branchId !== "projects") return;
 
-    activeCategory = e.detail.key || "films";
+    activeCategory = e.detail.key || "originals";
     selectedIndex = 0; // default to first project in category
 
     renderGrid();
