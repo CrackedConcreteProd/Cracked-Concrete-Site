@@ -73,7 +73,7 @@ const PROJECTS = [
     involvement: ["Cracked Concrete Original"],
     status: "Festival Circuit",
     logline: "Two young boys make the most of their time together in a hospital room.",
-    poster: "assets/projects/pulse/poster.jpg",
+    poster: "assets/projects/pulse/poster.JPG",
   stills: [
     "assets/projects/pulse/still-01.png",
     "assets/projects/pulse/still-02.png",
@@ -165,7 +165,7 @@ const PROJECTS = [
     involvement: ["Cracked Concrete Original"],
     status: "RELEASED",
     logline:
-      "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
+      "An ode to the legendary establishement found in Squamish, BC",
     poster: "",
     stills: [
       "assets/projects/sunny-chibba/still-01.png",
@@ -193,7 +193,7 @@ const PROJECTS = [
     type: "Short Film",
     involvement: ["Cinematography"],
     status: "Festival Circuit",
-    logline: "Placeholder logline for this film.",
+    logline: "Misi, a young Indigenous Woman, is plagued by vivid dreams that draw her deeper into her family's past.",
     poster: "",
     stills: [],
     credits: [
@@ -215,7 +215,7 @@ const PROJECTS = [
     type: "Short Film",
     involvement: ["Editor, Sound Design"],
     status: "UNRELEASED",
-    logline: "Placeholder logline for this film.",
+    logline: "A young musician navigates his days as they become increasingly contorted by the recent passing of his grandfather.",
     poster: "assets/projects/shape/poster.jpg",
     credits: [
       ["DIRECTOR", "TYLER WU"],

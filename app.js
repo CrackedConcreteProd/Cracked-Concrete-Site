@@ -36,6 +36,44 @@ const ICONS = {
   ],
 };
 
+// ===== YOUTUBE AVATAR HELPERS =====
+// Auto-fetches YouTube channel profile pics for marquee items without a custom image.
+// Free key: https://console.cloud.google.com/apis/credentials (enable "YouTube Data API v3")
+const YT_API_KEY = "AIzaSyAdWVMzNDqIaanL_c46jjArsSP2DvwRmug";
+
+function extractYTHandle(url) {
+  if (!url) return null;
+  const h = url.match(/youtube\.com\/@([^/?&#]+)/);
+  if (h) return { type: "handle", value: h[1] };
+  const c = url.match(/youtube\.com\/channel\/([^/?&#]+)/);
+  if (c) return { type: "id", value: c[1] };
+  return null;
+}
+
+async function fetchYTAvatar(ytUrl) {
+  if (!YT_API_KEY) return null;
+  const cacheKey = "ytav_" + ytUrl;
+  try { const c = localStorage.getItem(cacheKey); if (c) return c; } catch (_) {}
+
+  const info = extractYTHandle(ytUrl);
+  if (!info) return null;
+
+  try {
+    const param = info.type === "id" ? `id=${info.value}` : `forHandle=${info.value}`;
+    const res = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=snippet&${param}&key=${YT_API_KEY}`
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    const thumbs = json.items?.[0]?.snippet?.thumbnails;
+    const src = thumbs?.medium?.url || thumbs?.default?.url || null;
+    if (src) { try { localStorage.setItem(cacheKey, src); } catch (_) {} }
+    return src;
+  } catch (_) {
+    return null;
+  }
+}
+
 function buildIcon(el, pattern) {
   el.innerHTML = "";
   for (let y = 0; y < pattern.length; y++) {
@@ -246,6 +284,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const firstLink = card.querySelector(".mLink");
       if (firstLink) window.open(firstLink.href, "_blank", "noopener");
     });
+
+    // Auto-fetch YouTube avatars for items without a custom image
+    if (YT_API_KEY) {
+      data.forEach((it, i) => {
+        if (it.img) return;
+        const ytLink = (it.links || []).find(l => (l.label || "").toUpperCase() === "YT");
+        if (!ytLink) return;
+        fetchYTAvatar(ytLink.url).then(src => {
+          if (!src) return;
+          // Update both copies in the doubled marquee
+          [i, i + data.length].forEach(idx => {
+            const avatar = track.querySelector(`[data-card="${idx}"] .mAvatar`);
+            if (avatar) avatar.innerHTML = `<img src="${src}" alt="${it.name}" loading="lazy" />`;
+          });
+        });
+      });
+    }
 
     let mx = 0;
     let paused = false;
@@ -1021,12 +1076,12 @@ document.addEventListener("DOMContentLoaded", () => {
           badges: ["MUSIC", "SPORT", "ARTS"],
           marqueeDesc: "TRUSTED ONGOING WORKING RELATIONSHIPS",
           marquee: [
-            { name: "MAFUBA", img: "assets/people/mafuba.jpg", links: [{ label: "IG", url: "https://www.instagram.com/mafuba.music?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Mafubamusic" }] },
-            { name: "TREVOR-J", img: "assets/people/trevorj.jpg", links: [{ label: "IG", url: "https://www.instagram.com/i.mtrevorj?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }] },
-            { name: "FIRST FLOOR COLLECTIVE", img: "assets/people/firstfloor.jpg", links: [{ label: "IG", url: "https://www.instagram.com/firstfloorcollective?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@firstfloorcollective" }] },
-            { name: "GREEN THUMBS", img: "assets/people/greenthumbs.jpg", links: [{ label: "IG", url: "https://www.instagram.com/greenthumbscanada?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@QuarterBrainProductions" }] },
-            { name: "FORM", img: "assets/people/form.jpg", links: [{ label: "IG", url: "https://www.instagram.com/formvancouver?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.f-o-r-m.ca/" }] },
-            { name: "604 RECORDS", img: "assets/people/604.jpg", links: [{ label: "IG", url: "https://www.instagram.com/604recordsinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.604records.com/" }] },
+            { name: "MAFUBA", img: "", links: [{ label: "IG", url: "https://www.instagram.com/mafuba.music?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Mafubamusic" }] },
+            { name: "TREVOR-J", img: "", links: [{ label: "IG", url: "https://www.instagram.com/i.mtrevorj?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@intelligentminded514/featured" }] },
+            { name: "FIRST FLOOR COLLECTIVE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/firstfloorcollective?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@firstfloorcollective" }] },
+            { name: "GREEN THUMBS", img: "", links: [{ label: "IG", url: "https://www.instagram.com/greenthumbscanada?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@QuarterBrainProductions" }] },
+            { name: "FORM", img: "assets/people/form.jpeg", links: [{ label: "IG", url: "https://www.instagram.com/formvancouver?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.f-o-r-m.ca/" }] },
+            { name: "604 RECORDS", img: "assets/people/604.jpeg", links: [{ label: "IG", url: "https://www.instagram.com/604recordsinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.604records.com/" }] },
           ]
         },
         clients: {
@@ -1036,10 +1091,13 @@ document.addEventListener("DOMContentLoaded", () => {
           badges: ["RETAINERS", "PROJECT", "LOCAL"],
           marqueeDesc: "CLIENTS SPANNING DIFFERENT MEDIUMS AND PRACTICES",
           marquee: [
-            { name: "PLACEHOLDER CLIENT 01", img: "assets/clients/client-01.jpg", links: [{ label: "IG", url: "https://instagram.com/" }, { label: "YT", url: "https://youtube.com/" }] },
-            { name: "PLACEHOLDER CLIENT 02", img: "assets/clients/client-02.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
-            { name: "PLACEHOLDER CLIENT 03", img: "assets/clients/client-03.jpg", links: [{ label: "WEB", url: "https://example.com" }] },
-            { name: "PLACEHOLDER CLIENT 04", img: "assets/clients/client-04.jpg", links: [{ label: "IG", url: "https://instagram.com/" }] },
+            { name: "FKA RAYNE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/fkarayne?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@FKARayne" }] },
+            { name: "JIA", img: "", links: [{ label: "IG", url: "https://www.instagram.com/whoisjiaaaa?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCxwI2MjY-EJwRmNwaUXbBmA" }] },
+            { name: "SPANK WILLIAMS", img: "", links: [{ label: "IG", url: "https://www.instagram.com/spank_williams?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Spank_Williams" }] },
+            { name: "PISS", img: "", links: [{ label: "IG", url: "https://www.instagram.com/piss_theband?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@piss_theband" }] },
+            { name: "OOGWAY", img: "", links: [{ label: "IG", url: "https://www.instagram.com/oogway_the_okay?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCBsXl9QvTILN1fE27SVK5iw" }] },
+            { name: "FIONAVAIR", img: "", links: [{ label: "IG", url: "https://www.instagram.com/fionavair?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Fionavair" }] },
+            { name: "Justii_DC", img: "", links: [{ label: "IG", url: "https://www.instagram.com/justii_dc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@justii_dc" }] },
           ]
         }
       }

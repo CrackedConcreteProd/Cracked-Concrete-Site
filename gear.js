@@ -5,22 +5,22 @@ const GEAR_DATA = {
     items: [
       {
         id: "cam-001",
-        name: "SONY FX3",
+        name: "RED KOMODO 6K",
         description: "Full-frame 4K cinema camera with exceptional low-light performance. Features dual base ISO, 10-bit 4:2:2 internal recording, and S-Cinetone color science.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=SONY+FX3",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=RED+KOMODO",
         photos: [
           "https://placehold.co/800x600/1a55ff/e9fbff?text=FX3+Front",
           "https://placehold.co/800x600/0b34ff/e9fbff?text=FX3+Side",
           "https://placehold.co/800x600/1a55ff/e9fbff?text=FX3+Back",
           "https://placehold.co/800x600/0b34ff/e9fbff?text=FX3+Top"
         ],
-        dayRate: 150,
-        weekRate: 750,
+        dayRate: 200,
+        weekRate: 700,
         status: "available" // available, rented, maintenance
       },
       {
         id: "cam-002",
-        name: "BLACKMAGIC POCKET 6K PRO",
+        name: "Canon XL2",
         description: "Compact cinema camera with Super 35 sensor and built-in ND filters. Records in Blackmagic RAW for maximum flexibility in post-production.",
         thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=BMPCC+6K",
         photos: [
@@ -55,9 +55,9 @@ const GEAR_DATA = {
     items: [
       {
         id: "lens-001",
-        name: "SIGMA 18-35MM F1.8 ART",
-        description: "Fast zoom lens with constant f/1.8 aperture. Covers Super 35 sensors. Sharp edge-to-edge with beautiful bokeh. Industry standard for indie filmmaking.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=SIGMA+18-35",
+        name: "SMC Takumar Lens Set",
+        description: "Full set of SMC (Super-Multi-Coated) Takumars. Covers full frame sensors.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=SMC+TAKUMAR",
         photos: [
           "https://placehold.co/800x600/1a55ff/e9fbff?text=Sigma+Profile",
           "https://placehold.co/800x600/0b34ff/e9fbff?text=Sigma+Mount",
