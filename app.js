@@ -1613,6 +1613,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="gearDescription">${item.description}</div>
 
           <div class="gearPricing">
+            ${item.qty ? `<div><strong>QUANTITY:</strong> ${item.qty}</div>` : ''}
             <div><strong>DAY RATE:</strong> $${item.dayRate}</div>
             <div><strong>WEEK RATE:</strong> $${item.weekRate}</div>
           </div>
