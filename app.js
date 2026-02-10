@@ -74,6 +74,20 @@ async function fetchYTAvatar(ytUrl) {
   }
 }
 
+// ===== TOAST NOTIFICATION =====
+function showToast(msg, duration = 3000) {
+  let el = document.querySelector(".toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.className = "toast";
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add("is-visible");
+  clearTimeout(el._tid);
+  el._tid = setTimeout(() => el.classList.remove("is-visible"), duration);
+}
+
 function buildIcon(el, pattern) {
   el.innerHTML = "";
   for (let y = 0; y < pattern.length; y++) {
@@ -91,6 +105,58 @@ document.querySelectorAll(".pixel").forEach((el) => {
   if (ICONS[key]) buildIcon(el, ICONS[key]);
 });
 
+// ===== BOOT SCREEN SEQUENCE =====
+function runBootSequence(callback) {
+  const screen = document.getElementById("bootScreen");
+  const log = document.getElementById("bootLog");
+  const bar = document.getElementById("bootBar");
+  const pct = document.getElementById("bootPct");
+
+  if (!screen || !log || !bar || !pct) { callback(); return; }
+
+  const SEGS = 20;
+  for (let i = 0; i < SEGS; i++) {
+    const s = document.createElement("div");
+    s.className = "bootSeg";
+    bar.appendChild(s);
+  }
+  const segs = bar.querySelectorAll(".bootSeg");
+
+  const lines = [
+    { t: 0,    msg: "CRACKED CONCRETE SYSTEM v2.0" },
+    { t: 200,  msg: "INITIALIZING DISPLAY..." },
+    { t: 500,  msg: "LOADING MODULES... OK" },
+    { t: 850,  msg: "CHECKING ASSETS............. OK" },
+    { t: 1300, msg: "MOUNTING BRANCHES... OK" },
+    { t: 1700, msg: "RENDERING OSD... OK" },
+    { t: 2100, msg: "SYSTEM READY" },
+  ];
+
+  const totalTime = 2100;
+
+  lines.forEach(({ t, msg }) => {
+    setTimeout(() => {
+      log.textContent += msg + "\n";
+      const progress = Math.min(t / totalTime, 1);
+      const filled = Math.round(progress * SEGS);
+      segs.forEach((s, i) => { if (i < filled) s.classList.add("on"); });
+      pct.textContent = Math.round(progress * 100) + "%";
+    }, t);
+  });
+
+  // Bar hits 100%
+  setTimeout(() => {
+    segs.forEach(s => s.classList.add("on"));
+    pct.textContent = "100%";
+  }, totalTime + 100);
+
+  // Hard cut + callback
+  setTimeout(() => {
+    screen.remove();
+    callback();
+  }, totalTime + 300);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   // ---------- PAGE GUARD (HOME ONLY) ----------
   const path = (window.location.pathname || "").toLowerCase();
@@ -105,11 +171,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("grid");
   if (!items.length || !grid) return;
 
-  // Retro boot animation for tiles
-  items.forEach((tile, index) => {
-    setTimeout(() => {
-      tile.classList.add("booted");
-    }, index * 120);
+  // Run boot screen first, then boot tiles, then show reel
+  runBootSequence(() => {
+    items.forEach((tile, index) => {
+      setTimeout(() => {
+        tile.classList.add("booted");
+      }, index * 120);
+    });
+    // Show reel 1s after icons appear
+    setTimeout(() => { showReels(); }, 1000);
   });
 
   // Safety: if a tile has a branch attached, never navigate away on click.
@@ -155,6 +225,149 @@ document.addEventListener("DOMContentLoaded", () => {
   const state = { activeBranch: null };
 
   // =========================================================
+  // REEL POPUPS (3 windows — Films, Music Videos, Misc)
+  // =========================================================
+  const REEL_CONFIGS = [
+    { id: "reelFilms",       label: "FILMS",        text: "FILMS REEL COMING SOON" },
+    { id: "reelMusicVideos", label: "MUSIC VIDEOS",  text: "MUSIC VIDEOS REEL COMING SOON" },
+    { id: "reelMisc",        label: "MISC",          text: "MISC REEL COMING SOON" },
+  ];
+
+  const reelContainer = document.getElementById("reelContainer");
+  const reelPopups = []; // { el, dismissed }
+
+  // Build popup DOM for each config
+  REEL_CONFIGS.forEach(cfg => {
+    const el = document.createElement("div");
+    el.className = "reelPopup";
+    el.id = cfg.id;
+    el.innerHTML = `
+      <div class="reelHeader">
+        <div class="reelLabel">${cfg.label}</div>
+        <button class="reelClose" type="button">CLOSE</button>
+      </div>
+      <div class="reelPlayer">
+        <div class="reelPlaceholder">
+          <div class="reelNoise"></div>
+          <div class="reelText">${cfg.text}</div>
+        </div>
+      </div>
+    `;
+    if (reelContainer) reelContainer.appendChild(el);
+    reelPopups.push({ el, dismissed: false });
+  });
+
+  // Random non-overlapping placement below the icon grid
+  function placeReelsRandomly() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const gridEl = document.getElementById("grid");
+    const minY = gridEl ? gridEl.getBoundingClientRect().bottom + 12 : vh * 0.3;
+    const placed = []; // { x, y, w, h }
+
+    reelPopups.forEach(reel => {
+      // Temporarily show to measure
+      reel.el.style.visibility = "hidden";
+      reel.el.style.display = "block";
+      const w = reel.el.offsetWidth;
+      const h = reel.el.offsetHeight;
+      reel.el.style.display = "";
+      reel.el.style.visibility = "";
+
+      const pad = 16;
+      let x, y, attempts = 0, ok = false;
+
+      while (attempts < 80 && !ok) {
+        x = pad + Math.random() * Math.max(0, vw - w - pad * 2);
+        y = minY + Math.random() * Math.max(0, vh - minY - h - pad);
+        ok = true;
+        for (const p of placed) {
+          if (x < p.x + p.w + pad && x + w + pad > p.x &&
+              y < p.y + p.h + pad && y + h + pad > p.y) {
+            ok = false;
+            break;
+          }
+        }
+        attempts++;
+      }
+
+      reel.el.style.left = Math.round(x) + "px";
+      reel.el.style.top  = Math.round(y) + "px";
+      placed.push({ x, y, w, h });
+    });
+  }
+
+  placeReelsRandomly();
+
+  // Show / hide popups (mobile: one random pick from Films or Music Videos)
+  function showReels() {
+    const isMobile = window.innerWidth <= 720;
+
+    if (isMobile) {
+      // Pick randomly between Films (0) and Music Videos (1)
+      const pick = Math.random() < 0.5 ? 0 : 1;
+      reelPopups.forEach((r, i) => {
+        if (i === pick && !r.dismissed) r.el.classList.add("is-visible");
+        else r.el.classList.remove("is-visible");
+      });
+    } else {
+      reelPopups.forEach(r => {
+        if (!r.dismissed) r.el.classList.add("is-visible");
+      });
+    }
+  }
+  function hideReels() {
+    reelPopups.forEach(r => r.el.classList.remove("is-visible"));
+  }
+
+  // Close buttons (independent dismiss)
+  reelPopups.forEach(reel => {
+    const btn = reel.el.querySelector(".reelClose");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        reel.dismissed = true;
+        reel.el.classList.remove("is-visible");
+      });
+    }
+  });
+
+  // Draggable — each popup via its header
+  reelPopups.forEach(reel => {
+    const header = reel.el.querySelector(".reelHeader");
+    if (!header) return;
+
+    let ox = 0, oy = 0;
+
+    function onMove(e) {
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      reel.el.style.left = (cx - ox) + "px";
+      reel.el.style.top  = (cy - oy) + "px";
+    }
+    function onEnd() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onEnd);
+      document.removeEventListener("touchmove", onMove);
+      document.removeEventListener("touchend", onEnd);
+    }
+    function onStart(e) {
+      if (e.target.closest(".reelClose")) return;
+      e.preventDefault();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      ox = cx - parseFloat(reel.el.style.left);
+      oy = cy - parseFloat(reel.el.style.top);
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onEnd);
+      document.addEventListener("touchmove", onMove, { passive: false });
+      document.addEventListener("touchend", onEnd);
+    }
+
+    header.addEventListener("mousedown", onStart);
+    header.addEventListener("touchstart", onStart, { passive: false });
+  });
+
+  // =========================================================
   // PEOPLE MARQUEE (COLLABS + CLIENTS)
   // =========================================================
   let activeMarquee = null;
@@ -193,22 +406,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return `
         <div class="teamCard">
-          <div class="teamHeader">
-            <div class="teamPhoto">
-              ${m.img ? `<img src="${m.img}" alt="${m.name}" loading="lazy" />` : `<span class="teamPhotoPlaceholder">IMG</span>`}
-            </div>
-            <div class="teamMeta">
-              <div class="teamName">${m.name || "MEMBER"}</div>
-              <div class="teamRole">${m.role || ""}</div>
-              ${linksHtml ? `<div class="teamLinks">${linksHtml}</div>` : ""}
-            </div>
+          <div class="teamPhoto">
+            ${m.img ? `<img src="${m.img}" alt="${m.name}" loading="lazy" />` : `<span class="teamPhotoPlaceholder">IMG</span>`}
           </div>
-          ${m.bio ? `<div class="teamBio">${m.bio}</div>` : ""}
+          <div class="teamBody">
+            <div class="teamName">${m.name || "MEMBER"}</div>
+            <div class="teamRole">${m.role || ""}</div>
+            ${m.bio ? `<div class="teamBio">${m.bio}</div>` : ""}
+            ${linksHtml ? `<div class="teamLinks">${linksHtml}</div>` : ""}
+          </div>
         </div>
       `;
     }).join("");
 
     loglineEl.innerHTML = `<div class="teamGrid">${cards}</div>`;
+
+    // Make team photos clickable → open in lightbox
+    loglineEl.querySelectorAll(".teamPhoto img").forEach(img => {
+      img.addEventListener("click", () => {
+        const lb = document.getElementById("lightbox");
+        const lbImg = document.getElementById("lightboxImg");
+        const lbLabel = document.getElementById("lightboxLabel");
+        const lbCount = document.getElementById("lightboxCount");
+        if (!lb || !lbImg) return;
+
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || "Team photo";
+        if (lbLabel) lbLabel.textContent = img.alt || "";
+        if (lbCount) lbCount.textContent = "";
+
+        lb.classList.remove("has-multi");
+        lb.classList.add("is-open");
+        lb.setAttribute("aria-hidden", "false");
+        document.documentElement.style.overflow = "hidden";
+      });
+    });
 
     // Add class to panel to hide clutter
     const panel = loglineEl.closest(".projectPanel");
@@ -739,11 +971,14 @@ document.addEventListener("DOMContentLoaded", () => {
       this.branch.classList.remove("is-open", "is-drawing", "is-ready");
       if (activeMarquee) { activeMarquee.destroy(); activeMarquee = null; }
       hardResetXScroll();
+      showReels();
     }
 
     open() {
       if (state.activeBranch && state.activeBranch !== this) state.activeBranch.close();
       state.activeBranch = this;
+
+      hideReels();
 
       this.isOpen = true;
       this.branch.classList.add("is-open");
@@ -1060,7 +1295,7 @@ document.addEventListener("DOMContentLoaded", () => {
             {
               name: "BEN MOULAND",
               role: "CEO / DIRECTOR / DP / EDITOR",
-              img: "assets/people/ben.jpg",
+              img: "assets/people/ben.png",
               bio: "Ben Mouland is a Vancouver-based filmmaker and visual artist, born in New York City and raised in Montreal, whose practice spans tender, emotionally driven directing and more outlandish experiments with analog filmmaking.",
               links: [
                 { label: "IG", url: "https://www.instagram.com/benmouland/" },
@@ -1479,7 +1714,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCart();
 
     // Show feedback
-    alert(`${item.name} added to cart for ${days} day(s)`);
+    showToast(`${item.name} added to cart for ${days} day(s)`);
   }
 
   // Calculate price based on days
@@ -1582,7 +1817,7 @@ ESTIMATED TOTAL: $${total}
     // For now, we'll create a mailto link
     const subject = encodeURIComponent("Gear Rental Quote Request");
     const body = encodeURIComponent(message);
-    const mailtoLink = `mailto:info@crackedconcrete.com?subject=${subject}&body=${body}`;
+    const mailtoLink = `mailto:ben@cracked-concrete.com?subject=${subject}&body=${body}`;
 
     window.location.href = mailtoLink;
 
@@ -1592,7 +1827,7 @@ ESTIMATED TOTAL: $${total}
     saveCart();
     renderCart();
 
-    alert("Quote request prepared! Your email client should open. If not, please copy the cart details and email us directly.");
+    showToast("Quote request prepared! Your email client should open shortly.");
   }
 
   // Initialize gear rental if available
@@ -1650,7 +1885,7 @@ Additional Notes:
 
 Thanks!`);
 
-        const mailtoLink = `mailto:info@crackedconcrete.com?subject=${subject}&body=${body}`;
+        const mailtoLink = `mailto:ben@cracked-concrete.com?subject=${subject}&body=${body}`;
         window.location.href = mailtoLink;
       });
     });
@@ -1710,7 +1945,7 @@ Additional Notes:
 
 Thanks!`);
 
-        const mailtoLink = `mailto:info@crackedconcrete.com?subject=${subject}&body=${body}`;
+        const mailtoLink = `mailto:ben@cracked-concrete.com?subject=${subject}&body=${body}`;
         window.location.href = mailtoLink;
       });
     });

@@ -4,6 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Cracked Concrete — OSD</title>
+  <meta name="description" content="Cracked Concrete is a Vancouver-based production company specializing in film, music videos, and creative media." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Cracked Concrete — OSD" />
+  <meta property="og:description" content="Vancouver-based production company specializing in film, music videos, and creative media." />
+  <meta property="og:url" content="https://cracked-concrete.com" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Cracked Concrete — OSD" />
+  <meta name="twitter:description" content="Vancouver-based production company specializing in film, music videos, and creative media." />
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -15,6 +30,18 @@
   <div class="crt-layer crt-noise"></div>
   <div class="crt-layer crt-vignette"></div>
   <div class="crt-roll"></div>
+
+  <!-- BOOT SCREEN -->
+  <div class="bootScreen" id="bootScreen">
+    <div class="bootInner">
+      <div class="bootLog" id="bootLog"></div>
+      <div class="bootBarWrap">
+        <div class="bootBarLabel">LOADING</div>
+        <div class="bootBar" id="bootBar"></div>
+        <div class="bootPct" id="bootPct">0%</div>
+      </div>
+    </div>
+  </div>
 
   <!-- CONTENT -->
   <div class="stage">
@@ -42,6 +69,9 @@
           <div class="label">Connect</div>
         </a>
       </section>
+
+      <!-- REEL POPUPS (generated dynamically by app.js) -->
+      <div id="reelContainer"></div>
 
       <!-- BRANCH SLOT (one visible at a time) -->
       <div class="branchSlot" id="branchSlot" aria-label="Branch slot">
@@ -526,7 +556,7 @@
 
           <div class="subRow" id="connectSubRow" aria-label="Connect categories">
             <button class="subBtn" type="button" data-sub="email">EMAIL</button>
-            <button class="subBtn" type="button" data-sub="ig">SOcials</button>
+            <button class="subBtn" type="button" data-sub="ig">SOCIALS</button>
             <button class="subBtn" type="button" data-sub="book">BOOKING</button>
           </div>
 
@@ -536,8 +566,8 @@
             <div class="connectSection" id="connectEmail">
               <div class="connectCard">
                 <div class="connectLabel">EMAIL</div>
-                <a class="connectValue" href="mailto:info@crackedconcrete.com">INFO@CRACKEDCONCRETE.COM</a>
-                <a class="connectCTA" href="mailto:info@crackedconcrete.com">SEND EMAIL</a>
+                <a class="connectValue" href="mailto:ben@cracked-concrete.com">BEN@CRACKED-CONCRETE.COM</a>
+                <a class="connectCTA" href="mailto:ben@cracked-concrete.com">SEND EMAIL</a>
               </div>
             </div>
 
@@ -567,7 +597,7 @@
               <div class="connectCard">
                 <div class="connectLabel">BOOKING</div>
                 <div class="connectValue">AVAILABILITY FOR 2025-2026</div>
-                <a class="connectCTA" href="mailto:info@crackedconcrete.com?subject=Booking%20Inquiry">SEND BOOKING REQUEST</a>
+                <a class="connectCTA" href="mailto:ben@cracked-concrete.com?subject=Booking%20Inquiry">SEND BOOKING REQUEST</a>
               </div>
             </div>
 
@@ -592,7 +622,7 @@
       <div class="lightboxLabel" id="lightboxLabel"></div>
       <div class="lightboxCount" id="lightboxCount"></div>
 
-      <img id="lightboxImg" alt="" />
+      <img id="lightboxImg" alt="Image preview" />
     </div>
   </div>
 

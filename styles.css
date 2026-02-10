@@ -157,14 +157,79 @@ body::before{
 }
 
 @keyframes retroBoot{
-  0%   { opacity: 0; transform: scale(0.7); }
-  25%  { opacity: 0; transform: scale(0.7); }
-  50%  { opacity: 0.6; transform: scale(0.85); }
-  75%  { opacity: 0.3; transform: scale(0.95); }
-  85%  { opacity: 1; transform: scale(1); }
-  90%  { opacity: 0.8; transform: scale(1); }
-  95%  { opacity: 1; transform: scale(1); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; }
+  20%  { opacity: 0; }
+  21%  { opacity: 1; }
+  35%  { opacity: 0; }
+  36%  { opacity: 1; }
+  50%  { opacity: 0; }
+  51%  { opacity: 0.7; }
+  65%  { opacity: 0; }
+  66%  { opacity: 1; }
+  80%  { opacity: 0.4; }
+  81%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* =========================================================
+   BOOT SCREEN
+   ========================================================= */
+.bootScreen{
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: linear-gradient(175deg, var(--blueA) 0%, var(--blueC) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bootScreen.is-done{
+  display: none;
+}
+.bootInner{
+  width: min(480px, 85vw);
+  font-family: "Courier New", Courier, monospace;
+  color: var(--osd, #e9fbff);
+  text-transform: uppercase;
+  font-size: clamp(.7rem, 1.4vw, .85rem);
+  line-height: 1.7;
+}
+.bootLog{
+  min-height: 10em;
+  white-space: pre;
+  overflow: hidden;
+}
+.bootBarWrap{
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  margin-top: 1em;
+}
+.bootBarLabel{
+  flex-shrink: 0;
+  opacity: .6;
+}
+.bootBar{
+  flex: 1;
+  height: 14px;
+  border: 1px solid var(--osd, #e9fbff);
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+}
+.bootSeg{
+  flex: 1;
+  background: transparent;
+  transition: background 0s;
+}
+.bootSeg.on{
+  background: var(--osd, #e9fbff);
+}
+.bootPct{
+  flex-shrink: 0;
+  min-width: 3em;
+  text-align: right;
+  opacity: .6;
 }
 
 /* =========================================================
@@ -206,8 +271,7 @@ body::before{
   text-align:center;
   /* Initial state: hidden for boot animation */
   opacity: 0;
-  transform: scale(0.7);
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 .tile.booted{
@@ -442,6 +506,8 @@ body::before{
 }
 
 .teamCard{
+  display: flex;
+  gap: 24px;
   background: rgba(0,0,0,.25);
   border: 1px solid rgba(233,251,255,.2);
   border-radius: 10px;
@@ -454,18 +520,10 @@ body::before{
   box-shadow: 0 0 0 1px rgba(233,251,255,.1), 0 0 20px rgba(26,85,255,.15);
 }
 
-.teamHeader{
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 14px;
-}
-
 .teamPhoto{
   flex-shrink: 0;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
+  width: 180px;
+  border-radius: 8px;
   overflow: hidden;
   border: 2px solid rgba(233,251,255,.2);
   background: rgba(0,0,0,.3);
@@ -478,6 +536,7 @@ body::before{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .teamPhotoPlaceholder{
@@ -486,7 +545,7 @@ body::before{
   letter-spacing: .2em;
 }
 
-.teamMeta{
+.teamBody{
   flex: 1;
   min-width: 0;
 }
@@ -506,24 +565,25 @@ body::before{
   margin-top: 4px;
 }
 
+.teamBio{
+  font-size: clamp(12px, 1.4vw, 14px);
+  color: rgba(233,251,255,.75);
+  line-height: 1.7;
+  border-top: 1px solid rgba(233,251,255,.1);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
 .teamLinks{
   display: flex;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 12px;
   flex-wrap: wrap;
 }
 
 .teamLinks .mLink{
   font-size: 11px;
   padding: 4px 10px;
-}
-
-.teamBio{
-  font-size: clamp(12px, 1.4vw, 14px);
-  color: rgba(233,251,255,.75);
-  line-height: 1.7;
-  border-top: 1px solid rgba(233,251,255,.1);
-  padding-top: 14px;
 }
 
 /* Team view: hide redundant panel elements */
@@ -534,9 +594,15 @@ body::before{
 }
 
 @media (max-width: 500px){
-  .teamHeader{
+  .teamCard{
     flex-direction: column;
+    align-items: center;
     text-align: center;
+  }
+
+  .teamPhoto{
+    width: 120px;
+    height: 120px;
   }
 
   .teamLinks{
@@ -1001,6 +1067,100 @@ body::before{
   --stepX: 10;
 
   --beamT: 180ms;
+}
+
+/* ===== REEL POPUP ===== */
+.reelPopup{
+  display: none;
+  position: fixed;
+  width: min(360px, 38vw);
+  min-width: 180px;
+  max-width: 80vw;
+  border: 1px solid var(--osd, #e9fbff);
+  background: rgba(26,85,255,.75);
+  font-family: "Courier New", Courier, monospace;
+  text-transform: uppercase;
+  color: var(--osd, #e9fbff);
+  z-index: 35;
+  resize: horizontal;
+  overflow: hidden;
+}
+.reelPopup.is-visible{ display: block; animation: scanReveal 300ms steps(12, end) both; }
+
+.reelHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .35em .6em;
+  border-bottom: 1px solid var(--osd, #e9fbff);
+  font-size: clamp(.6rem, 1.1vw, .75rem);
+  letter-spacing: .1em;
+  opacity: .7;
+  cursor: grab;
+  user-select: none;
+}
+.reelHeader:active{ cursor: grabbing; }
+
+.reelClose{
+  background: none;
+  border: 1px solid var(--osd, #e9fbff);
+  color: var(--osd, #e9fbff);
+  font-family: inherit;
+  font-size: inherit;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: .15em .5em;
+  cursor: pointer;
+}
+.reelClose:hover{ background: rgba(233,251,255,.15); }
+
+.reelPlayer{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.reelPlaceholder{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+}
+
+.reelNoise{
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(233,251,255,.03) 2px,
+    rgba(233,251,255,.03) 4px
+  );
+  animation: reelStatic 0.4s steps(4) infinite;
+  pointer-events: none;
+}
+
+@keyframes reelStatic{
+  0%   { opacity: .4; }
+  25%  { opacity: .6; }
+  50%  { opacity: .3; }
+  75%  { opacity: .5; }
+  100% { opacity: .4; }
+}
+
+.reelText{
+  position: relative;
+  font-size: clamp(.7rem, 1.4vw, .9rem);
+  letter-spacing: .2em;
+  opacity: .5;
+}
+
+@media (max-width: 720px){
+  .reelPopup{ width: min(260px, 65vw); }
 }
 
 .branchSlot{
@@ -2929,4 +3089,29 @@ button,
 .subBtn,
 .projectCard{
   touch-action: manipulation; /* Prevents double-tap zoom delay */
+}
+
+/* ── Toast notification ── */
+.toast{
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: #111;
+  color: var(--osd, #e9fbff);
+  font-family: "Courier New", Courier, monospace;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: .55rem 1.2rem;
+  border: 1px solid var(--osd, #e9fbff);
+  border-radius: 2px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.toast.is-visible{
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
 }
