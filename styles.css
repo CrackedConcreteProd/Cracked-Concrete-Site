@@ -2481,6 +2481,19 @@ a.connectValue:hover{
   padding: 12px;
 }
 
+.gearSubHeader{
+  grid-column: 1 / -1;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--osd, #e9fbff);
+  opacity: .6;
+  border-bottom: 1px solid rgba(233,251,255,.2);
+  padding: 8px 0 4px;
+  margin-top: 4px;
+}
+
 .gearItem{
   background: rgba(0,0,0,.4);
   border: 1px solid rgba(233,251,255,.2);

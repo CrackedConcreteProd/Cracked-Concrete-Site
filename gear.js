@@ -6,6 +6,7 @@ const GEAR_DATA = {
       {
         id: "cam-001",
         name: "RED KOMODO 6K",
+        subsection: "DIGITAL",
         description: "Full-frame 4K cinema camera with exceptional low-light performance. Features dual base ISO, 10-bit 4:2:2 internal recording, and S-Cinetone color science.",
         thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=RED+KOMODO",
         photos: [
@@ -15,38 +16,104 @@ const GEAR_DATA = {
           "https://placehold.co/800x600/0b34ff/e9fbff?text=FX3+Top"
         ],
         dayRate: 200,
-        weekRate: 700,
+        weekRate: 800,
         status: "available" // available, rented, maintenance
       },
       {
-        id: "cam-002",
-        name: "Canon XL2",
-        description: "Compact cinema camera with Super 35 sensor and built-in ND filters. Records in Blackmagic RAW for maximum flexibility in post-production.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=BMPCC+6K",
+        id: "cam-004",
+        name: "PANASONIC LUMIX GH5",
+        subsection: "DIGITAL",
+        description: "Micro Four Thirds mirrorless camera with 4K 60fps 10-bit internal recording. Dual image stabilization, V-Log L, and weather-sealed magnesium alloy body.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=LUMIX+GH5",
         photos: [
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=6K+Front",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=6K+LCD",
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=6K+Rig",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=6K+Detail"
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=GH5+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=GH5+Back",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=GH5+Top",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=GH5+Side"
         ],
-        dayRate: 125,
-        weekRate: 625,
+        dayRate: 40,
+        weekRate: 160,
+        status: "available"
+      },
+      {
+        id: "cam-002",
+        name: "CANON XL2",
+        subsection: "ANALOG",
+        description: "Professional 3CCD MiniDV camcorder with interchangeable lens system. 20x fluorite zoom lens, XLR audio inputs, and progressive scan mode for a filmic look.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=CANON+XL2",
+        photos: [
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=XL2+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=XL2+LCD",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=XL2+Lens",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=XL2+Detail"
+        ],
+        dayRate: 50,
+        weekRate: 200,
         status: "available"
       },
       {
         id: "cam-003",
-        name: "CANON EOS R5C",
-        description: "Hybrid cinema/photo camera with 8K RAW recording. Active cooling system enables unlimited recording time. Dual card slots and Cinema EOS color science.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=R5C",
+        name: "SONY VX1000",
+        subsection: "ANALOG",
+        description: "Legendary MiniDV camcorder with 3CCD image system and optical image stabilization. The camera that defined indie filmmaking and skate video culture.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=SONY+VX1000",
         photos: [
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=R5C+Front",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=R5C+Screen",
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=R5C+Setup",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=R5C+Ports"
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=VX1000+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=VX1000+Screen",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=VX1000+Side",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=VX1000+Ports"
         ],
         dayRate: 175,
         weekRate: 875,
         status: "rented"
+      },
+      {
+        id: "cam-005",
+        name: "SONY HI8 HANDYCAM CCD-TRV65",
+        subsection: "ANALOG",
+        description: "Classic Hi8 camcorder with SteadyShot stabilization and NightShot infrared mode. Produces the warm, lo-fi analog texture that defined 90s home video.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=HI8+HANDYCAM",
+        photos: [
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=Hi8+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=Hi8+LCD",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=Hi8+Side",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=Hi8+Tape"
+        ],
+        dayRate: 75,
+        weekRate: 375,
+        status: "available"
+      },
+      {
+        id: "cam-006",
+        name: "PANASONIC AG-DVX100",
+        subsection: "ANALOG",
+        description: "Pioneering MiniDV camcorder with true 24p progressive recording. Leica Dicomar lens, manual focus ring, and CineGamma curves for a cinematic look on tape.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=AG-DVX100",
+        photos: [
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=DVX100+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=DVX100+Back",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=DVX100+Top",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=DVX100+Lens"
+        ],
+        dayRate: 100,
+        weekRate: 500,
+        status: "available"
+      },
+      {
+        id: "cam-007",
+        name: "JVC KY-210",
+        subsection: "ANALOG",
+        description: "Professional broadcast-grade 3-tube camera with S-VHS recording. Known for its rich, saturated color reproduction and classic broadcast look. A workhorse of 80s/90s television production.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=JVC+KY-210",
+        photos: [
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=KY210+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=KY210+Side",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=KY210+Viewfinder",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=KY210+Back"
+        ],
+        dayRate: 60,
+        weekRate: 300,
+        status: "available"
       }
     ]
   },
@@ -166,7 +233,7 @@ const GEAR_DATA = {
     ]
   },
   monitors: {
-    title: "MONITORS & TVS",
+    title: "CRT TELEVISIONS",
     items: [
       {
         id: "mon-001",

@@ -1554,7 +1554,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const gridDiv = document.createElement("div");
       gridDiv.className = "gearGrid";
 
+      let lastSub = null;
       category.items.forEach(item => {
+        if (item.subsection && item.subsection !== lastSub) {
+          lastSub = item.subsection;
+          const subHeader = document.createElement("div");
+          subHeader.className = "gearSubHeader";
+          subHeader.textContent = item.subsection;
+          gridDiv.appendChild(subHeader);
+        }
         const itemDiv = renderGearItem(item);
         gridDiv.appendChild(itemDiv);
       });
