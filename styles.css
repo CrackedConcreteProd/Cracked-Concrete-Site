@@ -3064,6 +3064,24 @@ button,
   -webkit-overflow-scrolling: touch;
 }
 
+/* Visible thin scrollbar for mobile project list */
+@media (max-width: 780px){
+  .projectsGrid{
+    scrollbar-width: thin;
+    scrollbar-color: rgba(233,251,255,.3) transparent;
+  }
+  .projectsGrid::-webkit-scrollbar{
+    width: 4px;
+  }
+  .projectsGrid::-webkit-scrollbar-track{
+    background: transparent;
+  }
+  .projectsGrid::-webkit-scrollbar-thumb{
+    background: rgba(233,251,255,.3);
+    border-radius: 2px;
+  }
+}
+
 /* Safe area insets for notched devices (iPhone X+) */
 @supports (padding: max(0px)){
   body{
