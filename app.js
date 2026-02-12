@@ -981,31 +981,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     open() {
-      if (state.activeBranch && state.activeBranch !== this) state.activeBranch.close();
+      if (state.activeBranch && state.activeBranch !== this) {
+        state.activeBranch.close();
+        state.activeBranch._hasDrawn = false;
+      }
       state.activeBranch = this;
 
       hideReels();
 
       this.isOpen = true;
       this.branch.classList.add("is-open");
-      this.branch.classList.remove("is-ready");
 
       hardResetXScroll();
 
-      // Optimized: Single RAF instead of triple-nested
-      requestAnimationFrame(() => {
-        this.layoutLines();
-        if (this.defaultKey) this.setActive(this.defaultKey);
-
-        this.branch.classList.remove("is-drawing");
-        void this.branch.offsetHeight;
-        this.branch.classList.add("is-drawing");
-
-        window.setTimeout(() => {
-          if (this.isOpen) this.branch.classList.add("is-ready");
+      if (this._hasDrawn) {
+        // Already drawn — just show immediately, no animation replay
+        this.branch.classList.add("is-drawing", "is-ready");
+        requestAnimationFrame(() => {
+          this.layoutLines(true);
           hardResetXScroll();
-        }, REVEAL_AFTER_MS);
-      });
+        });
+      } else {
+        // First open — play animation
+        this.branch.classList.remove("is-ready");
+        requestAnimationFrame(() => {
+          this.layoutLines();
+          if (this.defaultKey) this.setActive(this.defaultKey);
+
+          this.branch.classList.remove("is-drawing");
+          void this.branch.offsetHeight;
+          this.branch.classList.add("is-drawing");
+
+          window.setTimeout(() => {
+            if (this.isOpen) {
+              this.branch.classList.add("is-ready");
+              this._hasDrawn = true;
+            }
+            hardResetXScroll();
+          }, REVEAL_AFTER_MS);
+        });
+      }
     }
 
     toggle() {
