@@ -39,7 +39,7 @@ const ICONS = {
 // ===== YOUTUBE AVATAR HELPERS =====
 // Auto-fetches YouTube channel profile pics for marquee items without a custom image.
 // Free key: https://console.cloud.google.com/apis/credentials (enable "YouTube Data API v3")
-const YT_API_KEY = "AIzaSyAdWVMzNDqIaanL_c46jjArsSP2DvwRmug";
+const YT_API_KEY = "";
 
 function extractYTHandle(url) {
   if (!url) return null;
@@ -959,9 +959,15 @@ document.addEventListener("DOMContentLoaded", () => {
         this.setActive(btn.dataset.sub);
       });
 
+      this._lastResizeW = window.innerWidth;
       window.addEventListener("resize", () => {
         if (!this.isOpen) return;
-        this.layoutLines();
+        // On mobile, address bar show/hide fires resize but only changes height.
+        // Skip relayout for height-only changes to avoid re-triggering animation.
+        const w = window.innerWidth;
+        if (w === this._lastResizeW) return;
+        this._lastResizeW = w;
+        this.layoutLines(true);
         hardResetXScroll();
       });
     }
@@ -1059,7 +1065,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Bend-route layout:
     // trunk down -> knee (horizontal to a safe corridor) -> stem down -> bar -> drops
-    layoutLines() {
+    layoutLines(skipAnimation = false) {
       if (!this.tile || !this.subRow || !this.linesEl) return;
 
       const tRect = this.tile.getBoundingClientRect();
@@ -1213,42 +1219,53 @@ document.addEventListener("DOMContentLoaded", () => {
           };
         });
 
-        const DURATION = 1200;
-        const STAGGER = 60;
-
-        // Start animation on next frame
-        requestAnimationFrame(() => {
-          const startTime = performance.now();
-
-          // Set geometry and make visible immediately
+        if (skipAnimation) {
+          // Resize: just update geometry without re-animating
           pathData.forEach(data => {
             data.path.setAttribute("d", data.d);
             data.path.setAttribute("stroke-dasharray", data.length);
+            data.path.setAttribute("stroke-dashoffset", 0);
             data.path.classList.add("animating");
           });
           this.svg.style.visibility = "visible";
+        } else {
+          const DURATION = 1200;
+          const STAGGER = 60;
 
-          const animate = (now) => {
-            const elapsed = now - startTime;
+          // Start animation on next frame
+          requestAnimationFrame(() => {
+            const startTime = performance.now();
 
-            pathData.forEach((data, i) => {
-              const t = elapsed - (i * STAGGER);
-              const progress = quantize(Math.max(0, Math.min(1, t / DURATION)), 12);
-              const offset = data.length * (1 - progress);
-              data.path.setAttribute("stroke-dashoffset", offset);
+            // Set geometry and make visible immediately
+            pathData.forEach(data => {
+              data.path.setAttribute("d", data.d);
+              data.path.setAttribute("stroke-dasharray", data.length);
+              data.path.classList.add("animating");
             });
+            this.svg.style.visibility = "visible";
 
-            const totalDuration = DURATION + ((pathData.length - 1) * STAGGER) + 100;
-            if (elapsed < totalDuration) {
-              requestAnimationFrame(animate);
-            } else {
-              // Animation complete - trigger section reveal
-              this.branch.classList.add("done");
-            }
-          };
+            const animate = (now) => {
+              const elapsed = now - startTime;
 
-          animate(startTime);
-        });
+              pathData.forEach((data, i) => {
+                const t = elapsed - (i * STAGGER);
+                const progress = quantize(Math.max(0, Math.min(1, t / DURATION)), 12);
+                const offset = data.length * (1 - progress);
+                data.path.setAttribute("stroke-dashoffset", offset);
+              });
+
+              const totalDuration = DURATION + ((pathData.length - 1) * STAGGER) + 100;
+              if (elapsed < totalDuration) {
+                requestAnimationFrame(animate);
+              } else {
+                // Animation complete - trigger section reveal
+                this.branch.classList.add("done");
+              }
+            };
+
+            animate(startTime);
+          });
+        }
       }
     }
   }

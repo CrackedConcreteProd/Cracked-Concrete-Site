@@ -118,13 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
           // Add active to clicked item
           item.classList.add("is-active");
 
-          // TODO: Show project details in a modal or detail panel
           const slug = item.dataset.slug;
           const project = projectData.find(p => p.slug === slug);
-          if (project) {
-            console.log("Selected project:", project);
-            // Future: Open detail view, lightbox, or separate panel
-          }
         });
       });
     });
@@ -212,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
       minimizeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         win.style.display = "none";
-        // TODO: Add to taskbar or dock
       });
     }
 
