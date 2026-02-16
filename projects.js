@@ -230,6 +230,28 @@ const PROJECTS = [
     ],
   },
   {
+    slug: "mv-07",
+    category: "musicvideos",
+    section: "editing",
+    title: "Why Can't I Call You?",
+    year: "2024",
+    type: "Music Video",
+    involvement: ["Editing"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "Slightest Clue"],
+      ["DIRECTOR", "Francis Rogers"],
+      ["Cinematographer", "Jamie Mitri"],
+      ["Editor", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/LUXc_B69JKQ?si=8fK-k96ApJ-kvt_o"],
+    ],
+  },
+  {
     slug: "project-07",
     category: "films",
     section: "cinematography",
@@ -344,6 +366,26 @@ const PROJECTS = [
     ],
     links: [
       ["WATCH", "https://youtu.be/ZpGrneTg1h0?si=x83LdSkRVvZwyXdC"],
+    ],
+  },
+  {
+    slug: "mv-08",
+    category: "musicvideos",
+    section: "cinematography",
+    title: "Should've Known (Live at Fox Cabaret)",
+    year: "2024",
+    type: "Music Video",
+    involvement: ["Cinematography"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "Riun Garner"],
+      ["Cinematographer", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/DSBR52ziHuU?si=TMrq0d6su54ESlFU"],
     ],
   },
   {

@@ -39,7 +39,7 @@ const ICONS = {
 // ===== YOUTUBE AVATAR HELPERS =====
 // Auto-fetches YouTube channel profile pics for marquee items without a custom image.
 // Free key: https://console.cloud.google.com/apis/credentials (enable "YouTube Data API v3")
-const YT_API_KEY = "";
+const YT_API_KEY = "AIzaSyAdWVMzNDqIaanL_c46jjArsSP2DvwRmug";
 
 function extractYTHandle(url) {
   if (!url) return null;
@@ -1365,6 +1365,8 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "OOGWAY", img: "", links: [{ label: "IG", url: "https://www.instagram.com/oogway_the_okay?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCBsXl9QvTILN1fE27SVK5iw" }] },
             { name: "FIONAVAIR", img: "", links: [{ label: "IG", url: "https://www.instagram.com/fionavair?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Fionavair" }] },
             { name: "Justii_DC", img: "", links: [{ label: "IG", url: "https://www.instagram.com/justii_dc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@justii_dc" }] },
+            { name: "RIUN GARNER", img: "", links: [{ label: "IG", url: "https://www.instagram.com/riungarner?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCkRorTRhewEpH90rBMOGCTw" }] },
+            { name: "SLIGHTEST CLUE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/slightestclue?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@slightestclue" }] },
           ]
         }
       }
