@@ -257,15 +257,17 @@ document.addEventListener("DOMContentLoaded", () => {
     reelPopups.push({ el, dismissed: false });
   });
 
-  // Random non-overlapping placement below the icon grid
+  // Non-overlapping placement below the icon grid
   function placeReelsRandomly() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const gridEl = document.getElementById("grid");
     const minY = gridEl ? gridEl.getBoundingClientRect().bottom + 12 : vh * 0.3;
     const placed = []; // { x, y, w, h }
+    const pad = 16;
+    const cascade = 36; // px offset per window for fallback
 
-    reelPopups.forEach(reel => {
+    reelPopups.forEach((reel, idx) => {
       // Temporarily show to measure
       reel.el.style.visibility = "hidden";
       reel.el.style.display = "block";
@@ -274,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
       reel.el.style.display = "";
       reel.el.style.visibility = "";
 
-      const pad = 16;
       let x, y, attempts = 0, ok = false;
 
       while (attempts < 80 && !ok) {
@@ -289,6 +290,14 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
         attempts++;
+      }
+
+      // Cascade fallback if random placement failed
+      if (!ok) {
+        x = pad + idx * cascade;
+        y = minY + idx * cascade;
+        x = Math.min(x, Math.max(pad, vw - w - pad));
+        y = Math.min(y, Math.max(minY, vh - h - pad));
       }
 
       reel.el.style.left = Math.round(x) + "px";
@@ -1331,7 +1340,7 @@ document.addEventListener("DOMContentLoaded", () => {
               bio: "Ben Mouland is a Vancouver-based filmmaker and visual artist, born in New York City and raised in Montreal, whose practice spans tender, emotionally driven directing and more outlandish experiments with analog filmmaking.",
               links: [
                 { label: "IG", url: "https://www.instagram.com/benmouland/" },
-                { label: "LINKEDIN", url: "www.linkedin.com/in/ben-mouland-720082234" },
+                { label: "LINKEDIN", url: "https://www.linkedin.com/in/ben-mouland-720082234" },
               ]
             },
           ]
