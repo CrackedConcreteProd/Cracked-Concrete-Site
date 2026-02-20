@@ -228,9 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // REEL POPUPS (3 windows — Films, Music Videos, Misc)
   // =========================================================
   const REEL_CONFIGS = [
-    { id: "reelFilms",       label: "FILMS",        text: "FILMS REEL COMING SOON" },
-    { id: "reelMusicVideos", label: "MUSIC VIDEOS",  text: "MUSIC VIDEOS REEL COMING SOON" },
-    { id: "reelMisc",        label: "MISC",          text: "MISC REEL COMING SOON" },
+    { id: "reelFilms",       label: "FILMS",        videoId: "1H6NWYeGV3A" },
+    { id: "reelMusicVideos", label: "MUSIC VIDEOS",  videoId: "uFrMkZTIRR8" },
+    { id: "reelMisc",        label: "MISC",          videoId: "mLkzxBsfGxU" },
   ];
 
   const reelContainer = document.getElementById("reelContainer");
@@ -247,10 +247,13 @@ document.addEventListener("DOMContentLoaded", () => {
         <button class="reelClose" type="button">CLOSE</button>
       </div>
       <div class="reelPlayer">
-        <div class="reelPlaceholder">
-          <div class="reelNoise"></div>
-          <div class="reelText">${cfg.text}</div>
-        </div>
+        <iframe
+          src="https://www.youtube.com/embed/${cfg.videoId}?autoplay=1&mute=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          style="position:absolute;inset:0;width:100%;height:100%;"
+        ></iframe>
       </div>
     `;
     if (reelContainer) reelContainer.appendChild(el);
