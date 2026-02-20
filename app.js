@@ -1872,7 +1872,7 @@ ESTIMATED TOTAL: $${total}
     // For now, we'll create a mailto link
     const subject = encodeURIComponent("Gear Rental Quote Request");
     const body = encodeURIComponent(message);
-    const mailtoLink = `mailto:ben@cracked-concrete.com?subject=${subject}&body=${body}`;
+    const mailtoLink = `mailto:ben@crackedconcrete.ca?subject=${subject}&body=${body}`;
 
     window.location.href = mailtoLink;
 
@@ -1940,7 +1940,7 @@ Additional Notes:
 
 Thanks!`);
 
-        const mailtoLink = `mailto:ben@cracked-concrete.com?subject=${subject}&body=${body}`;
+        const mailtoLink = `mailto:ben@crackedconcrete.ca?subject=${subject}&body=${body}`;
         window.location.href = mailtoLink;
       });
     });
@@ -2000,7 +2000,7 @@ Additional Notes:
 
 Thanks!`);
 
-        const mailtoLink = `mailto:ben@cracked-concrete.com?subject=${subject}&body=${body}`;
+        const mailtoLink = `mailto:ben@crackedconcrete.ca?subject=${subject}&body=${body}`;
         window.location.href = mailtoLink;
       });
     });
