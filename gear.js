@@ -170,35 +170,35 @@ const GEAR_DATA = {
       },
       {
         id: "lens-002",
-        name: "SONY 24-70MM F2.8 GM II",
+        name: "CONTAX VARIO-SONNAR 28-85MM F3.3-4",
         subsection: "FULL FRAME",
-        description: "Professional standard zoom for full-frame Sony E-mount. Weather-sealed, fast autofocus, and razor-sharp throughout the zoom range.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=SONY+24-70",
+        description: "Zeiss-designed full-frame zoom in Contax/Yashica mount, adaptable to most modern systems. Covers a versatile wide-to-portrait range with the signature Zeiss T* coating — rich contrast, smooth transitions, and a warmth that flatters skin tones and natural light alike. A favourite for documentary and narrative work.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=CONTAX+28-85",
         photos: [
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=GM+II+Side",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=GM+II+Front",
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=GM+II+Rear",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=GM+II+Detail"
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=Contax+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=Contax+Side",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=Contax+Mount",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=Contax+Detail"
         ],
         dayRate: 60,
         weekRate: 300,
         status: "available"
       },
       {
-        id: "lens-003",
-        name: "CANON 70-200MM F2.8 L IS III",
-        subsection: "SUPER 35",
-        description: "Legendary telephoto zoom with image stabilization. Perfect for portraits, events, and sports. Weather-sealed professional build quality.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=CANON+70-200",
+        id: "lens-007",
+        name: "AUTO VIVITAR 135MM F2.8",
+        subsection: "FULL FRAME",
+        description: "Classic vintage telephoto in M42 screw mount, adaptable to most modern systems. Punchy contrast and creamy out-of-focus rendering make it a natural for portraits, live performance, and anything that benefits from compression and separation. Smooth manual focus with a long throw — precise and satisfying to pull.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=VIVITAR+135MM",
         photos: [
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=70-200+Full",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=70-200+Hood",
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=70-200+Mount",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=70-200+Controls"
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=Vivitar+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=Vivitar+Side",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=Vivitar+Mount",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=Vivitar+Detail"
         ],
-        dayRate: 55,
-        weekRate: 275,
-        status: "maintenance"
+        dayRate: 20,
+        weekRate: 80,
+        status: "available"
       },
       {
         id: "lens-004",
@@ -230,6 +230,22 @@ const GEAR_DATA = {
         ],
         dayRate: 25,
         weekRate: 100,
+        status: "available"
+      },
+      {
+        id: "lens-008",
+        name: "SLR MAGIC 12MM F1.6",
+        subsection: "MICRO FOUR THIRDS",
+        description: "Ultra-wide cine-style lens built natively for MFT. At f1.6 it pulls in serious light for its focal length — great for tight interiors, low-light performance, and immersive wide angles with minimal distortion. De-clicked aperture ring and smooth focus throw make it a natural fit for video work.",
+        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=SLR+MAGIC+12MM",
+        photos: [
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=SLRMagic+Front",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=SLRMagic+Side",
+          "https://placehold.co/800x600/1a55ff/e9fbff?text=SLRMagic+Mount",
+          "https://placehold.co/800x600/0b34ff/e9fbff?text=SLRMagic+Detail"
+        ],
+        dayRate: 30,
+        weekRate: 120,
         status: "available"
       },
       {
@@ -326,21 +342,6 @@ const GEAR_DATA = {
   grip: {
     title: "GRIP + SUPPORT",
     items: [
-      {
-        id: "grip-001",
-        name: "DJI RS3 PRO GIMBAL",
-        description: "Professional 3-axis gimbal stabilizer. 10lb payload capacity, automated axis locks, and extended battery life. Includes focus motor and carrying case.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=DJI+RS3",
-        photos: [
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=RS3+Full",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=RS3+Folded",
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=RS3+Motor",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=RS3+Case"
-        ],
-        dayRate: 85,
-        weekRate: 425,
-        status: "available"
-      },
       {
         id: "grip-002",
         name: "MANFROTTO 516 FLUID HEAD TRIPOD",
@@ -439,22 +440,6 @@ const GEAR_DATA = {
   },
   misc: {
     title: "MISC",
-    items: [
-      {
-        id: "misc-001",
-        name: "RODE WIRELESS PRO",
-        description: "Professional wireless microphone system with 32-bit float recording. Includes 2 transmitters, 1 receiver, and charging case. Timecode sync capable.",
-        thumbnail: "https://placehold.co/400x300/1a55ff/e9fbff?text=RODE+PRO",
-        photos: [
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=Rode+Set",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=Rode+TX",
-          "https://placehold.co/800x600/1a55ff/e9fbff?text=Rode+RX",
-          "https://placehold.co/800x600/0b34ff/e9fbff?text=Rode+Case"
-        ],
-        dayRate: 50,
-        weekRate: 250,
-        status: "rented"
-      }
-    ]
+    items: []
   }
 };
