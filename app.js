@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="reelPlayer">
         <iframe
-          src="https://www.youtube.com/embed/${cfg.videoId}?autoplay=1&mute=1"
+          src="https://www.youtube.com/embed/${cfg.videoId}?autoplay=1&mute=1&loop=1&playlist=${cfg.videoId}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
