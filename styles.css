@@ -1119,7 +1119,7 @@ body::before{
   font-family: "Courier New", Courier, monospace;
   text-transform: uppercase;
   color: var(--osd, #e9fbff);
-  z-index: 35;
+  z-index: 9;
   resize: horizontal;
   overflow: hidden;
 }
