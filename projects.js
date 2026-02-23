@@ -104,7 +104,7 @@ const PROJECTS = [
     involvement: ["Cracked Concrete Original"],
     status: "RELEASED",
     logline:
-      "A neon-forward product promo built around motion, reflections, and analog grit.",
+      "In the vibrant city of Vancouver, four lives intersect in unexpected ways as two budding relationships unfold, each navigating the complexities of connection, timing, and self-discovery.",
     poster: "assets/projects/goldfish/poster.png",
   stills: [
     "assets/projects/goldfish/still-01.png",
