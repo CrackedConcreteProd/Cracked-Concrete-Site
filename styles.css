@@ -184,6 +184,20 @@ body::before{
   align-items: center;
   justify-content: center;
 }
+.bootScreen::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,.20) 3px
+  );
+  opacity: .75;
+  mix-blend-mode: multiply;
+}
 .bootScreen.is-done{
   display: none;
 }
