@@ -1198,7 +1198,20 @@ body::before{
 }
 
 @media (max-width: 720px){
-  .reelPopup{ width: min(260px, 65vw); }
+  #reelContainer{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    z-index: 10;
+  }
+  .reelPopup{
+    position: relative !important;
+    width: 100% !important;
+    left: auto !important;
+    top: auto !important;
+  }
 }
 
 .branchSlot{

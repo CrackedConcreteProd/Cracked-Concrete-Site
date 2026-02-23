@@ -311,21 +311,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   placeReelsRandomly();
 
-  // Show / hide popups (mobile: one random pick from Films or Music Videos)
+  // Show / hide popups
   function showReels() {
-    const isMobile = window.innerWidth <= 720;
+    reelPopups.forEach(r => {
+      if (!r.dismissed) r.el.classList.add("is-visible");
+    });
 
-    if (isMobile) {
-      // Pick randomly between Films (0) and Music Videos (1)
-      const pick = Math.random() < 0.5 ? 0 : 1;
-      reelPopups.forEach((r, i) => {
-        if (i === pick && !r.dismissed) r.el.classList.add("is-visible");
-        else r.el.classList.remove("is-visible");
-      });
-    } else {
-      reelPopups.forEach(r => {
-        if (!r.dismissed) r.el.classList.add("is-visible");
-      });
+    if (false) {
     }
   }
   function hideReels() {
