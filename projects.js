@@ -814,6 +814,7 @@ if (!els.grid || !els.panel) {
     // Media (poster + stills)
     const posterSrc = getProjectPoster(p);
     const hasPoster = Boolean(posterSrc);
+    const hasRealPoster = Boolean(p.poster); // custom file only, not YouTube thumbnail
     const hasStills = Array.isArray(p.stills) && p.stills.length > 0;
 
     // Build gallery: poster first, then stills
@@ -834,7 +835,7 @@ if (!els.grid || !els.panel) {
       // Show poster + stills
       const stillsShown = p.stills.slice(0, 3);
       els.cover.innerHTML = `
-        <div class="panelMedia">
+        <div class="panelMedia ${hasRealPoster ? "has-poster" : ""}">
           <div class="panelPoster ${hasPoster ? "" : "is-missing"}">
             ${
               hasPoster
@@ -860,7 +861,7 @@ if (!els.grid || !els.panel) {
     } else {
       // Poster only (no stills)
       els.cover.innerHTML = `
-        <div class="panelMedia">
+        <div class="panelMedia ${hasRealPoster ? "has-poster poster-only" : ""}">
           <div class="panelPoster" style="grid-column: span 2;">
             <img src="${posterSrc}" data-gindex="0" alt="${p.title} poster" loading="lazy" />
           </div>

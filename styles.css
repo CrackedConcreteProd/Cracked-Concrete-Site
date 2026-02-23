@@ -894,6 +894,23 @@ body::before{
   overflow: hidden;
 }
 
+/* When a real poster + stills are present, let the poster drive height via aspect ratio */
+.panelMedia.has-poster{
+  height: auto;
+}
+
+/* Poster only (no stills) — keep fixed height, fill with cover */
+.panelMedia.poster-only{
+  height: 343px;
+}
+.panelMedia.poster-only .panelPoster{
+  aspect-ratio: unset;
+  height: 100%;
+}
+.panelMedia.poster-only .panelPoster img{
+  object-fit: contain;
+}
+
 .panelPoster,
 .panelStill{
   height: 100%;
@@ -902,6 +919,16 @@ body::before{
   overflow: hidden;
   position: relative;
   background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.10));
+}
+
+.panelPoster{
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
+}
+
+.has-poster .panelPoster{
+  aspect-ratio: 2/3;
+  width: 100%;
+  height: auto;
 }
 
 .panelPoster img,
@@ -914,11 +941,6 @@ body::before{
 
 .panelPoster img{
   object-fit: contain;
-  background: transparent;
-}
-
-.panelPoster{
-  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
 }
 
 .panelStill img{ object-fit: cover; }
@@ -927,6 +949,7 @@ body::before{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+  height: 100%;
 }
 
 .mediaLabel{
@@ -3116,6 +3139,11 @@ input:focus-visible,
 textarea:focus-visible{
   outline: 2px solid rgba(233,251,255,0.6);
   outline-offset: 2px;
+}
+
+/* Tiles use brightness as their selected indicator — suppress focus ring */
+.tile:focus-visible{
+  outline: none;
 }
 
 /* Improve touch scrolling performance */
