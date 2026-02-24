@@ -1331,7 +1331,7 @@ document.addEventListener("DOMContentLoaded", () => {
             {
               name: "BEN MOULAND",
               role: "CEO / DIRECTOR / DP / EDITOR",
-              img: "assets/people/ben.png",
+              img: "assets/people/ben.jpg",
               bio: "Ben Mouland is a Vancouver-based filmmaker and visual artist, born in New York City and raised in Montreal, whose practice spans tender, emotionally driven directing and more outlandish experiments with analog filmmaking.",
               links: [
                 { label: "IG", url: "https://www.instagram.com/benmouland/" },

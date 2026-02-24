@@ -75,9 +75,9 @@ const PROJECTS = [
     logline: "Two young boys make the most of their time together in a hospital room.",
     poster: "assets/projects/pulse/poster.JPG",
   stills: [
-    "assets/projects/pulse/still-01.png",
-    "assets/projects/pulse/still-02.png",
-    "assets/projects/pulse/still-03.png",
+    "assets/projects/pulse/still-01.jpg",
+    "assets/projects/pulse/still-02.jpg",
+    "assets/projects/pulse/still-03.jpg",
   ],
     credits: [
       ["DIRECTOR", "Ben Mouland"],
@@ -105,11 +105,11 @@ const PROJECTS = [
     status: "RELEASED",
     logline:
       "In the vibrant city of Vancouver, four lives intersect in unexpected ways as two budding relationships unfold, each navigating the complexities of connection, timing, and self-discovery.",
-    poster: "assets/projects/goldfish/poster.png",
+    poster: "assets/projects/goldfish/poster.jpg",
   stills: [
-    "assets/projects/goldfish/still-01.png",
-    "assets/projects/goldfish/still-02.png",
-    "assets/projects/goldfish/still-03.png",
+    "assets/projects/goldfish/still-01.jpg",
+    "assets/projects/goldfish/still-02.jpg",
+    "assets/projects/goldfish/still-03.jpg",
   ],
     credits: [
       ["DIRECTOR", "Ben Mouland"],
@@ -137,9 +137,9 @@ const PROJECTS = [
       "A frivolous group of teenagers are slowly picked off by a crude forest entity.",
     poster: "assets/projects/ultra-violent-light/poster.jpg",
     stills: [
-      "assets/projects/ultra-violent-light/still-01.png",
-      "assets/projects/ultra-violent-light/still-02.png",
-      "assets/projects/ultra-violent-light/still-03.png",
+      "assets/projects/ultra-violent-light/still-01.jpg",
+      "assets/projects/ultra-violent-light/still-02.jpg",
+      "assets/projects/ultra-violent-light/still-03.jpg",
     ],
       credits: [
         ["Director", "Ben Mouland"],
@@ -168,9 +168,9 @@ const PROJECTS = [
       "An ode to the legendary establishement found in Squamish, BC",
     poster: "",
     stills: [
-      "assets/projects/sunny-chibba/still-01.png",
-      "assets/projects/sunny-chibba/still-02.png",
-      "assets/projects/sunny-chibba/still-03.png",
+      "assets/projects/sunny-chibba/still-01.jpg",
+      "assets/projects/sunny-chibba/still-02.jpg",
+      "assets/projects/sunny-chibba/still-03.jpg",
     ],
       credits: [
        ["Director", "Ben Mouland"],
