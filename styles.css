@@ -31,11 +31,26 @@ html, body{
 }
 
 html{
-  background-color: var(--blueC);
   background: linear-gradient(180deg, var(--blueA), var(--blueB) 45%, var(--blueC));
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
+  background-color: var(--blueC); /* fallback — must come after `background` shorthand */
+}
+
+/* background-attachment:fixed is broken on iOS Safari — use a fixed pseudo-element instead */
+@media (max-width: 720px){
+  html{
+    background: none;
+    background-color: var(--blueC);
+  }
+  html::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, var(--blueA), var(--blueB) 45%, var(--blueC));
+  }
 }
 
 body{
