@@ -34,6 +34,7 @@ const PROJECTS = [
     slug: "project-01",
     category: "films",
     section: "originals",
+    extraSections: ["editing"],
     title: "LIVE at the Court",
     year: "2026",
     type: "SHORT DOCUMENTARY",
@@ -67,6 +68,7 @@ const PROJECTS = [
     slug: "project-02",
     category: "films",
     section: "originals",
+    extraSections: ["editing"],
     title: "Pulse",
     year: "2025",
     type: "Short Film",
@@ -98,6 +100,7 @@ const PROJECTS = [
     slug: "project-03",
     category: "films",
     section: "originals",
+    extraSections: ["editing"],
     title: "Goldfish",
     year: "2024",
     type: "Feature Film",
@@ -159,6 +162,7 @@ const PROJECTS = [
     slug: "project-05",
     category: "films",
     section: "originals",
+    extraSections: ["editing"],
     title: "Sunny Chibas: The Shit Hot Eatery",
     year: "2022",
     type: "Short Documentary",
@@ -303,6 +307,7 @@ const PROJECTS = [
     slug: "mv-02",
     category: "musicvideos",
     section: "directing",
+    extraSections: ["editing"],
     title: "Scaredy Cat",
     year: "2025",
     type: "Music Video",
@@ -392,6 +397,7 @@ const PROJECTS = [
     slug: "mv-05",
     category: "musicvideos",
     section: "directing",
+    extraSections: ["editing"],
     title: "Cheef Keef",
     year: "2023",
     type: "Music Video",
@@ -414,6 +420,7 @@ const PROJECTS = [
     slug: "mv-06",
     category: "musicvideos",
     section: "directing",
+    extraSections: ["editing"],
     title: "Kookoo Family / Shakin'",
     year: "2022",
     type: "Music Video",
@@ -437,6 +444,7 @@ const PROJECTS = [
     slug: "live-01",
     category: "docs",
     section: "cinematography",
+    extraSections: ["editing"],
     title: "PISS live under oak street bridge",
     year: "2025",
     type: "Live Session",
@@ -461,6 +469,7 @@ const PROJECTS = [
     slug: "live-02",
     category: "docs",
     section: "cinematography",
+    extraSections: ["editing"],
     title: "Daughter",
     year: "2025",
     type: "Live Session",
@@ -614,7 +623,11 @@ if (!els.grid || !els.panel) {
   let activeCategory = "originals";
 
   function getVisible() {
-    const filtered = PROJECTS.filter((p) => (p.section || "originals") === activeCategory);
+    const filtered = PROJECTS.filter((p) => {
+      const primary = p.section || "originals";
+      const extra = p.extraSections || [];
+      return primary === activeCategory || extra.includes(activeCategory);
+    });
     return filtered.sort((a, b) =>
       CATEGORY_ORDER.indexOf(a.category || "misc") - CATEGORY_ORDER.indexOf(b.category || "misc")
     );
