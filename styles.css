@@ -1135,7 +1135,6 @@ body::before{
   text-transform: uppercase;
   color: var(--osd, #e9fbff);
   z-index: 9;
-  resize: horizontal;
   overflow: hidden;
 }
 .reelPopup.is-visible{ display: block; animation: scanReveal 300ms steps(12, end) both; }
@@ -1166,6 +1165,38 @@ body::before{
   cursor: pointer;
 }
 .reelClose:hover{ background: rgba(233,251,255,.15); }
+
+.reelResize{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.reelResize::before,
+.reelResize::after{
+  content: '';
+  position: absolute;
+  background: var(--osd, #e9fbff);
+}
+.reelResize::before{
+  bottom: 4px; right: 2px;
+  width: 10px; height: 1px;
+  transform: rotate(-45deg);
+  transform-origin: right center;
+}
+.reelResize::after{
+  bottom: 2px; right: 4px;
+  width: 6px; height: 1px;
+  transform: rotate(-45deg);
+  transform-origin: right center;
+}
+.reelPopup:hover .reelResize{ opacity: 0.6; }
+.reelResize:hover{ opacity: 1 !important; }
 
 .reelPlayer{
   position: relative;

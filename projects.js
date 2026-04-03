@@ -466,6 +466,26 @@ const PROJECTS = [
     ],
   },
   {
+    slug: "live-03",
+    category: "docs",
+    section: "cinematography",
+    title: 'PISS "time loop at hot slit" live at Shop Amalgam - May 5 2024',
+    year: "2024",
+    type: "Live Session",
+    involvement: ["Cinematography"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["Cinematographer", "Ben Mouland"],
+      ["Sound", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/RAd6elXbI_A?si=9Os93d_cmpBCO9_J"],
+    ],
+  },
+  {
     slug: "live-02",
     category: "docs",
     section: "cinematography",

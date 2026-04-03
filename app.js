@@ -255,6 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
           style="position:absolute;inset:0;width:100%;height:100%;"
         ></iframe>
       </div>
+      <div class="reelResize" title="Resize"></div>
     `;
     if (reelContainer) reelContainer.appendChild(el);
     reelPopups.push({ el, dismissed: false });
@@ -369,6 +370,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     header.addEventListener("mousedown", onStart);
     header.addEventListener("touchstart", onStart, { passive: false });
+  });
+
+  // Resizable — drag the bottom-right corner handle
+  reelPopups.forEach(reel => {
+    const handle = reel.el.querySelector(".reelResize");
+    if (!handle) return;
+
+    function onResizeMove(e) {
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const rect = reel.el.getBoundingClientRect();
+      const newW = Math.max(180, Math.min(window.innerWidth * 0.9, cx - rect.left));
+      reel.el.style.width = newW + "px";
+    }
+    function onResizeEnd() {
+      document.removeEventListener("mousemove", onResizeMove);
+      document.removeEventListener("mouseup", onResizeEnd);
+      document.removeEventListener("touchmove", onResizeMove);
+      document.removeEventListener("touchend", onResizeEnd);
+    }
+    function onResizeStart(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.addEventListener("mousemove", onResizeMove);
+      document.addEventListener("mouseup", onResizeEnd);
+      document.addEventListener("touchmove", onResizeMove, { passive: false });
+      document.addEventListener("touchend", onResizeEnd);
+    }
+
+    handle.addEventListener("mousedown", onResizeStart);
+    handle.addEventListener("touchstart", onResizeStart, { passive: false });
   });
 
   // =========================================================
