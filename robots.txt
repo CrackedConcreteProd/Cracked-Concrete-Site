@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cracked-concrete.com/sitemap.xml
+Sitemap: https://crackedconcrete.ca/sitemap.xml

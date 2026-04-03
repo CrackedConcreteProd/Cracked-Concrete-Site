@@ -39,7 +39,7 @@ const ICONS = {
 // ===== YOUTUBE AVATAR HELPERS =====
 // Auto-fetches YouTube channel profile pics for marquee items without a custom image.
 // Free key: https://console.cloud.google.com/apis/credentials (enable "YouTube Data API v3")
-const YT_API_KEY = "AIzaSyAdWVMzNDqIaanL_c46jjArsSP2DvwRmug";
+const YT_API_KEY = "AIzaSyAf6t8NoPNkpHL59XZ_NE7QhpSIVL-Pn08";
 
 function extractYTHandle(url) {
   if (!url) return null;
@@ -208,11 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return style.gridTemplateColumns.split(" ").length;
   }
 
-  function getBranchW() {
-    const v = getComputedStyle(document.documentElement).getPropertyValue("--branchW").trim();
-    const n = parseFloat(v);
-    return Number.isFinite(n) ? n : 8;
-  }
 
   // Only ever reset horizontal scroll (never vertical)
   function hardResetXScroll() {
@@ -318,8 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!r.dismissed) r.el.classList.add("is-visible");
     });
 
-    if (false) {
-    }
   }
   function hideReels() {
     reelPopups.forEach(r => r.el.classList.remove("is-visible"));
@@ -704,13 +697,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return Math.max(1, len);
   }
 
-  function dash(path, len, p) {
-    const clamped = Math.max(0, Math.min(1, p));
-    const drawn = len * clamped;
-    path.style.strokeDasharray = `${len}`;
-    path.style.strokeDashoffset = `${len - drawn}`;
-  }
-
   // Chunky “OSD” stepping
   function quantize(p, steps) {
     const s = Math.max(1, steps | 0);
@@ -719,10 +705,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---- CENTER SPINE + OBSTACLE AVOIDANCE (STEP 2) ----
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-
-  function rectsOverlap(a, b) {
-    return !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y);
-  }
 
   // Does a vertical segment at x from y1..y2 hit rect r?
   function verticalHitsRect(x, y1, y2, r) {
@@ -913,22 +895,6 @@ document.addEventListener("DOMContentLoaded", () => {
         this.svg.setAttribute("class", "branchSvg");
         this.svg.setAttribute("aria-hidden", "true");
 
-        this.pTrunk = svgEl("path"); this.pTrunk.setAttribute("class", "branchPath");
-        this.pTrunk.setAttribute("stroke-dasharray", "1");
-        this.pTrunk.setAttribute("stroke-dashoffset", "1");
-
-        this.pStem = svgEl("path"); this.pStem.setAttribute("class", "branchPath");
-        this.pStem.setAttribute("stroke-dasharray", "1");
-        this.pStem.setAttribute("stroke-dashoffset", "1");
-
-        this.pBar = svgEl("path"); this.pBar.setAttribute("class", "branchPath");
-        this.pBar.setAttribute("stroke-dasharray", "1");
-        this.pBar.setAttribute("stroke-dashoffset", "1");
-
-        this.svg.appendChild(this.pTrunk);
-        this.svg.appendChild(this.pStem);
-        this.svg.appendChild(this.pBar);
-
         this.pDrops = [];
         for (let i = 0; i < this.subBtns.length; i++) {
           const p = svgEl("path");
@@ -942,7 +908,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.linesEl.appendChild(this.svg);
       } else if (this.svg) {
         // Ensure drop paths match buttons
-        const existing = Array.from(this.svg.querySelectorAll("path")).slice(3); // after trunk/stem/bar
+        const existing = Array.from(this.svg.querySelectorAll("path"));
         existing.forEach(p => p.remove());
         this.pDrops = [];
         for (let i = 0; i < this.subBtns.length; i++) {
@@ -1121,9 +1087,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const tRect = this.tile.getBoundingClientRect();
       const linesRect = this.linesEl.getBoundingClientRect();
 
-      const branchW = getBranchW();
-      const overlap = Math.ceil(branchW / 2);
-
       // Start from tile center
       const startX = Math.round((tRect.left + tRect.width / 2) - linesRect.left);
 
@@ -1238,11 +1201,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // --- SVG PATH RENDERING: Single continuous path per button ---
       if (this.svg && this.pDrops) {
-        // Hide unused paths
-        if (this.pTrunk) this.pTrunk.style.display = "none";
-        if (this.pStem) this.pStem.style.display = "none";
-        if (this.pBar) this.pBar.style.display = "none";
-
         // Clear old data and hide everything
         this.svg.style.visibility = "hidden";
         this.pDrops.forEach(p => {
@@ -1513,8 +1471,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCategories();
     renderCart();
 
-    // Listen for services subsection changes
-    const servicesBranch = branches.find(b => b.id === "services");
     const productionServicesEl = document.getElementById("productionServices");
     const tapeTransferEl = document.getElementById("tapeTransfer");
 
