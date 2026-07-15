@@ -59,7 +59,7 @@ const PROJECTS = [
       ["Location Sound Mixer", "Juliette Leach"],
     ],
     links: [
-      ["TRAILER", "TBD"],
+      ["TRAILER", "https://youtu.be/sc-IgVM4osI?si=V5XvQU4Rsfxk3Bm1"],
       ["IMDB", "https://www.imdb.com/title/tt39393828/?ref_=ext_shr_lnk"],
       ["LETTERBOXD", "https://boxd.it/10j7e"],
     ],
@@ -417,6 +417,29 @@ const PROJECTS = [
     ],
   },
   {
+    slug: "mv-09",
+    category: "musicvideos",
+    section: "directing",
+    extraSections: ["editing"],
+    title: "Technicolour",
+    year: "2026",
+    type: "Music Video",
+    involvement: ["Direction, Editing"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "Jia"],
+      ["DIRECTOR", "Ben Mouland"],
+      ["Cinematographer", "Jamie Mitri"],
+      ["Editor", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://www.youtube.com/watch?v=BP4duVfAQvQ"],
+    ],
+  },
+  {
     slug: "mv-06",
     category: "musicvideos",
     section: "directing",
@@ -648,9 +671,13 @@ if (!els.grid || !els.panel) {
       const extra = p.extraSections || [];
       return primary === activeCategory || extra.includes(activeCategory);
     });
-    return filtered.sort((a, b) =>
-      CATEGORY_ORDER.indexOf(a.category || "misc") - CATEGORY_ORDER.indexOf(b.category || "misc")
-    );
+    return filtered.sort((a, b) => {
+      const catDiff =
+        CATEGORY_ORDER.indexOf(a.category || "misc") -
+        CATEGORY_ORDER.indexOf(b.category || "misc");
+      if (catDiff !== 0) return catDiff;
+      return Number(b.year) - Number(a.year);
+    });
   }
 
   function badge(text) {
