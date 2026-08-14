@@ -38,8 +38,13 @@ const ICONS = {
 
 // ===== YOUTUBE AVATAR HELPERS =====
 // Auto-fetches YouTube channel profile pics for marquee items without a custom image.
-// Free key: https://console.cloud.google.com/apis/credentials (enable "YouTube Data API v3")
+// Channel-ID lookups are batched into one API call. Results are cached in memory (session)
+// and localStorage (7 days), so profile pics auto-update when the cache expires.
 const YT_API_KEY = "AIzaSyAf6t8NoPNkpHL59XZ_NE7QhpSIVL-Pn08";
+const YT_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+// In-memory cache — works within the session even when localStorage is unavailable
+const ytMemCache = new Map();
 
 function extractYTHandle(url) {
   if (!url) return null;
@@ -50,28 +55,97 @@ function extractYTHandle(url) {
   return null;
 }
 
-async function fetchYTAvatar(ytUrl) {
-  if (!YT_API_KEY) return null;
-  const cacheKey = "ytav_" + ytUrl;
-  try { const c = localStorage.getItem(cacheKey); if (c) return c; } catch (_) {}
-
-  const info = extractYTHandle(ytUrl);
-  if (!info) return null;
-
+function ytCacheGet(url) {
+  const key = "ytav_" + url;
+  if (ytMemCache.has(key)) return ytMemCache.get(key);
   try {
-    const param = info.type === "id" ? `id=${info.value}` : `forHandle=${info.value}`;
-    const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?part=snippet&${param}&key=${YT_API_KEY}`
-    );
-    if (!res.ok) return null;
-    const json = await res.json();
-    const thumbs = json.items?.[0]?.snippet?.thumbnails;
-    const src = thumbs?.medium?.url || thumbs?.default?.url || null;
-    if (src) { try { localStorage.setItem(cacheKey, src); } catch (_) {} }
-    return src;
-  } catch (_) {
-    return null;
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const { src, expires } = JSON.parse(raw);
+      if (expires > Date.now()) { ytMemCache.set(key, src); return src; }
+      localStorage.removeItem(key);
+    }
+  } catch (_) {}
+  return null;
+}
+
+function ytCacheSet(url, src) {
+  ytMemCache.set("ytav_" + url, src);
+  try {
+    localStorage.setItem("ytav_" + url, JSON.stringify({ src, expires: Date.now() + YT_CACHE_TTL }));
+  } catch (_) {}
+}
+
+function applyAvatar(track, i, dataLen, src, name) {
+  [i, i + dataLen].forEach(idx => {
+    const avatar = track.querySelector(`[data-card="${idx}"] .mAvatar`);
+    if (avatar) avatar.innerHTML = `<img src="${src}" alt="${name}" loading="lazy" />`;
+  });
+}
+
+// Fetches avatars for all marquee items, batching channel-ID lookups into a single API call.
+async function mountMarqueeAvatars(data, track) {
+  if (!YT_API_KEY) return;
+
+  const work = data.map((it, i) => {
+    if (it.img) return null;
+    const ytLink = (it.links || []).find(l => (l.label || "").toUpperCase() === "YT");
+    if (!ytLink) return null;
+    const info = extractYTHandle(ytLink.url);
+    if (!info) return null;
+    return { it, i, url: ytLink.url, info };
+  }).filter(Boolean);
+
+  // Apply cached results immediately
+  const uncached = [];
+  for (const item of work) {
+    const cached = ytCacheGet(item.url);
+    if (cached) applyAvatar(track, item.i, data.length, cached, item.it.name);
+    else uncached.push(item);
   }
+
+  if (!uncached.length) return;
+
+  const byId = uncached.filter(w => w.info.type === "id");
+  const byHandle = uncached.filter(w => w.info.type === "handle");
+
+  // Batch all channel-ID lookups into one API call
+  if (byId.length) {
+    try {
+      const ids = byId.map(w => w.info.value).join(",");
+      const res = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${ids}&key=${YT_API_KEY}`
+      );
+      if (res.ok) {
+        const json = await res.json();
+        for (const apiItem of (json.items || [])) {
+          const thumbs = apiItem.snippet?.thumbnails;
+          const src = thumbs?.medium?.url || thumbs?.default?.url;
+          if (!src) continue;
+          const match = byId.find(w => w.info.value === apiItem.id);
+          if (!match) continue;
+          ytCacheSet(match.url, src);
+          applyAvatar(track, match.i, data.length, src, match.it.name);
+        }
+      }
+    } catch (_) {}
+  }
+
+  // Handle-based lookups run concurrently
+  await Promise.all(byHandle.map(async w => {
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet&forHandle=${w.info.value}&key=${YT_API_KEY}`
+      );
+      if (!res.ok) return;
+      const json = await res.json();
+      const thumbs = json.items?.[0]?.snippet?.thumbnails;
+      const src = thumbs?.medium?.url || thumbs?.default?.url;
+      if (!src) return;
+      ytCacheSet(w.url, src);
+      applyAvatar(track, w.i, data.length, src, w.it.name);
+    } catch (_) {}
+  }));
 }
 
 // ===== TOAST NOTIFICATION =====
@@ -546,21 +620,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Auto-fetch YouTube avatars for items without a custom image
-    if (YT_API_KEY) {
-      data.forEach((it, i) => {
-        if (it.img) return;
-        const ytLink = (it.links || []).find(l => (l.label || "").toUpperCase() === "YT");
-        if (!ytLink) return;
-        fetchYTAvatar(ytLink.url).then(src => {
-          if (!src) return;
-          // Update both copies in the doubled marquee
-          [i, i + data.length].forEach(idx => {
-            const avatar = track.querySelector(`[data-card="${idx}"] .mAvatar`);
-            if (avatar) avatar.innerHTML = `<img src="${src}" alt="${it.name}" loading="lazy" />`;
-          });
-        });
-      });
-    }
+    mountMarqueeAvatars(data, track);
 
     let mx = 0;
     let paused = false;
