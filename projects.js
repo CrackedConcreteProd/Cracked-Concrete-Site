@@ -530,6 +530,30 @@ const PROJECTS = [
       ["WATCH", "https://youtu.be/4yqm6RY_HUg?si=LDaG-1ylMSLTR9nK"],
     ],
   },
+  {
+    slug: "live-03",
+    category: "docs",
+    section: "directing",
+    extraSections: ["cinematography", "editing"],
+    title: "Hillsboro Live at eSpot",
+    year: "2026",
+    type: "Live Session",
+    involvement: ["Direction, Cinematography, Editing"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "Hillsboro"],
+      ["DIRECTOR", "Ben Mouland"],
+      ["Cinematographer", "Ben Mouland"],
+      ["Additional Photography", "Jason Yueh & Andrew Lee"],
+      ["Editor", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://www.youtube.com/watch?v=YOtWlojAvdw"],
+    ],
+  },
   // ===== MISC =====
   {
     slug: "misc-01",

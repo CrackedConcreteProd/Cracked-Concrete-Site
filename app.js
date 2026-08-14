@@ -1360,6 +1360,7 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "Justii_DC", img: "", links: [{ label: "IG", url: "https://www.instagram.com/justii_dc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@justii_dc" }] },
             { name: "RIUN GARNER", img: "", links: [{ label: "IG", url: "https://www.instagram.com/riungarner?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCkRorTRhewEpH90rBMOGCTw" }] },
             { name: "SLIGHTEST CLUE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/slightestclue?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@slightestclue" }] },
+            { name: "HILLSBORO", img: "", links: [{ label: "IG", url: "https://www.instagram.com/hillsboroinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCJo51mxwmOfWTyPLNIUCTgg" }] },
           ]
         }
       }
