@@ -1426,9 +1426,9 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "OOGWAY", img: "", links: [{ label: "IG", url: "https://www.instagram.com/oogway_the_okay?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCBsXl9QvTILN1fE27SVK5iw" }] },
             { name: "FIONAVAIR", img: "", links: [{ label: "IG", url: "https://www.instagram.com/fionavair?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@Fionavair" }] },
             { name: "Justii_DC", img: "", links: [{ label: "IG", url: "https://www.instagram.com/justii_dc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@justii_dc" }] },
-            { name: "RIUN GARNER", img: "", links: [{ label: "IG", url: "https://www.instagram.com/riungarner?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCkRorTRhewEpH90rBMOGCTw" }] },
-            { name: "SLIGHTEST CLUE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/slightestclue?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@slightestclue" }] },
-            { name: "HILLSBORO", img: "", links: [{ label: "IG", url: "https://www.instagram.com/hillsboroinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/channel/UCJo51mxwmOfWTyPLNIUCTgg" }] },
+            { name: "RIUN GARNER", img: "", links: [{ label: "IG", url: "https://www.instagram.com/riungarner?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@riungarner?si=TsuDeurXO0zfn3jf" }] },
+            { name: "SLIGHTEST CLUE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/slightestclue?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@slightestclue?si=rEHMLwhKxBkrcF5G" }] },
+            { name: "HILLSBORO", img: "", links: [{ label: "IG", url: "https://www.instagram.com/hillsboroinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@hillsboroinc?si=_6sgNM1EryQtibXC" }] },
           ]
         }
       }
