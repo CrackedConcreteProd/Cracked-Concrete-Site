@@ -61,9 +61,17 @@ function ytCacheGet(url) {
   try {
     const raw = localStorage.getItem(key);
     if (raw) {
-      const { src, expires } = JSON.parse(raw);
-      if (expires > Date.now()) { ytMemCache.set(key, src); return src; }
-      localStorage.removeItem(key);
+      if (raw.startsWith("{")) {
+        // New format: JSON with TTL
+        const { src, expires } = JSON.parse(raw);
+        if (expires > Date.now()) { ytMemCache.set(key, src); return src; }
+        localStorage.removeItem(key);
+      } else {
+        // Old format: plain URL string — accept it and migrate to new format
+        ytMemCache.set(key, raw);
+        ytCacheSet(url, raw);
+        return raw;
+      }
     }
   } catch (_) {}
   return null;
@@ -131,21 +139,21 @@ async function mountMarqueeAvatars(data, track) {
     } catch (_) {}
   }
 
-  // Handle-based lookups run concurrently
-  await Promise.all(byHandle.map(async w => {
+  // Handle-based lookups run sequentially to avoid rate-limit bursts
+  for (const w of byHandle) {
     try {
       const res = await fetch(
         `https://www.googleapis.com/youtube/v3/channels?part=snippet&forHandle=${w.info.value}&key=${YT_API_KEY}`
       );
-      if (!res.ok) return;
+      if (!res.ok) continue;
       const json = await res.json();
       const thumbs = json.items?.[0]?.snippet?.thumbnails;
       const src = thumbs?.medium?.url || thumbs?.default?.url;
-      if (!src) return;
+      if (!src) continue;
       ytCacheSet(w.url, src);
       applyAvatar(track, w.i, data.length, src, w.it.name);
     } catch (_) {}
-  }));
+  }
 }
 
 // ===== TOAST NOTIFICATION =====
