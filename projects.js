@@ -234,6 +234,26 @@ const PROJECTS = [
     ],
   },
   {
+    slug: "mv-10",
+    category: "musicvideos",
+    section: "editing",
+    title: "Zoology",
+    year: "2025",
+    type: "Music Video",
+    involvement: ["Editing"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "Fionavair"],
+      ["Editor", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/7xuV3J9pseE?si=7shGiu2o-DZ_ab2X"],
+    ],
+  },
+  {
     slug: "mv-07",
     category: "musicvideos",
     section: "editing",
