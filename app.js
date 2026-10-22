@@ -636,6 +636,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let last = performance.now();
     let interactive = false;
 
+    // Cache the loop width instead of reading scrollWidth every frame (forces layout).
+    // Refreshed only when the track resizes, e.g. when avatars finish loading.
+    let halfWidth = track.scrollWidth / 2;
+    const ro = new ResizeObserver(() => { halfWidth = track.scrollWidth / 2; });
+    ro.observe(track);
+
+    // Keep within loop bounds for smooth endless scrolling
+    function wrap() {
+      if (halfWidth <= 0) return;
+      while (mx <= -halfWidth) mx += halfWidth;
+      while (mx > 0) mx -= halfWidth;
+    }
+
     function apply() {
       track.style.setProperty("--mx", `${mx}px`);
     }
@@ -647,13 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!paused) {
         mx -= speed * (dt / 16.67);
 
-        // Seamless infinite loop: reset when first set of items scrolls fully off-screen
-        const halfWidth = track.scrollWidth / 2;
-        if (halfWidth > 0) {
-          // Keep mx within the repeating bounds for smooth endless scrolling
-          while (mx <= -halfWidth) mx += halfWidth;
-          while (mx > 0) mx -= halfWidth;
-        }
+        wrap();
 
         apply();
       }
@@ -680,12 +687,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       mx -= d * 0.85;
 
-      // Keep within loop bounds
-      const halfWidth = track.scrollWidth / 2;
-      if (halfWidth > 0) {
-        while (mx <= -halfWidth) mx += halfWidth;
-        while (mx > 0) mx -= halfWidth;
-      }
+      wrap();
 
       apply();
     }
@@ -700,12 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paused = true;
         mx += 55;
 
-        // Keep within loop bounds
-        const halfWidth = track.scrollWidth / 2;
-        if (halfWidth > 0) {
-          while (mx <= -halfWidth) mx += halfWidth;
-          while (mx > 0) mx -= halfWidth;
-        }
+        wrap();
 
         apply();
       } else if (e.key === "ArrowRight") {
@@ -713,12 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paused = true;
         mx -= 55;
 
-        // Keep within loop bounds
-        const halfWidth = track.scrollWidth / 2;
-        if (halfWidth > 0) {
-          while (mx <= -halfWidth) mx += halfWidth;
-          while (mx > 0) mx -= halfWidth;
-        }
+        wrap();
 
         apply();
       } else if (e.key === " ") {
@@ -734,6 +726,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return {
       destroy() {
         cancelAnimationFrame(raf);
+        ro.disconnect();
         window.removeEventListener("keydown", onKey);
         root.removeEventListener("wheel", onWheel);
         root.removeEventListener("mouseenter", enterInteractive);
@@ -1429,6 +1422,8 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "RIUN GARNER", img: "", links: [{ label: "IG", url: "https://www.instagram.com/riungarner?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@riungarner?si=TsuDeurXO0zfn3jf" }] },
             { name: "SLIGHTEST CLUE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/slightestclue?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@slightestclue?si=rEHMLwhKxBkrcF5G" }] },
             { name: "HILLSBORO", img: "", links: [{ label: "IG", url: "https://www.instagram.com/hillsboroinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@hillsboroinc?si=_6sgNM1EryQtibXC" }] },
+            { name: "JIAN", img: "", links: [{ label: "IG", url: "https://www.instagram.com/jianrossmusic?utm_source=ig_web_button_share_sheet&psln=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@jianrossmusic?si=agqXLj5eakBSQohD" }] },
+            { name: "SNOWCHILD EDGE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/snowchildedge?utm_source=ig_web_button_share_sheet&dlrf=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@snowchildedge?si=pYctXzVXDOcW6kff" }] },
           ]
         }
       }
