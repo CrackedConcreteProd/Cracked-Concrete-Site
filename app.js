@@ -1403,6 +1403,7 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "GREEN THUMBS", img: "", links: [{ label: "IG", url: "https://www.instagram.com/greenthumbscanada?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://www.youtube.com/@QuarterBrainProductions" }] },
             { name: "FORM", img: "assets/people/form.jpeg", links: [{ label: "IG", url: "https://www.instagram.com/formvancouver?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.f-o-r-m.ca/" }] },
             { name: "604 RECORDS", img: "assets/people/604.jpeg", links: [{ label: "IG", url: "https://www.instagram.com/604recordsinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "WEB", url: "https://www.604records.com/" }] },
+            { name: "ONPITCH", img: "", links: [{ label: "IG", url: "https://www.instagram.com/onpitch.io?utm_source=ig_web_button_share_sheet&exln=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@onpitchyt?si=soWGCJwbRT4gD4Aw" }] },
           ]
         },
         clients: {
@@ -1424,7 +1425,6 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "HILLSBORO", img: "", links: [{ label: "IG", url: "https://www.instagram.com/hillsboroinc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@hillsboroinc?si=_6sgNM1EryQtibXC" }] },
             { name: "JIAN", img: "", links: [{ label: "IG", url: "https://www.instagram.com/jianrossmusic?utm_source=ig_web_button_share_sheet&psln=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@jianrossmusic?si=agqXLj5eakBSQohD" }] },
             { name: "SNOWCHILD EDGE", img: "", links: [{ label: "IG", url: "https://www.instagram.com/snowchildedge?utm_source=ig_web_button_share_sheet&dlrf=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@snowchildedge?si=pYctXzVXDOcW6kff" }] },
-            { name: "ONPITCH", img: "", links: [{ label: "IG", url: "https://www.instagram.com/onpitch.io?utm_source=ig_web_button_share_sheet&exln=ZDNlZDc0MzIxNw==" }, { label: "YT", url: "https://youtube.com/@onpitchyt?si=soWGCJwbRT4gD4Aw" }] },
           ]
         }
       }

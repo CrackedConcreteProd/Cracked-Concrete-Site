@@ -616,6 +616,29 @@ const PROJECTS = [
       ["WATCH", "https://youtu.be/tF8QZ0RnTxg?si=Qexw64NKWUYubfjL"],
     ],
   },
+  {
+    slug: "misc-03",
+    category: "misc",
+    section: "directing",
+    extraSections: ["cinematography", "editing"],
+    title: "Jian / OnPitch Promo Ad",
+    year: "2026",
+    type: "Promo Ad",
+    involvement: ["Direction, Cinematography, Editing"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "Jian"],
+      ["DIRECTOR", "Ben Mouland"],
+      ["Cinematographer", "Ben Mouland"],
+      ["Editor", "Ben Mouland"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/Lidpkyev1kQ?si=3c8zNCgRri0dqDj4"],
+    ],
+  },
 ];
 
 // =========================================================
