@@ -300,6 +300,32 @@ const PROJECTS = [
   },
   // ===== MUSIC VIDEOS =====
   {
+    slug: "mv-11",
+    category: "musicvideos",
+    section: "cinematography",
+    title: "blocking a scene you can't remember",
+    year: "2026",
+    type: "Music Video",
+    involvement: ["Cinematography"],
+    status: "RELEASED",
+    logline: "",
+    poster: "",
+    stills: [],
+    credits: [
+      ["ARTIST", "PISS"],
+      ["DIRECTOR(s)", "Taylor Zantingh & Nushi Sharma"],
+      ["Cinematographer", "Ben Mouland"],
+      ["PRODUCER", "Nushi Sharma"],
+      ["Production Designer", "Helena Ventosa"],
+      ["Editor", "Nushi Sharma"],
+      ["Colourist", "Jackey Lee"],
+      ["Featuring", "Lauren Berg"],
+    ],
+    links: [
+      ["WATCH", "https://youtu.be/ShDocSCuiIU?si=tD9MTh4DbhnLdvtq"],
+    ],
+  },
+  {
     slug: "mv-01",
     category: "musicvideos",
     section: "cinematography",
