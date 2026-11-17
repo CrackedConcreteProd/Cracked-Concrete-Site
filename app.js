@@ -84,10 +84,19 @@ function ytCacheSet(url, src) {
   } catch (_) {}
 }
 
+// Only YouTube's avatar hosts are accepted, since src can come from localStorage
+const YT_AVATAR_SRC = /^https:\/\/yt3\.(ggpht|googleusercontent)\.com\//;
+
 function applyAvatar(track, i, dataLen, src, name) {
+  if (!YT_AVATAR_SRC.test(src)) return;
   [i, i + dataLen].forEach(idx => {
     const avatar = track.querySelector(`[data-card="${idx}"] .mAvatar`);
-    if (avatar) avatar.innerHTML = `<img src="${src}" alt="${name}" loading="lazy" />`;
+    if (!avatar) return;
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = name;
+    img.loading = "lazy";
+    avatar.replaceChildren(img);
   });
 }
 
