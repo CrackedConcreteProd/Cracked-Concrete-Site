@@ -213,9 +213,6 @@ body::before{
   opacity: .75;
   mix-blend-mode: multiply;
 }
-.bootScreen.is-done{
-  display: none;
-}
 .bootInner{
   width: min(480px, 85vw);
   font-family: "Courier New", Courier, monospace;
@@ -770,15 +767,6 @@ body::before{
 /* Prevent the link text from forcing the card super wide */
 .mLinks .mLink{ white-space: nowrap; }
 
-.mHint{
-  margin-top: 8px;
-  font-size: 10px;
-  opacity: .7;
-  letter-spacing: .22em;
-  white-space: normal;
-  max-width: 100%;
-}
-
 /* ===========================
    PANEL
 =========================== */
@@ -1205,44 +1193,6 @@ body::before{
   overflow: hidden;
 }
 
-.reelPlaceholder{
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #111;
-}
-
-.reelNoise{
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(233,251,255,.03) 2px,
-    rgba(233,251,255,.03) 4px
-  );
-  animation: reelStatic 0.4s steps(4) infinite;
-  pointer-events: none;
-}
-
-@keyframes reelStatic{
-  0%   { opacity: .4; }
-  25%  { opacity: .6; }
-  50%  { opacity: .3; }
-  75%  { opacity: .5; }
-  100% { opacity: .4; }
-}
-
-.reelText{
-  position: relative;
-  font-size: clamp(.7rem, 1.4vw, .9rem);
-  letter-spacing: .2em;
-  opacity: .5;
-}
-
 @media (max-width: 720px){
   #reelContainer{
     position: relative;
@@ -1643,36 +1593,12 @@ body::before{
   letter-spacing: .20em;
 }
 
-/* Bigger hint (or comment this out if you want to hide it) */
-#peopleBranch .mHint{
-  margin-top: 12px;
-  font-size: 12px;
-  letter-spacing: .22em;
-  opacity: .7;
-}
-
-/* Hide OSD footer text everywhere */
-.projectsFooter,
-.panelFooter,
-.osdFooter,
-.footerHints{
-  display: none !important;
-}
-
 /* =========================================================
    REMOVE ALL OSD / CONTROL HINTS (ENTER, MENU, ETC.)
    ========================================================= */
 
-/* Marquee hint text */
-.mHint{
-  display: none !important;
-}
-
-/* Any footer-style OSD hints */
-.projectsFooter,
-.panelFooter,
-.osdFooter,
-.footerHints{
+/* Hide OSD footer text everywhere */
+.projectsFooter{
   display: none !important;
 }
 
