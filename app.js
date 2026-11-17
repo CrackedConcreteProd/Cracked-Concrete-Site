@@ -1509,11 +1509,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let cart = [];
   let expandedItemId = null;
 
-  // Load cart from localStorage
+  // Load cart from localStorage. Saved entries are rebuilt from GEAR_DATA by id
+  // so tampered names/prices never reach innerHTML.
   function loadCart() {
+    cart = [];
     try {
-      const saved = localStorage.getItem("gearCart");
-      if (saved) cart = JSON.parse(saved);
+      const saved = JSON.parse(localStorage.getItem("gearCart") || "[]");
+      if (!Array.isArray(saved)) return;
+      const allItems = Object.values(GEAR_DATA).flatMap(cat => cat.items || []);
+      saved.forEach(entry => {
+        const item = allItems.find(i => i.id === entry?.id);
+        const days = Math.max(1, Math.floor(Number(entry?.days)) || 1);
+        if (!item || cart.some(c => c.id === item.id)) return;
+        cart.push({
+          id: item.id,
+          name: item.name,
+          days: days,
+          dayRate: item.dayRate,
+          weekRate: item.weekRate,
+          price: calculatePrice(item, days)
+        });
+      });
     } catch (e) {
       cart = [];
     }
