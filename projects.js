@@ -781,7 +781,7 @@ if (!els.grid || !els.panel) {
   }
 
   function renderGrid() {
-    els.grid.innerHTML = "";
+    els.grid.replaceChildren();
 
     const visible = getVisible();
 
@@ -1036,12 +1036,12 @@ if (!els.grid || !els.panel) {
 
     els.title.textContent = p.title;
 
-    els.badges.innerHTML = "";
+    els.badges.replaceChildren();
     (p.involvement || []).forEach((t) => els.badges.appendChild(badge(t)));
 
     els.logline.textContent = p.logline || "";
 
-    els.credits.innerHTML = "";
+    els.credits.replaceChildren();
     (p.credits || []).forEach(([k, v]) => {
       const row = document.createElement("div");
       row.className = "creditRow";
@@ -1049,7 +1049,7 @@ if (!els.grid || !els.panel) {
       els.credits.appendChild(row);
     });
 
-    els.links.innerHTML = "";
+    els.links.replaceChildren();
     (p.links || []).forEach(([label, href]) => {
       const a = document.createElement("a");
       a.className = "panelLink";
@@ -1085,11 +1085,11 @@ if (!els.grid || !els.panel) {
     } else {
       els.meta.textContent = "SELECT A PROJECT";
       els.title.textContent = "—";
-      els.badges.innerHTML = "";
+      els.badges.replaceChildren();
       els.logline.textContent = "No projects in this category yet.";
-      els.credits.innerHTML = "";
-      els.links.innerHTML = "";
-      els.cover.innerHTML = "";
+      els.credits.replaceChildren();
+      els.links.replaceChildren();
+      els.cover.replaceChildren();
     }
   });
 

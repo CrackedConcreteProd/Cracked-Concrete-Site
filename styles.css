@@ -2513,14 +2513,20 @@ a.connectValue:hover{
   transform: rotate(180deg);
 }
 
+/* Animates to the real content height; browsers without interpolate-size just snap open */
 .categoryContent{
-  max-height: 0;
+  interpolate-size: allow-keywords;
+  block-size: 0;
   overflow: hidden;
-  transition: max-height 400ms ease-out;
+  transition: block-size 400ms ease-out;
 }
 
 .gearCategory.open .categoryContent{
-  max-height: 5000px;
+  block-size: auto;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .categoryContent{ transition: none; }
 }
 
 /* GEAR GRID (3 columns) */

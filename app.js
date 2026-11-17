@@ -180,7 +180,7 @@ function showToast(msg, duration = 3000) {
 }
 
 function buildIcon(el, pattern) {
-  el.innerHTML = "";
+  el.replaceChildren();
   for (let y = 0; y < pattern.length; y++) {
     for (let x = 0; x < pattern[y].length; x++) {
       const d = document.createElement("div");
@@ -567,7 +567,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return {
       destroy() {
-        loglineEl.innerHTML = "";
+        loglineEl.replaceChildren();
         if (panel) panel.classList.remove("is-team");
       }
     };
@@ -742,7 +742,7 @@ document.addEventListener("DOMContentLoaded", () => {
         root.removeEventListener("mouseleave", leaveInteractive);
         root.removeEventListener("focusin", enterInteractive);
         root.removeEventListener("focusout", leaveInteractive);
-        loglineEl.innerHTML = "";
+        loglineEl.replaceChildren();
         hardResetXScroll();
       }
     };
@@ -1129,7 +1129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (this.ui.badges) {
-          this.ui.badges.innerHTML = "";
+          this.ui.badges.replaceChildren();
           (c.badges || []).forEach(x => {
             const s = document.createElement("span");
             s.className = "badge";
@@ -1647,7 +1647,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderCategories() {
     if (!gearCategoriesEl) return;
 
-    gearCategoriesEl.innerHTML = "";
+    gearCategoriesEl.replaceChildren();
 
     Object.keys(GEAR_DATA).forEach(catKey => {
       const category = GEAR_DATA[catKey];
@@ -1865,7 +1865,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (cart.length === 0) {
       cartEmptyEl.style.display = "block";
-      cartItemsEl.innerHTML = "";
+      cartItemsEl.replaceChildren();
       cartFooterEl.style.display = "none";
       return;
     }

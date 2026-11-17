@@ -4,3 +4,8 @@ Thumbs.db
 .env.*
 !.env.example
 node_modules/
+
+# Local agent skills (not part of the site)
+.agents/
+.claude/
+skills-lock.json
